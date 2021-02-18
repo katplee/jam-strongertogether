@@ -9,8 +9,8 @@ using UnityEngine;
 
 public class Enemy : Element
 {
-    public Enemy(ElementType type) : base(type)
+    private void Awake()
     {
-
+        base.Start();
     }
 }

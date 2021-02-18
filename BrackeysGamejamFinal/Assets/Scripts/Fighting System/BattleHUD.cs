@@ -11,12 +11,20 @@ public class BattleHUD : MonoBehaviour
     public Image hpStatsBar;
     public Image armorStatsBar;
 
-    public void UpdateHUD(Element element)
+    public void UpdateHUD<T>(T element)
+        where T : Element
     {
-        playerNameText.text = element.Type.ToString();
-        playerLevelText.text = "Lvl " + element.Armor.ToString();
-        hpStatsBar.fillAmount = element.HP / 10;
-        armorStatsBar.fillAmount = element.Armor / 10;
+        playerNameText.text = element.type.ToString();
+        playerLevelText.text = "Lvl " + element.armor.ToString();
+        Debug.Log(element.hp / 100);
+        hpStatsBar.fillAmount = element.hp / 100;
+        armorStatsBar.fillAmount = element.armor / 100;
+    }
+
+    public void UpdateHP<T>(float hp)
+        where T : Element
+    {
+        hpStatsBar.fillAmount = hp / 100;
     }
 
 }

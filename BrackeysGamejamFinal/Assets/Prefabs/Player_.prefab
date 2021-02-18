@@ -90,6 +90,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8373822766257155222}
+  - component: {fileID: 7327610709151363616}
   m_Layer: 0
   m_Name: Player_
   m_TagString: Untagged
@@ -112,3 +113,25 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7327610709151363616
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6283360413482932523}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c856a09954c37747ad74460ff2c70bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 2
+  hp: 0
+  armor: 0
+  damageAmount: 20
+  fireAttack: 0
+  waterAttack: 0
+  windAttack: 0
+  earthAttack: 0
+  weakness: 1
+  weaknessFactor: 2

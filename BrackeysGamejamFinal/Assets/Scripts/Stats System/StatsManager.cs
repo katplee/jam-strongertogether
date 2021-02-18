@@ -10,11 +10,10 @@ public class StatsManager : MonoBehaviour
     /// TryGetComponent<Dragon>(out Dragon dragon); that's inside a switch case
     /// </summary>
     
-    Dragon dragon = new Dragon(Element.ElementType.DRAGON);    
+    
 
     private void Start()
     {
-        Debug.Log(dragon.FireAttack);
         
     }
 }

@@ -17,11 +17,6 @@ public class Dragon : Element
 
     public DragonType DType { get; set; }
 
-    public Dragon(ElementType type) : base(type)
-    {
-        InitializeAttributes();
-    }
-
     private void InitializeAttributes()
     {
         //set dragon type (randomize?)
@@ -29,6 +24,12 @@ public class Dragon : Element
         //for example 3 for an earth dragon
         int type = 3;
         DType = (DragonType)type;
+    }
+
+    private void Awake()
+    {
+        base.Start();
+        InitializeAttributes();
     }
 }
 

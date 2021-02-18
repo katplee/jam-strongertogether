@@ -9,8 +9,5 @@ using UnityEngine;
 
 public class Boss : Element
 {
-    public Boss(ElementType type) : base(type)
-    {
-
-    }
+   
 }
