@@ -7,7 +7,15 @@ using UnityEngine;
 /// include all methods and parameters specific to a boss here
 /// </summary>
 
-public class Boss : Element
+public class Boss : Enemy
 {
-   
+    public override ElementType Type
+    {
+        get { return ElementType.BOSS; }
+    }
+
+    private void Awake()
+    {
+        base.Start();
+    }
 }

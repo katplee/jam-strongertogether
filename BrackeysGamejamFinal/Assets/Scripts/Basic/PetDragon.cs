@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PetDragon : MonoBehaviour
+//kat 210220: made pet dragon into a child of dragon class
+
+public class PetDragon : Dragon
 {
     private Rigidbody2D rb2d;
     public float speed;
@@ -12,8 +14,12 @@ public class PetDragon : MonoBehaviour
     public GameObject target;    
     private Animator anim;
 
-    // Start is called before the first frame update
-    void Start()
+    private void Awake()
+    {
+        base.Start(); //kat added this!
+    }
+
+    protected new void Start()
     {
         rb2d = GetComponent<Rigidbody2D>();
         target = GameObject.FindGameObjectWithTag("Player");
@@ -21,8 +27,7 @@ public class PetDragon : MonoBehaviour
         speed = target.GetComponent<Player>().speed;
         anim = GetComponent<Animator>();        
     }
-
-    // Update is called once per frame
+        
     void Update()
     {
         if (target != null)

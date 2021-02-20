@@ -14,7 +14,7 @@ public class BattleHUD : MonoBehaviour
     public void UpdateHUD<T>(T element)
         where T : Element
     {
-        playerNameText.text = element.type.ToString();
+        playerNameText.text = element.Type.ToString();
         playerLevelText.text = "Lvl " + element.armor.ToString();
         Debug.Log(element.hp / 100);
         hpStatsBar.fillAmount = element.hp / 100;

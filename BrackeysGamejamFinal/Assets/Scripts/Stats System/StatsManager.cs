@@ -10,8 +10,6 @@ public class StatsManager : MonoBehaviour
     /// TryGetComponent<Dragon>(out Dragon dragon); that's inside a switch case
     /// </summary>
     
-    
-
     private void Start()
     {
         

@@ -9,8 +9,15 @@ using UnityEngine;
 
 public class Enemy : Element
 {
+    public override ElementType Type
+    {
+        get { return ElementType.ENEMY; }
+    }
+
+    //the base.Start() needs to be called at Awake
+    //or else it would be too late for the updating of the stats
     private void Awake()
     {
         base.Start();
-    }
+    }    
 }

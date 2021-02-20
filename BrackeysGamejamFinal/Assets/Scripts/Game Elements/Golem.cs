@@ -7,7 +7,15 @@ using UnityEngine;
 /// include all methods and parameters specific to a golem here
 /// </summary>
 
-public class Golem : Element
+public class Golem : Enemy
 {
-    
+    public override ElementType Type
+    {
+        get { return ElementType.GOLEM; }
+    }
+
+    private void Awake()
+    {
+        base.Start();
+    }
 }

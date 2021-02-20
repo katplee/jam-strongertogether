@@ -1,20 +1,38 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public class Player : MonoBehaviour
+/// <summary>
+/// kat 210219: trying something out for the scene management thing and the HUD task
+/// so I made player a child class of element
+/// </summary>
+
+public class Player : Element
 {
     private Rigidbody2D rb2d;
     public float speed;
-    public int hp;
+    //public new float hp;
 
-    private int direction, legion, dieForm;    
+    private int direction, legion, dieForm;
     private Animator anim;
-    
+
     private bool reloading = false, dead = false, armed;
 
+    public override ElementType Type
+    {
+        get { return ElementType.PLAYER; }
+    }
+
+    public string attackScene = "AttackScene";
+
+    private void Awake()
+    {
+        base.Start(); //kat added this!        
+    }
+
     // Start is called before the first frame update
-    void Start()
+    protected new void Start()
     {
         rb2d = GetComponent<Rigidbody2D>();
         //anim = GetComponent<Animator>(); WHEN WE GET ANIMATION SPRITES
@@ -29,11 +47,15 @@ public class Player : MonoBehaviour
         {
             Move();
         }
-        
     }
 
     private void Move()
     {
+        #region kat added this!
+        Scene currentScene = SceneManager.GetActiveScene();
+        if (currentScene.name == attackScene) { return; }
+        #endregion
+
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
 

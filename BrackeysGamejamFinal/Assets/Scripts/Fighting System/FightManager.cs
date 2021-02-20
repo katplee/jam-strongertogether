@@ -33,29 +33,28 @@ public class FightManager : MonoBehaviour
     public Transform enemyCorner;
 
     //fix this part. make it more general
-    private Dragon player;
+    public Player player;
     private Enemy enemy;
 
     public BattleHUD playerHUD;
     public BattleHUD enemyHUD;
 
+    [Header("Transition Values")]
+    public string sceneName = "BasicScene";
+    public SceneTransition sceneTransition;
+
     // Start is called before the first frame update
     void Start()
     {
         state = BattleState.START;
-
         StartCoroutine(SetupBattle());
-    }
-
-    private void OnDestroy()
-    {
-
     }
 
     IEnumerator SetupBattle()
     {
         GameObject playerGO = Instantiate(playerPrefab, playerCorner);
-        player = playerGO.GetComponent<Dragon>();
+        player = playerGO.AddComponent<Player>();
+        SetPlayerStats();
         playerHUD.UpdateHUD<Element>(player);
 
         GameObject enemyGO = Instantiate(enemyPrefab, enemyCorner);
@@ -66,6 +65,29 @@ public class FightManager : MonoBehaviour
 
         state = BattleState.PLAYERTURN;
         OnPlayerTurn();
+    }
+
+    private void SetPlayerStats()
+    {
+        PlayerData saved = PlayerData.Instance;
+
+        player.hp = saved.playerHP;
+        player.armor = saved.playerArmor;
+        player.damageAmount = saved.playerDamageAmount;
+        player.fireAttack = saved.playerFireAttack;
+        player.waterAttack = saved.playerWaterAttack;
+        player.windAttack = saved.playerWindAttack;
+        player.earthAttack = saved.playerEarthAttack;
+    }
+
+    private void UpdateSavedStats()
+    {
+        PlayerData saved = PlayerData.Instance;
+
+        saved.playerHP = player.hp;
+
+
+
     }
 
     private void OnPlayerTurn()
@@ -93,6 +115,9 @@ public class FightManager : MonoBehaviour
 
         bool playerIsDead = player.TakeDamage(enemy.DamageAmount());
 
+        //update the saved stats
+        UpdateSavedStats();
+
         //update the player stats
         playerHUD.UpdateHP<Element>(player.hp);
 
@@ -102,7 +127,17 @@ public class FightManager : MonoBehaviour
         yield return new WaitForSeconds(timeToWait);
 
         CheckForEnemyWin(playerIsDead);
+    }
 
+    private bool DealDamage()
+    {
+        if (enemy.Type == Element.ElementType.DRAGON)
+        {
+
+        }
+
+        bool playerIsDead = player.TakeDamage(enemy.DamageAmount());
+        return playerIsDead;
     }
 
     public void OnAttackButton()
@@ -174,7 +209,6 @@ public class FightManager : MonoBehaviour
 
     public void OnLeaveButton()
     {
-        Debug.Log("Leave game!");
-        //Do something..
+        sceneTransition.FadeTo(sceneName);
     }
 }
