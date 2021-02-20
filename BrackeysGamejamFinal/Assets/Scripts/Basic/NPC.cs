@@ -17,9 +17,7 @@ public class NPC : MonoBehaviour
     public GameObject instPanel;
     public GameObject spritePanel;
 
-    [Header("Transition Values")]
-    public string sceneName = "AttackScene";
-    public SceneTransition sceneTransition;
+    
 
     // Start is called before the first frame update
     void Start()
@@ -49,9 +47,7 @@ public class NPC : MonoBehaviour
             talking = true;
             trigger.NPCTriggerDialogue(this);
             spritePanel.SetActive(false);
-            instPanel.SetActive(false);
-
-            sceneTransition.FadeTo(sceneName);
+            instPanel.SetActive(false);            
         }
     }
     void OnCollisionEnter2D(Collision2D collision)

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Object = System.Object;
@@ -12,6 +14,10 @@ public class DragonsData : MonoBehaviour
     public static DragonsData Instance;
 
     public static List<List<Object>> dragonsStats = new List<List<Object>>();
+    public List<List<Object>> dragonsList = new List<List<Object>>();
+
+    [TextArea(15, 15)]
+    public List<Object> dragonList;
 
     private Scene currentScene;
     private string attackScene = "AttackScene";
@@ -33,7 +39,6 @@ public class DragonsData : MonoBehaviour
 
     private enum Stat
     {
-        code,
         dragon_type,
         hp,
         armor,
@@ -47,18 +52,17 @@ public class DragonsData : MonoBehaviour
     }
 
     private Dictionary<Stat, int> stat = new Dictionary<Stat, int>()
-    {
-        { Stat.code, 0},
-        { Stat.dragon_type, 1 },
-        { Stat.hp, 2 },
-        { Stat.armor, 3 },
-        { Stat.damage_amount, 4 },
-        { Stat.weakness, 5 },
-        { Stat.weakness_factor, 6 },
-        { Stat.fire_attack, 7 },
-        { Stat.water_attack, 8 },
-        { Stat.wind_attack, 9 },
-        { Stat.earth_attack, 10 },
+    {        
+        { Stat.dragon_type, 0 },
+        { Stat.hp, 1 },
+        { Stat.armor, 2 },
+        { Stat.damage_amount, 3 },
+        { Stat.weakness, 4 },
+        { Stat.weakness_factor, 5 },
+        { Stat.fire_attack, 6 },
+        { Stat.water_attack, 7 },
+        { Stat.wind_attack, 8 },
+        { Stat.earth_attack, 9 },
     };
 
     private void Start()
@@ -83,18 +87,32 @@ public class DragonsData : MonoBehaviour
         currentScene = SceneManager.GetActiveScene();
         if (currentScene.name == attackScene) { return; }
 
+        if(dragonsStats.Count == 0) { return; }
+
+        var sorted = dragonsStats.OrderBy(list => list[0]);
+
+        foreach(var sort in sorted)
+        {
+            dragonList.Add(sort);
+        }
+
+        /*
         List<Object> lastLoggedDragon = dragonsStats[dragonsStats.Count - 1];
 
-        Debug.Log($"{(Stat)0} : {lastLoggedDragon[0]}");
-        Debug.Log($"{(Stat)1} : {lastLoggedDragon[1]}");
-        Debug.Log($"{(Stat)2} : {lastLoggedDragon[2]}");
-        Debug.Log($"{(Stat)3} : {lastLoggedDragon[3]}");
-        Debug.Log($"{(Stat)4} : {lastLoggedDragon[4]}");
-        Debug.Log($"{(Stat)5} : {lastLoggedDragon[5]}");
-        Debug.Log($"{(Stat)6} : {lastLoggedDragon[6]}");
-        Debug.Log($"{(Stat)7} : {lastLoggedDragon[7]}");
-        Debug.Log($"{(Stat)8} : {lastLoggedDragon[8]}");
-        Debug.Log($"{(Stat)9} : {lastLoggedDragon[9]}");
+        string lastLoggedDragonText = 
+            $"{(Stat)0} : {lastLoggedDragon[0]}\n" +
+            $"{(Stat)1} : {lastLoggedDragon[1]}\n" +
+            $"{(Stat)2} : {lastLoggedDragon[2]}\n" +
+            $"{(Stat)3} : {lastLoggedDragon[3]}\n" +
+            $"{(Stat)4} : {lastLoggedDragon[4]}\n" +
+            $"{(Stat)5} : {lastLoggedDragon[5]}\n" +
+            $"{(Stat)6} : {lastLoggedDragon[6]}\n" +
+            $"{(Stat)7} : {lastLoggedDragon[7]}\n" +
+            $"{(Stat)8} : {lastLoggedDragon[8]}\n" +
+            $"{(Stat)9} : {lastLoggedDragon[9]}";
+
+        dragonList.Add(lastLoggedDragonText);
+        */
     }
 
     public void SaveDragon(Dragon dragon)
@@ -102,7 +120,6 @@ public class DragonsData : MonoBehaviour
         //create a new temporary list to save each dragon's stats
         List<Object> dragonStats = new List<Object>()
         {
-            dragon,
             dragon.DType,
             dragon.hp,
             dragon.armor,

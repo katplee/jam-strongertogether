@@ -21,9 +21,10 @@ public class FightManager : MonoBehaviour
 
     public BattleState state;
 
+    public TMP_Text dialogueBox;
     public Button attackButton;
     public Button leaveButton;
-    public TMP_Text dialogueBox;
+    public GameObject dragonPanel;
     public float timeToWait = 2f;
 
     public GameObject playerPrefab;
@@ -40,7 +41,7 @@ public class FightManager : MonoBehaviour
     public BattleHUD enemyHUD;
 
     [Header("Transition Values")]
-    public string sceneName = "BasicScene 2";
+    private string sceneName = "BasicScene 2";
     public SceneTransition sceneTransition;
 
     // Start is called before the first frame update
@@ -163,6 +164,34 @@ public class FightManager : MonoBehaviour
 
         CheckForPlayerWin(enemyIsDead);
     }
+
+    public void OnSwitchButton()
+    {
+        if (state != BattleState.PLAYERTURN) { return; }
+
+        Debug.Log("Switch!");
+
+        //Show a panel where you can choose your dragons
+
+        StartCoroutine(SwitchDragon());
+    }
+
+    IEnumerator SwitchDragon()
+    {
+
+
+        if (dragonPanel.activeSelf) { dragonPanel.SetActive(false); }
+        else { dragonPanel.SetActive(true); }
+
+
+        
+
+        yield return new WaitForSeconds(timeToWait);
+
+        state = BattleState.ENEMYTURN;
+        StartCoroutine(OnEnemyTurn());
+    }
+
 
     private void CheckForPlayerWin(bool enemyIsDead)
     {

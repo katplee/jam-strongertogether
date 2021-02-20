@@ -204,7 +204,7 @@ MonoBehaviour:
   damageAmount: 15
   weakness: 4
   weaknessFactor: 2
-  fireAttack: 0
+  fireAttack: 15
   waterAttack: 0
   windAttack: 0
   earthAttack: 0
@@ -228,7 +228,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pStones: 2
-  pStonesReq: {fileID: 2229290203129814051}
+  pStonesReq: {fileID: 0}
   dragon: {fileID: 2229290202662044387}
   reqText: {fileID: 2229290203410693634}
   reqStone: {fileID: -5415872262040562667, guid: 1f5be065c99c31a4c8098ec90069fa99,
