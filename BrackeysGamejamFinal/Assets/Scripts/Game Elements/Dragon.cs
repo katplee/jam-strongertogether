@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 /// <summary>
 /// kat, 2/17/2021:
@@ -11,48 +10,78 @@ using Random = UnityEngine.Random;
 
 public class Dragon : Element
 {
+    public enum DragonType
+    {
+        FIRE, WATER, WIND, EARTH, BASE, NOTDRAGON
+    }
+
+    public DragonType DType;
+    
     public override ElementType Type
     {
         get { return ElementType.DRAGON; }
     }
 
-    public enum DragonType
-    {
-        FIRE, WATER, WIND, EARTH, NOTDRAGON
-    }
-        
-    protected override DragonType DType
-    {
-        get => _dType;
-        set => _dType = value;
-    }
-    public int dType;
+    public float dragonImmunity = 0.5f; //kat added this!
 
-    private float dragonImmunity = 0.5f;
+    //LEVELING SYSTEM
+    private int Lvl = 1;
+    private float XP = 0;
+
+    [Header("Leveling System")]
+    public float xpPerMinute = 10f;
+    public float xpPerWonFight = 120f;
+    public float xpPerLvl = 100f;
+    public int maxLvl = 5;
+
+    public TamingReqs tamingReqs;
 
     private void Awake()
     {
-        base.Start();        
+        InitializeDragonAttributes();
+        InitializeUniqueAttributes(Type);        
     }
 
-    protected new void Start()
+    protected override void Start()
     {
-        InitializeAttributes();
+        //DO NOT ERASE THIS METHOD! This prevents the base.Start() from being called!
+        //Do not load the base.Start() method so the weakness will not be set.
     }
 
-    private void InitializeAttributes()
+    private void InitializeDragonAttributes()
     {
-        //set dragon type (randomize?)
-        //could be set depending on the level, etc.
-        //for example 3 for an earth dragon
-        dType = Random.Range(0, 4);
-        Debug.Log(dType);
-        DType = (DragonType)dType;
-        Debug.Log(DType);
+        switch (DType)
+        {
+            case DragonType.FIRE:
+                weakness = WeaknessType.WATER;
+                break;
+
+            case DragonType.WATER:
+                weakness = WeaknessType.FIRE;
+                break;
+
+            case DragonType.WIND:
+                weakness = WeaknessType.EARTH;
+                break;
+
+            case DragonType.EARTH:
+                weakness = WeaknessType.WIND;
+                break;
+
+            case DragonType.BASE:
+                weakness = WeaknessType.NOTCONSIDERED;
+                break;
+        }        
     }
 
+    public void Tame()
+    {
+
+    }
+
+    #region OPTIONAL CODE
     public override bool TakeDamage(float damageAmount, WeaknessType enemyWeakness)
-    {
+    {        
         float effDamageAmount = (enemyWeakness.ToString() == DType.ToString()) ?
             damageAmount * dragonImmunity : damageAmount;
 
@@ -65,5 +94,6 @@ public class Dragon : Element
         //invoke some game over event maybe?
         return true;
     }
+    #endregion
 }
 

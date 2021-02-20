@@ -40,7 +40,7 @@ public class FightManager : MonoBehaviour
     public BattleHUD enemyHUD;
 
     [Header("Transition Values")]
-    public string sceneName = "BasicScene";
+    public string sceneName = "BasicScene 2";
     public SceneTransition sceneTransition;
 
     // Start is called before the first frame update

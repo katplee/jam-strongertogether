@@ -3,14 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System;
 
 public class SceneTransition : MonoBehaviour
 {
+    public static event Action JustBeforeSceneTransition; //kat added this!
+    public static event Action JustAfterSceneTransition;
+
     public Image img;
     public AnimationCurve curve;
     void Start()
     {
         StartCoroutine(FadeIn());
+
+        JustAfterSceneTransition?.Invoke();
     }
 
     public void FadeTo(string scene)
@@ -21,6 +27,8 @@ public class SceneTransition : MonoBehaviour
         {
             Time.timeScale = 1f;
         }
+
+        JustBeforeSceneTransition?.Invoke(); //kat added this!
 
         StartCoroutine(FadeOut(scene));
     }

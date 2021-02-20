@@ -25,13 +25,6 @@ public abstract class Element : MonoBehaviour
 
     public abstract ElementType Type { get; }
 
-    protected Dragon.DragonType _dType;
-    protected virtual Dragon.DragonType DType 
-    {
-        get => Dragon.DragonType.NOTDRAGON;
-        set => _dType = value;
-    }
-
     public float hp;
     public float armor;
 
@@ -51,7 +44,7 @@ public abstract class Element : MonoBehaviour
 
     protected float maxHP = 100;
 
-    protected void Start()
+    protected virtual void Start()
     {
         InitializeCommonAttributes();
         InitializeUniqueAttributes(Type);
