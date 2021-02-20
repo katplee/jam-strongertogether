@@ -25,7 +25,17 @@ public class PetDragon : Dragon
         target = GameObject.FindGameObjectWithTag("Player");
         rec = target.transform.position;
         speed = target.GetComponent<Player>().speed;
-        anim = GetComponent<Animator>();        
+        anim = GetComponent<Animator>();       
+        switch (DType)
+        {
+            case Dragon.DragonType.FIRE:
+                anim.SetInteger("DType", 0);
+                break;
+            case Dragon.DragonType.BASE:
+                anim.SetInteger("DType", 1);
+                break;
+
+        }
     }
         
     void Update()
@@ -33,14 +43,14 @@ public class PetDragon : Dragon
         if (target != null)
         {
             Move();
-            //Direction();         
+            Direction();         
         }
     }
 
     void Move()
     {
 
-        if (Vector2.Distance(transform.position, target.transform.position)>=1.7f)
+        if (Vector2.Distance(transform.position, target.transform.position)>=2.5f)
         {
             rec = (target.transform.position - transform.position).normalized * speed * 1.2f;
             rb2d.velocity = new Vector2(rec.x, rec.y);
@@ -52,13 +62,14 @@ public class PetDragon : Dragon
 
     }
 
-    /*
+    
     void Direction()
     {
-        rotation = (target.transform.position - transform.position).normalized;
-        angle = Mathf.Atan2(rotation.y, rotation.x);
-        angle = angle * (180 / Mathf.PI);
-
+        Vector3 dir = target.transform.position - transform.position;
+        Quaternion lookRotation = Quaternion.LookRotation(dir, new Vector3(0,0,1f));
+        Vector3 rotation = Quaternion.Lerp(transform.rotation, lookRotation, Time.deltaTime * 25.0f).eulerAngles;
+        transform.rotation = Quaternion.Euler(0f, 0f, rotation.z);
+        /*
         if (angle < 157.5 && angle > 112.5)
         {
             anim.SetInteger("Direction", -1);
@@ -106,7 +117,8 @@ public class PetDragon : Dragon
             anim.SetInteger("Legion", 0);
 
         }
+        */
     }
-    */
+    
 
 }

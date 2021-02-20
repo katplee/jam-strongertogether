@@ -17,13 +17,19 @@ public enum BattleState { START, PLAYERTURN, ENEMYTURN, WON, LOST }
 public class FightManager : MonoBehaviour
 {
     //public static event Action OnStartFight;
-    //public static event Action OnEndFight;
+    //use this to update dragon stats
+    public static event Action<Element> OnEnemyEndTurn;
 
     public BattleState state;
 
     public TMP_Text dialogueBox;
     public Button attackButton;
     public Button leaveButton;
+    public Button switchButton;
+    [SerializeField] private string lastButtonClicked;
+    public string _attack = "attack";
+    public string _switch = "switch";
+    public string _leave = "leave";
     public GameObject dragonPanel;
     public float timeToWait = 2f;
 
@@ -34,14 +40,14 @@ public class FightManager : MonoBehaviour
     public Transform enemyCorner;
 
     //fix this part. make it more general
-    public Player player;
+    public Element player;
     private Enemy enemy;
 
     public BattleHUD playerHUD;
     public BattleHUD enemyHUD;
 
     [Header("Transition Values")]
-    private string sceneName = "BasicScene 2";
+    private string sceneName = "BasicScene 3";
     public SceneTransition sceneTransition;
 
     // Start is called before the first frame update
@@ -56,7 +62,7 @@ public class FightManager : MonoBehaviour
         GameObject playerGO = Instantiate(playerPrefab, playerCorner);
         player = playerGO.AddComponent<Player>();
         SetPlayerStats();
-        playerHUD.UpdateHUD<Element>(player);
+        playerHUD.UpdateHUD(player);
 
         GameObject enemyGO = Instantiate(enemyPrefab, enemyCorner);
         enemy = enemyGO.GetComponent<Enemy>();
@@ -145,6 +151,8 @@ public class FightManager : MonoBehaviour
     {
         if (state != BattleState.PLAYERTURN) { return; }
 
+        if (lastButtonClicked.ToLower() == _switch) { return; }
+
         Debug.Log("Attack!");
 
         StartCoroutine(DealAttack());
@@ -169,29 +177,30 @@ public class FightManager : MonoBehaviour
     {
         if (state != BattleState.PLAYERTURN) { return; }
 
-        Debug.Log("Switch!");
-
         //Show a panel where you can choose your dragons
+        if (dragonPanel.activeSelf) { dragonPanel.SetActive(false); }
+        else { dragonPanel.SetActive(true); }
+
+    }
+
+    public void OnSwitchDragon()
+    {
+        if (state != BattleState.PLAYERTURN) { return; }
+
+        //change the player script to the chosen dragon
+
+        //change the sprite to the chosen dragon
 
         StartCoroutine(SwitchDragon());
     }
 
     IEnumerator SwitchDragon()
     {
-
-
-        if (dragonPanel.activeSelf) { dragonPanel.SetActive(false); }
-        else { dragonPanel.SetActive(true); }
-
-
-        
-
         yield return new WaitForSeconds(timeToWait);
 
         state = BattleState.ENEMYTURN;
         StartCoroutine(OnEnemyTurn());
     }
-
 
     private void CheckForPlayerWin(bool enemyIsDead)
     {

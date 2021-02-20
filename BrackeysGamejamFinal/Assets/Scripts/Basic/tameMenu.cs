@@ -7,10 +7,78 @@ public class tameMenu : MonoBehaviour
     public Player player;
     public GameObject menu;
     private bool isChoosing = false;
+
+    [Header("Buttons")]
+    public GameObject fireDB;
+    public GameObject fireDPrefab;
+
+    public GameObject waterDB;
+    public GameObject waterDPrefab;
+
+    public GameObject earthDB;
+    public GameObject earthDPrefab;
+
+    public GameObject airDB;
+    public GameObject airDPrefab;
+
+    public GameObject basicDB;
+    public GameObject basicDPrefab;
+
+    public GameObject currDragon = null;
+
     // Start is called before the first frame update
     void Start()
     {
-        menu.SetActive(false); ;
+        menu.SetActive(false);
+        UpdateMenu();
+    }
+
+    public void UpdateMenu()
+    {
+        if (Inventory.instance.hasFireD)
+        {
+            fireDB.SetActive(true);
+        }
+        else
+        {
+            fireDB.SetActive(false);
+        }
+
+        if (Inventory.instance.hasWaterD)
+        {
+            waterDB.SetActive(true);
+        }
+        else
+        {
+            waterDB.SetActive(false);
+        }
+
+        if (Inventory.instance.hasEarthD)
+        {
+            earthDB.SetActive(true);
+        }
+        else
+        {
+            earthDB.SetActive(false);
+        }
+
+        if (Inventory.instance.hasAirD)
+        {
+            airDB.SetActive(true);
+        }
+        else
+        {
+            airDB.SetActive(false);
+        }
+
+        if (Inventory.instance.hasBaseD)
+        {
+            basicDB.SetActive(true);
+        }
+        else
+        {
+            basicDB.SetActive(false);
+        }
     }
 
     // Update is called once per frame
@@ -32,4 +100,30 @@ public class tameMenu : MonoBehaviour
             }            
         }
     }
+
+    public void chooseDragon(int i)
+    {
+        if (currDragon != null)
+        {
+            Destroy(currDragon);
+        }
+        switch (i)
+        {
+            case 0:
+                currDragon = Instantiate(basicDPrefab, transform);
+                break;
+            case 1:
+                currDragon = Instantiate(fireDPrefab, transform);
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+
+        }
+    }
+
+
 }

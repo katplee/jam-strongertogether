@@ -21,54 +21,66 @@ public class Inventory : MonoBehaviour
     [Header("Dragons")]
     private Dragon fireDragon = null;
     public GameObject fDragoPrefab;
+    public bool hasFireD = false;
 
     private Dragon waterDragon = null;
     public GameObject wDragoPrefab;
+    public bool hasWaterD = false;
 
     private Dragon earthDragon = null;
     public GameObject eDragoPrefab;
+    public bool hasEarthD = false;
 
     private Dragon airDragon = null;
     public GameObject aDragoPrefab;
+    public bool hasAirD = false;
 
     private Dragon baseDragon = null;
     public GameObject bDragoPrefab;
+    public bool hasBaseD = false;
 
-    public Dragon _dragon;
-    
+    public Dragon _dragon;   
 
-    void Awake() //Singleton pattern!
+
+    private void Awake()
     {
         DontDestroyOnLoad(this);
-        if (instance != null)
-        {
-            Debug.LogError("More than one Inventory in the scene");
-            return;
-        }
 
-        instance = this;
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     public void AddDragon(Dragon d)
     {
-        //Dragon _dragon;
+        //Adding dragon!!       
 
         switch (d.DType)
         {
             case Dragon.DragonType.FIRE:
                 _dragon = fDragoPrefab.GetComponent<Dragon>();
+                hasFireD = true;
                 break;
             case Dragon.DragonType.WATER:
                 _dragon = wDragoPrefab.GetComponent<Dragon>();
+                hasWaterD = true;
                 break;
             case Dragon.DragonType.EARTH:
                 _dragon = eDragoPrefab.GetComponent<Dragon>();
+                hasEarthD = true;
                 break;
             case Dragon.DragonType.WIND:
                 _dragon = aDragoPrefab.GetComponent<Dragon>();
+                hasAirD = true;
                 break;
             case Dragon.DragonType.BASE:
                 _dragon = bDragoPrefab.GetComponent<Dragon>();
+                hasBaseD = true;
                 break;
         }
 
@@ -98,7 +110,9 @@ public class Inventory : MonoBehaviour
             case Dragon.DragonType.BASE:
                 baseDragon = _dragon;
                 break;
-        }        
+        }
+
+        GameObject.FindGameObjectWithTag("Player").GetComponent<tameMenu>().UpdateMenu();
     }
 
     public void AddStone(PStone stone)
