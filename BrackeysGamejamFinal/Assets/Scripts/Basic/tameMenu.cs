@@ -115,11 +115,14 @@ public class tameMenu : MonoBehaviour
             case 1:
                 currDragon = Instantiate(fireDPrefab, transform);
                 break;
-            case 2:
+            case 2:                
+                currDragon = Instantiate(waterDPrefab, transform);
                 break;
             case 3:
+                currDragon = Instantiate(earthDPrefab, transform);
                 break;
             case 4:
+                currDragon = Instantiate(airDPrefab, transform);
                 break;
 
         }

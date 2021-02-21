@@ -622,6 +622,7 @@ GameObject:
   - component: {fileID: 381816427}
   - component: {fileID: 381816426}
   - component: {fileID: 381816431}
+  - component: {fileID: 381816432}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -646,7 +647,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.68, y: 0.92}
+    oldSize: {x: 0.52, y: 0.88}
     newSize: {x: 0.68, y: 0.92}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -739,7 +740,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 3
-  m_Sprite: {fileID: 297761703447499198, guid: 4e06e54c6a7959348b80b35867a69d1d, type: 3}
+  m_Sprite: {fileID: -4618357630990279931, guid: f5f59c904a9acdf469dba50492d75eaf,
+    type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -783,15 +785,37 @@ MonoBehaviour:
   fireDPrefab: {fileID: 3107027223711043712, guid: f1d48d47b33c8e74b9f8751b558bd174,
     type: 3}
   waterDB: {fileID: 1131646783}
-  waterDPrefab: {fileID: 0}
+  waterDPrefab: {fileID: 6916317780019802122, guid: cd1deae7a4f0e49488408978d75658f5,
+    type: 3}
   earthDB: {fileID: 2118657790}
-  earthDPrefab: {fileID: 0}
+  earthDPrefab: {fileID: 6916317780019802122, guid: 932641f89c919b9448389b048c1f3090,
+    type: 3}
   airDB: {fileID: 1981572286}
-  airDPrefab: {fileID: 0}
+  airDPrefab: {fileID: 6916317780019802122, guid: 303cdc82ab7cf594da62cfdb32bc4590,
+    type: 3}
   basicDB: {fileID: 1534175834}
   basicDPrefab: {fileID: 6916317780019802122, guid: 2c2c54740198c8346aa5bc01cef55164,
     type: 3}
   currDragon: {fileID: 0}
+--- !u!95 &381816432
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 381816425}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: f69c36043ddbef64faaae13394abd304, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!114 &389149959 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2256922261916140315, guid: 4096af4ab6deb8c458339b78a131582d,
@@ -3599,7 +3623,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1131646786}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 381816431}
+        m_MethodName: chooseDragon
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 2
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1131646786
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14690,7 +14725,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1981572289}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 381816431}
+        m_MethodName: chooseDragon
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 4
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1981572289
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15092,7 +15138,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2118657793}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 381816431}
+        m_MethodName: chooseDragon
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 3
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2118657793
 MonoBehaviour:
   m_ObjectHideFlags: 0

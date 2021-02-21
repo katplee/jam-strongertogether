@@ -28,11 +28,20 @@ public class PetDragon : Dragon
         anim = GetComponent<Animator>();       
         switch (DType)
         {
-            case Dragon.DragonType.FIRE:
+            case Dragon.DragonType.BASE:
                 anim.SetInteger("DType", 0);
                 break;
-            case Dragon.DragonType.BASE:
+            case Dragon.DragonType.FIRE:
                 anim.SetInteger("DType", 1);
+                break;
+            case Dragon.DragonType.WATER:
+                anim.SetInteger("DType", 2);
+                break;
+            case Dragon.DragonType.EARTH:
+                anim.SetInteger("DType", 3);
+                break;
+            case Dragon.DragonType.WIND:
+                anim.SetInteger("DType", 4);
                 break;
 
         }

@@ -514,16 +514,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c856a09954c37747ad74460ff2c70bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _dType: 2
   hp: 100
   armor: 1
   damageAmount: 15
-  weakness: 4
+  weakness: 3
   weaknessFactor: 2
   fireAttack: 0
   waterAttack: 0
   windAttack: 15
   earthAttack: 0
-  DType: 2
   dragonImmunity: 0.5
   xpPerMinute: 10
   xpPerWonFight: 120
@@ -543,9 +543,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pStones: 2
-  pStonesReq: {fileID: 218342345620233322}
+  pStonesReq: {fileID: 0}
   dragon: {fileID: 218342346092118698}
   reqText: {fileID: 218342345372630603}
-  reqStone: {fileID: 6405820626325576148, guid: 1f5be065c99c31a4c8098ec90069fa99,
+  reqStone: {fileID: -1377832561413711059, guid: 1f5be065c99c31a4c8098ec90069fa99,
     type: 3}
   imgStone: {fileID: 218342344409341040}

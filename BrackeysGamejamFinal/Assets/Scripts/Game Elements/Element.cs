@@ -23,10 +23,21 @@ public abstract class Element : MonoBehaviour
         FIRE, WATER, WIND, EARTH, NOTCONSIDERED
     }
 
+    #region Kat's region
+    public Dragon.DragonType _dType;
+    public virtual Dragon.DragonType DType 
+    {
+        get => Dragon.DragonType.NOTDRAGON;
+        set => _dType = value;
+    }
+    #endregion
+
+
     public abstract ElementType Type { get; }
 
     public float hp;
     public float armor;
+    public float remainder;
 
     public float damageAmount; //for testing only, because this will be computed
     public WeaknessType weakness;
@@ -42,12 +53,13 @@ public abstract class Element : MonoBehaviour
 
     public int earthAttack;
 
-    protected float maxHP = 100;
+    public float maxHP = 100;
+    public float maxArmor;
 
     protected virtual void Start()
     {
         InitializeCommonAttributes();
-        InitializeUniqueAttributes(Type);
+        //InitializeUniqueAttributes(Type);
     }
 
     protected void InitializeCommonAttributes()
@@ -55,8 +67,17 @@ public abstract class Element : MonoBehaviour
         //set starting hp to full (assumed full scale is 100)
         hp = maxHP;
 
-        //set starting armor to full (assumed full scale is 100)
-        armor = 100;
+        if(Type == ElementType.PLAYER)
+        {
+            armor = 0;
+            maxArmor = 0.1f;
+        }
+        else
+        {
+            //set starting armor to full (assumed full scale is 100)
+            armor = 100;
+            maxArmor = 100;
+        }
 
         //determine weakness
         //in the meantime, weakness is randomly generated
@@ -79,9 +100,11 @@ public abstract class Element : MonoBehaviour
                 SetToBoss();
                 break;
 
+            /* set values via inspector on prefab
             case ElementType.DRAGON:
                 SetToDragon();
                 break;
+            */
 
             case ElementType.ENEMY:
                 SetToEnemy();
@@ -145,14 +168,44 @@ public abstract class Element : MonoBehaviour
     //called to take damage by the enemy
     public virtual bool TakeDamage(float damageAmount, WeaknessType enemyWeakness = WeaknessType.NOTCONSIDERED)
     {
-        if (hp == 0) { return true; }
+        //the armor gets damaged first!
+        if(armor != 0) 
+        { 
+            //subtract the damage from the armor
+            remainder = armor - damageAmount;
+            armor = Mathf.Max(armor - damageAmount, 0);
 
-        hp = Mathf.Max(hp - damageAmount, 0);
+            //if there is no remainder, return the element is not dead
+            if(remainder >= 0) { return false; }
+            
+            //if there is a remainder
+            else
+            {
+                //subtract the remainder from the health
+                hp = Mathf.Max(hp - damageAmount, 0);
 
-        if (hp != 0) { return false; }
+                //if the hp is not depleted after subtracting, return the element is not dead
+                if (hp != 0) { return false; }
+                
+                //else return the element is dead
+                return true;
+            }            
+        }        
+        else
+        {
+            Debug.Log("TEST");
+            //if the hp is already zero, return the element is dead
+            if (hp == 0) { return true; }
 
-        //invoke some game over event maybe?
-        return true;
+            //if not, then subtract the damage from the hp
+            hp = Mathf.Max(hp - damageAmount, 0);
+
+            //if ho is not depleted after subtracting, return the element is not dead
+            if (hp != 0) { return false; }
+
+            //else return the element is dead!
+            return true;
+        }
     }
 
     //if the enemy is a dragon

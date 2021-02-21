@@ -15,8 +15,14 @@ public class Dragon : Element
         FIRE, WATER, WIND, EARTH, BASE, NOTDRAGON
     }
 
-    public DragonType DType;
-    
+    #region Kat's region
+    public override DragonType DType
+    {
+        get => _dType;
+        set => _dType = value;
+    }
+    #endregion
+
     public override ElementType Type
     {
         get { return ElementType.DRAGON; }
@@ -79,6 +85,7 @@ public class Dragon : Element
 
     }
 
+    /*
     #region OPTIONAL CODE
     public override bool TakeDamage(float damageAmount, WeaknessType enemyWeakness)
     {        
@@ -95,5 +102,6 @@ public class Dragon : Element
         return true;
     }
     #endregion
+    */
 }
 

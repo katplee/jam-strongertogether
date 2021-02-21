@@ -18,7 +18,7 @@ public class DragonsData : MonoBehaviour
     public List<List<Object>> dragonsList = new List<List<Object>>();
 
     [TextArea(15, 15)]
-    public List<string> dragonList;
+    [SerializeField] private List<string> dragonList;
 
     private Scene currentScene;
     private string attackScene = "AttackScene";
@@ -49,11 +49,12 @@ public class DragonsData : MonoBehaviour
         fire_attack,
         water_attack,
         wind_attack,
-        earth_attack
+        earth_attack,
+        maxHP
     }
 
     private Dictionary<Stat, int> stat = new Dictionary<Stat, int>()
-    {        
+    {
         { Stat.dragon_type, 0 },
         { Stat.hp, 1 },
         { Stat.armor, 2 },
@@ -64,12 +65,14 @@ public class DragonsData : MonoBehaviour
         { Stat.water_attack, 7 },
         { Stat.wind_attack, 8 },
         { Stat.earth_attack, 9 },
+        { Stat.maxHP, 10}
     };
 
     private void Start()
     {
         //SceneTransition.JustAfterSceneTransition += LogDragonStats;
-        NewDragonSaved += SortDragonStats;
+        NewDragonSaved += SortLogDragonStats;
+        FightManager.OnFightEnd += RefreshLogs;
 
         DontDestroyOnLoad(this);
 
@@ -81,6 +84,12 @@ public class DragonsData : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    private void OnDestroy()
+    {
+        NewDragonSaved -= SortLogDragonStats;
+        FightManager.OnFightEnd -= RefreshLogs;
     }
 
     public void SaveDragon(Dragon dragon)
@@ -97,27 +106,29 @@ public class DragonsData : MonoBehaviour
             dragon.fireAttack,
             dragon.waterAttack,
             dragon.windAttack,
-            dragon.earthAttack
+            dragon.earthAttack,
+            dragon.maxHP
         };
 
         dragonsStats.Add(dragonStats);
         NewDragonSaved?.Invoke();
     }
 
-    private void SortDragonStats()
+    private void SortLogDragonStats()
     {
+        Debug.Log("I'm invoked!");
+
         currentScene = SceneManager.GetActiveScene();
         if (currentScene.name == attackScene) { return; }
 
-        if(dragonsStats.Count == 0) { return; }
+        if (dragonsStats.Count == 0) { return; }
 
         dragonList.Clear();
 
         var sorted = dragonsStats.OrderBy(list => list[0]).ThenByDescending(list => list[1]);
         sortedDragonsStats = sorted.ToList();
 
-        //vvvvv erase all of these!
-        foreach(var sort in sorted)
+        foreach (var sort in sorted)
         {
             List<string> _sort = sort.Select(i => i.ToString()).ToList();
 
@@ -131,7 +142,9 @@ public class DragonsData : MonoBehaviour
             $"{(Stat)6} : {_sort[6]}\n" +
             $"{(Stat)7} : {_sort[7]}\n" +
             $"{(Stat)8} : {_sort[8]}\n" +
-            $"{(Stat)9} : {_sort[9]}";
+            $"{(Stat)9} : {_sort[9]}\n" +
+            $"{(Stat)10} : {_sort[10]}";
+
 
             dragonList.Add(lastLoggedDragonText);
         }
@@ -154,4 +167,29 @@ public class DragonsData : MonoBehaviour
         dragonList.Add(lastLoggedDragonText);
         */
     }
+
+    private void RefreshLogs()
+    {
+        dragonList.Clear();
+
+        foreach (List<Object> list in sortedDragonsStats)
+        {
+            string lastLoggedDragonText =
+            $"{(Stat)0} : {list[0]}\n" +
+            $"{(Stat)1} : {list[1]}\n" +
+            $"{(Stat)2} : {list[2]}\n" +
+            $"{(Stat)3} : {list[3]}\n" +
+            $"{(Stat)4} : {list[4]}\n" +
+            $"{(Stat)5} : {list[5]}\n" +
+            $"{(Stat)6} : {list[6]}\n" +
+            $"{(Stat)7} : {list[7]}\n" +
+            $"{(Stat)8} : {list[8]}\n" +
+            $"{(Stat)9} : {list[9]}\n" +
+            $"{(Stat)10} : {list[10]}";
+
+            dragonList.Add(lastLoggedDragonText);
+        }
+    }
 }
+
+

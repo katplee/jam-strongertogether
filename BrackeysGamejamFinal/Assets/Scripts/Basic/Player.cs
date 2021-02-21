@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -14,6 +15,11 @@ public class Player : Element
     public float speed;
 
     private int direction, legion, dieForm;
+
+    [SerializeField] private float moveHorizontal;
+    [SerializeField] private float moveVertical;
+    [SerializeField] private float moveSpeed;
+
     private Animator anim;
     public bool isChoosingTame = false;
 
@@ -38,7 +44,7 @@ public class Player : Element
         SceneTransition.JustAfterSceneTransition += MovePlayerToPreTransPosition;
 
         rb2d = GetComponent<Rigidbody2D>();
-        //anim = GetComponent<Animator>(); WHEN WE GET ANIMATION SPRITES
+        anim = GetComponent<Animator>(); 
         direction = 0;
         legion = -1;
     }
@@ -58,8 +64,6 @@ public class Player : Element
         if (PlayerData.Instance == null) { return; }
 
         transform.position = PlayerData.Instance.playerBasicPosition;
-        Debug.Log(PlayerData.Instance.playerBasicPosition);
-
     }
 
     // Update is called once per frame
@@ -86,7 +90,6 @@ public class Player : Element
             return;
         }
 
-
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
 
@@ -94,45 +97,58 @@ public class Player : Element
 
         if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S))
         {
-            //anim.SetBool("Move", true);
-            legion = -1;
-            if (h == 0)
-            {
-                direction = 0;
-            }
+            moveHorizontal = 0;
+            moveVertical = -1;
+            moveSpeed = 1f;            
         }
         else if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
         {
-            //anim.SetBool("Move", true);
-            legion = 1;
-            if (h == 0)
-            {
-                direction = 0;
-            }
+            moveHorizontal = 0;
+            moveVertical = 1;
+            moveSpeed = 1f;            
         }
-        if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
+        else if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
         {
-            //anim.SetBool("Move", true);
-            direction = -1;
-            if (v == 0)
-            {
-                legion = 0;
-            }
+            moveHorizontal = -1;
+            moveVertical = 0;
+            moveSpeed = 1f;            
         }
         else if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
         {
-            //anim.SetBool("Move", true);
-            direction = 1;
-            if (v == 0)
-            {
-                legion = 0;
-            }
+            moveHorizontal = 1;
+            moveVertical = 0;
+            moveSpeed = 1f;            
         }
-        if (h == 0 && v == 0)
+        else
+        {   
+            moveSpeed = 0f;
+        }        
+
+        anim.SetFloat("Horizontal", moveHorizontal);
+        anim.SetFloat("Vertical", moveVertical);
+        anim.SetFloat("Speed", moveSpeed);
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        CheckForVictories(collision.gameObject);
+
+        if (collision.gameObject.CompareTag("Enemy"))
         {
-            //anim.SetBool("Move", false);
+            Debug.Log("Enemy");
+            Element enemy = collision.gameObject.GetComponent<Element>();
+            LastEnemyData.Instance.SaveEnemyData(enemy);
         }
     }
 
+    private void CheckForVictories(GameObject enemyGO)
+    {
+        currentScene = SceneManager.GetActiveScene();
+        if (currentScene.name == attackScene) { return; }
 
+        if (LastEnemyData.enemyDefeated == false) { return; }
+
+        LastEnemyData.enemyDefeated = false;
+        Destroy(enemyGO);
+    }
 }

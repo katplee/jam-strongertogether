@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class BattleHUD : MonoBehaviour
 {
     public TMP_Text playerNameText;
-    public TMP_Text playerLevelText;
+    //public TMP_Text playerLevelText;
     public Image hpStatsBar;
     public Image armorStatsBar;
 
@@ -15,16 +15,17 @@ public class BattleHUD : MonoBehaviour
         where T : Element
     {
         playerNameText.text = element.Type.ToString();
-        playerLevelText.text = "Lvl " + element.armor.ToString();
+        //playerLevelText.text = "Lvl " + element.armor.ToString();
         Debug.Log(element.hp / 100);
-        hpStatsBar.fillAmount = element.hp / 100;
-        armorStatsBar.fillAmount = element.armor / 100;
+        hpStatsBar.fillAmount = element.hp / element.maxHP;
+        armorStatsBar.fillAmount = element.armor / element.maxArmor;
     }
 
-    public void UpdateHP<T>(float hp)
+    public void UpdateHPArmor<T>(float hp, float armor, float maxHP, float maxArmor)
         where T : Element
     {
-        hpStatsBar.fillAmount = hp / 100;
+        hpStatsBar.fillAmount = hp / maxHP;
+        armorStatsBar.fillAmount = armor / maxArmor;
     }
 
 }
