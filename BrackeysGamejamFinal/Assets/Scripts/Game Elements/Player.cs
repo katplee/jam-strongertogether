@@ -41,18 +41,32 @@ public class Player : Element
     // Start is called before the first frame update
     protected new void Start()
     {
-        SceneTransition.JustAfterSceneTransition += MovePlayerToPreTransPosition;
-
         rb2d = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>(); 
         direction = 0;
         legion = -1;
+
+
+        
+        SceneTransition.JustAfterSceneTransition += MovePlayerToPreTransPosition;
     }
 
     private void OnDestroy()
     {
         SceneTransition.JustAfterSceneTransition -= MovePlayerToPreTransPosition;
     }
+
+    protected override void InitializeAttributes()
+    {
+        armor = 0;
+        maxArmor = 0.1f;
+    }
+
+    protected override void InitializeAttacks()
+    { 
+
+    }
+       
 
     ///in transitioning back to the basic scene,
     ///the 

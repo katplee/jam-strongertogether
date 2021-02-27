@@ -4,12 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-/// <notes>
-/// kat, 2/17/2021:
-/// *confirm whether attacks could be increased
-/// *fix damage amount
-/// *delete unnecessary variables
-/// </notes>
+/*
+ * Things to decide on:
+ * *what will the weakness factor be equal to? (a variable in the TakeDamage method)
+*/
 
 public abstract class Element : MonoBehaviour
 {
@@ -18,66 +16,71 @@ public abstract class Element : MonoBehaviour
         GOLEM, BOSS, DRAGON, ENEMY, PLAYER
     }
 
+    public abstract ElementType Type { get; }
+
+    public WeaknessType Weakness { get; protected set; }
+
+    protected int specialtyAttack = 15;
+    protected int weaknessFactor = 2;
+
     public enum WeaknessType
     {
         FIRE, WATER, WIND, EARTH, NOTCONSIDERED
     }
 
-    #region Kat's region
-    public Dragon.DragonType _dType;
-    public virtual Dragon.DragonType DType 
+    private Dragon.DragonType dType;
+    public virtual Dragon.DragonType DType
     {
-        get => Dragon.DragonType.NOTDRAGON;
-        set => _dType = value;
+        get => dType;
+        protected set => dType = value;
     }
-    #endregion
 
+    protected float hp;
 
-    public abstract ElementType Type { get; }
+    private float armor; //dragons do not have armor because they become the armor
+    public virtual float Armor
+    {
+        get => armor;
+        protected set => armor = value;
+    }
 
-    public float hp;
-    public float armor;
-    public float remainder;
-
-    public float damageAmount; //for testing only, because this will be computed
-    public WeaknessType weakness;
-    public float weaknessFactor = 2.0f;
+    protected float remainder; //used in the computation of armor/hp to subtract
+    //protected float damageAmount; //for testing only, because this will be computed
 
     //pertains to the amount of damage an element could cause
     //for example, if the fire attack is 3, the element could inflict 3 more damage points
-    public int fireAttack;
+    protected int fireAttack;
+    protected int waterAttack;
+    protected int windAttack;
+    protected int earthAttack;
 
-    public int waterAttack;
+    protected float maxHP = 0;
+    protected int hpMargin = 3;
+    protected float hpLevelFactor = 10;
 
-    public int windAttack;
+    protected float maxArmor = 0;
 
-    public int earthAttack;
-
-    public float maxHP = 100;
-    public float maxArmor;
 
     protected virtual void Start()
     {
-        InitializeCommonAttributes();
-        //InitializeUniqueAttributes(Type);
+        InitializeAttributes();
+        InitializeAttacks();
     }
 
-    protected void InitializeCommonAttributes()
+    protected virtual void InitializeAttributes()
     {
-        //set starting hp to full (assumed full scale is 100)
+        //set DType
+        dType = Dragon.DragonType.NOTDRAGON;
+
+        //each element's max HP is dependent on the level (temporary fix)
+        float elementMaxHP = (GameManager.currLvl * hpLevelFactor) +
+            Random.Range(-hpMargin, hpMargin);
+        SetMaximumStat(ref maxHP, elementMaxHP);
         hp = maxHP;
 
-        if(Type == ElementType.PLAYER)
-        {
-            armor = 0;
-            maxArmor = 0.1f;
-        }
-        else
-        {
-            //set starting armor to full (assumed full scale is 100)
-            armor = 100;
-            maxArmor = 100;
-        }
+        //each element's max HP is dependent on the level (temporary fix)
+        maxArmor = 0;
+        Armor = maxArmor;
 
         //determine weakness
         //in the meantime, weakness is randomly generated
@@ -85,83 +88,14 @@ public abstract class Element : MonoBehaviour
         //  between the element and its weakness
         //weakness will be set at the moment of instantiation
         int weaknessInd = Random.Range(0, 4);
-        weakness = (WeaknessType)weaknessInd;
+        Weakness = (WeaknessType)weaknessInd;
     }
 
-    protected void InitializeUniqueAttributes(ElementType type)
+    protected abstract void InitializeAttacks();
+
+    public void SetMaximumStat(ref float maxStat, float newMaxStat)
     {
-        switch (type)
-        {
-            case ElementType.GOLEM:
-                SetToGolem();
-                break;
-
-            case ElementType.BOSS:
-                SetToBoss();
-                break;
-
-            /* set values via inspector on prefab
-            case ElementType.DRAGON:
-                SetToDragon();
-                break;
-            */
-
-            case ElementType.ENEMY:
-                SetToEnemy();
-                break;
-
-            case ElementType.PLAYER:
-                SetToPlayer();
-                break;
-
-            default:
-                break;
-        }
-    }
-
-    private void SetToGolem()
-    {
-        //specify starting golem stats here
-        fireAttack = 8;
-        waterAttack = 8;
-        windAttack = 8;
-        earthAttack = 8;
-    }
-
-    private void SetToBoss()
-    {
-        //specify starting boss stats here
-        fireAttack = 1;
-        waterAttack = 2;
-        windAttack = 3;
-        earthAttack = 4;
-    }
-
-    private void SetToDragon()
-    {
-        //specify starting dragon stats here
-        fireAttack = 1;
-        waterAttack = 2;
-        windAttack = 3;
-        earthAttack = 4;
-    }
-
-    private void SetToEnemy()
-    {
-        //specify starting enemy stats here
-        fireAttack = 1;
-        waterAttack = 2;
-        windAttack = 3;
-        earthAttack = 4;
-    }
-
-    private void SetToPlayer()
-    {
-        //specify starting enemy stats here
-        fireAttack = 1;
-        waterAttack = 2;
-        windAttack = 3;
-        earthAttack = 4;
+        maxStat = Mathf.Max(maxStat, newMaxStat);
     }
 
     //if the enemy is not a dragon
@@ -169,48 +103,46 @@ public abstract class Element : MonoBehaviour
     public virtual bool TakeDamage(float damageAmount, WeaknessType enemyWeakness = WeaknessType.NOTCONSIDERED)
     {
         //the armor gets damaged first!
-        if(armor != 0) 
-        { 
+        if (armor != 0)
+        {
             //subtract the damage from the armor
             remainder = armor - damageAmount;
             armor = Mathf.Max(armor - damageAmount, 0);
 
-            //if there is no remainder, return the element is not dead
-            if(remainder >= 0) { return false; }
-            
-            //if there is a remainder
-            else
+            //if there is positive remainder (meaning there is still armor), return the element is not dead
+            if (remainder > 0) { return false; }
+
+            //if there is negative remainder
+            else if (remainder < 0)
             {
                 //subtract the remainder from the health
-                hp = Mathf.Max(hp - damageAmount, 0);
-
-                //if the hp is not depleted after subtracting, return the element is not dead
-                if (hp != 0) { return false; }
-                
-                //else return the element is dead
-                return true;
-            }            
-        }        
+                hp = Mathf.Max((hp - Mathf.Abs(remainder)), 0);
+            }
+        }
+        //if there is no more armor
         else
         {
-            Debug.Log("TEST");
             //if the hp is already zero, return the element is dead
             if (hp == 0) { return true; }
 
             //if not, then subtract the damage from the hp
             hp = Mathf.Max(hp - damageAmount, 0);
-
-            //if ho is not depleted after subtracting, return the element is not dead
-            if (hp != 0) { return false; }
-
-            //else return the element is dead!
-            return true;
         }
+
+        //if there is 0 remainder from the armor, check if hp is not depleted
+        //if the hp was subtracted damage from
+        //if the hp is not zero at the time of attack
+
+        //if the hp is not depleted after subtracting, return the element is not dead
+        if (hp != 0) { return false; }
+
+        //else return the element is dead
+        return true;
     }
 
-    //if the enemy is a dragon
+    //if the enemy is a dragon (the boss)
     //called to take damage by the enemy
-    public bool TakeDamage(Dragon.DragonType dragonType, float damageAmount)
+    public bool TakeDamage(float damageAmount, Dragon.DragonType dragonType)
     {
         /*OPTIONAL CODE:
          * I added this because maybe we would want to increase the effect of the damage
@@ -219,12 +151,10 @@ public abstract class Element : MonoBehaviour
          *      ENEMY'S WEAKNESS: FIRE
          *      DRAGON TYPE: FIRE
          *      When the dragon attacks, the effect will be multiplied by 2 or something.
-         *      And when the enemy attacks, since it is it's weakness and the dragon's strength, the effect is diminished to half.
+         *      And when the enemy attacks, since it's its weakness and the dragon's strength, the effect is diminished to half.
         */
 
-        #region OPTIONAL CODE
-
-        if (dragonType.ToString() == weakness.ToString())
+        if (dragonType.ToString() == Weakness.ToString())
         {
             return TakeDamage(damageAmount * weaknessFactor);
         }
@@ -232,22 +162,14 @@ public abstract class Element : MonoBehaviour
         {
             return TakeDamage(damageAmount);
         }
-
-        #endregion
     }
 
     //returns the amount of damage the element could inflict at any given time
     //may be used together with the TakeDamage method
     public float DamageAmount()
     {
-        //fix this
-        /*
-        float damageAmount = 
-            (weakness == WeaknessType.FIRE ? weaknessFactor : 1f) * fireAttack +
-            (weakness == WeaknessType.WATER ? weaknessFactor : 1f) * waterAttack +
-            (weakness == WeaknessType.FIRE ? weaknessFactor : 1f) * windAttack +
-            (weakness == WeaknessType.FIRE ? weaknessFactor : 1f) * earthAttack;
-        */
+        float damageAmount = fireAttack + waterAttack + windAttack + earthAttack;
+
         return damageAmount;
     }
 }

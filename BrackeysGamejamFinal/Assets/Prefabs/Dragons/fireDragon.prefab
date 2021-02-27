@@ -90,7 +90,7 @@ GameObject:
   - component: {fileID: 2229290202662044384}
   m_Layer: 0
   m_Name: fireDragon
-  m_TagString: Untagged
+  m_TagString: FireDragon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -199,16 +199,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c856a09954c37747ad74460ff2c70bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _dType: 0
-  hp: 100
-  armor: 1
-  damageAmount: 15
   weakness: 1
   weaknessFactor: 2
+  hp: 100
+  armor: 1
+  remainder: 0
+  damageAmount: 15
   fireAttack: 15
   waterAttack: 0
   windAttack: 0
   earthAttack: 0
+  maxHP: 100
+  maxArmor: 0
   dragonImmunity: 0.5
   xpPerMinute: 10
   xpPerWonFight: 120

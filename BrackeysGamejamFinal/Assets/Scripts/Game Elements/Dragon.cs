@@ -2,93 +2,114 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
-/// <summary>
-/// kat, 2/17/2021:
-/// include all methods and parameters specific to a dragon here
-/// </summary>
+/*
+ * Things to decide on:
+ * *will the player increase in xp as well? Or is it just the dragon?
+ * *how does the hp related with the xp?
+ * 
+ * Things to remember:
+ * *maybe it would be nice to also include the weaknesses, etc. on the player HUD
+ */
 
 public class Dragon : Element
 {
-    public enum DragonType
-    {
-        FIRE, WATER, WIND, EARTH, BASE, NOTDRAGON
-    }
-
-    #region Kat's region
-    public override DragonType DType
-    {
-        get => _dType;
-        set => _dType = value;
-    }
-    #endregion
-
+    public TamingReqs tamingReqs;
     public override ElementType Type
     {
         get { return ElementType.DRAGON; }
     }
 
-    public float dragonImmunity = 0.5f; //kat added this!
+    public enum DragonType
+    {
+        FIRE, WATER, WIND, EARTH, BASE, NOTDRAGON
+    }
 
-    //LEVELING SYSTEM
-    private int Lvl = 1;
-    private float XP = 0;
+    private const string baseDragonTag = "BaseDragon";
+    private const string fireDragonTag = "FireDragon";
+    private const string waterDragonTag = "WaterDragon";
+    private const string windDragonTag = "WindDragon";
+    private const string earthDragonTag = "EarthDragon";
 
+    public override DragonType DType
+    {
+        get => base.DType;
+        protected set => base.DType = value;
+    }
+
+    protected float dragonImmunity = 0.5f;
+    
     [Header("Leveling System")]
     public float xpPerMinute = 10f;
     public float xpPerWonFight = 120f;
     public float xpPerLvl = 100f;
     public int maxLvl = 5;
 
-    public TamingReqs tamingReqs;
-
-    private void Awake()
+    private int lvl = 0; //set the level at start
+    private float xp = 0;
+    public override float Armor
     {
-        InitializeDragonAttributes();
-        InitializeUniqueAttributes(Type);        
+        get => base.Armor;
+        protected set => base.Armor = 0;
     }
 
-    protected override void Start()
+    protected override void InitializeAttributes()
     {
-        //DO NOT ERASE THIS METHOD! This prevents the base.Start() from being called!
-        //Do not load the base.Start() method so the weakness will not be set.
+        //set starting hp to full (assumed full scale is 100)
+        maxHP = 100;
+        hp = maxHP;
+
+        SetDragonTypeWeakness();
     }
 
-    private void InitializeDragonAttributes()
+    private void SetDragonTypeWeakness()
     {
-        switch (DType)
+        string tag = gameObject.tag;
+
+        switch (tag)
         {
-            case DragonType.FIRE:
-                weakness = WeaknessType.WATER;
+            case baseDragonTag:
+                DType = DragonType.BASE;
+                int weaknessInd = Random.Range(0, 4);
+                Weakness = (WeaknessType)weaknessInd;
                 break;
 
-            case DragonType.WATER:
-                weakness = WeaknessType.FIRE;
+            case fireDragonTag:
+                DType = DragonType.FIRE;
+                Weakness = WeaknessType.WATER;
                 break;
 
-            case DragonType.WIND:
-                weakness = WeaknessType.EARTH;
+            case waterDragonTag:
+                DType = DragonType.WATER;
+                Weakness = WeaknessType.FIRE;
                 break;
 
-            case DragonType.EARTH:
-                weakness = WeaknessType.WIND;
+            case windDragonTag:
+                DType = DragonType.WIND;
+                Weakness = WeaknessType.EARTH;
                 break;
 
-            case DragonType.BASE:
-                weakness = WeaknessType.NOTCONSIDERED;
+            case earthDragonTag:
+                DType = DragonType.EARTH;
+                Weakness = WeaknessType.WIND;
                 break;
-        }        
-    }
 
-    public void Tame()
+            default:
+                break;
+        }
+    }   
+
+    protected override void InitializeAttacks()
     {
-
+        fireAttack = (DType == DragonType.FIRE) ? specialtyAttack : 0;
+        waterAttack = (DType == DragonType.WATER) ? specialtyAttack : 0;
+        windAttack = (DType == DragonType.WIND) ? specialtyAttack : 0;
+        earthAttack = (DType == DragonType.EARTH) ? specialtyAttack : 0;
     }
 
-    /*
-    #region OPTIONAL CODE
     public override bool TakeDamage(float damageAmount, WeaknessType enemyWeakness)
-    {        
+    {
         float effDamageAmount = (enemyWeakness.ToString() == DType.ToString()) ?
             damageAmount * dragonImmunity : damageAmount;
 
@@ -101,7 +122,10 @@ public class Dragon : Element
         //invoke some game over event maybe?
         return true;
     }
-    #endregion
-    */
+
+    public void Tame()
+    {
+
+    }
 }
 
