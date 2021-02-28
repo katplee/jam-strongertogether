@@ -2,29 +2,38 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public class DontDestroy : MonoBehaviour
+public class PlayerData : MonoBehaviour
 {
-    public static DontDestroy Instance;
+    public static PlayerData Instance;    
 
-    private int count = 20;
-
-    private Player player;
-    private bool playerIsFound;
-    public List<Dragon> dragons;
+    private Player player;    
 
     //player stats
     public Element.ElementType playerType;
     public float playerHP;
     public float playerArmor;
     public float playerDamageAmount;
+    public Element.WeaknessType playerWeakness;
+    public float playerWeaknessFactor;
     public int playerFireAttack;
     public int playerWaterAttack;
     public int playerWindAttack;
     public int playerEarthAttack;
 
-    void Awake()
+    public Vector3 playerBasicPosition;
+
+    //dragon overview
+    //public Dragon[] dragons;
+    public int dragonCount;
+
+    public string attackScene = "AttackScene";
+
+    void Start()
     {
+        SceneTransition.JustBeforeSceneTransition += SavePlayerPosition;
+
         DontDestroyOnLoad(this);
 
         if (Instance == null)
@@ -36,30 +45,35 @@ public class DontDestroy : MonoBehaviour
             Destroy(gameObject);
         }
 
-        SavePlayer();
-        SaveDragons();
-
+        //SavePlayer();        
     }
 
+    /*
     private void SavePlayer()
     {
-        if (playerIsFound) { return; }
         player = FindObjectOfType<Player>();
-        playerIsFound = true;
-
+                
         playerType = player.Type;
         playerHP = player.hp;
         playerArmor = player.armor;
         playerDamageAmount = player.DamageAmount();
+        playerWeakness = player.weakness;
+        playerWeaknessFactor = player.weaknessFactor;
 
         playerFireAttack = player.fireAttack;
         playerWaterAttack = player.waterAttack;
         playerWindAttack = player.windAttack;
         playerEarthAttack = player.earthAttack;
     }
+    */
 
-    private void SaveDragons()
+    private void SavePlayerPosition()
     {
+        player = FindObjectOfType<Player>();
 
-    }
+        Scene currentScene = SceneManager.GetActiveScene();
+        if (currentScene.name == attackScene) { return; }
+
+        playerBasicPosition = player.transform.position;
+    }    
 }

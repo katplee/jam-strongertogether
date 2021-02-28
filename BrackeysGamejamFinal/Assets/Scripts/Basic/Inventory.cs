@@ -84,7 +84,7 @@ public class Inventory : MonoBehaviour
                 break;
         }
 
-        //_dragon = fDragoPrefab.GetComponent<Dragon>(); kat: should we erase this? it's messing up the _dragon variable.
+        /* temporarily disabling this until I fix data management
         _dragon.DType = d.DType;
         _dragon.xpPerMinute = d.xpPerMinute;
         _dragon.xpPerWonFight = d.xpPerWonFight;
@@ -92,6 +92,7 @@ public class Inventory : MonoBehaviour
         _dragon.maxLvl = d.maxLvl;
         _dragon.tamingReqs.pStones = d.tamingReqs.pStones;
         _dragon.tamingReqs.pStonesReq = null;
+        */
                 
         switch (d.DType)
         {

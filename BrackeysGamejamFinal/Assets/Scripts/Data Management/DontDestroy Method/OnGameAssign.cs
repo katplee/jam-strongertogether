@@ -48,6 +48,7 @@ public class OnGameAssign : MonoBehaviour
     {
         List<Object> saved = DragonsData.sortedDragonsStats[panelIndex - 1];
 
+        /*
         dragon.DType = (Dragon.DragonType)saved[0];
         dragon.hp = (float)saved[1];
         dragon.armor = (float)saved[2];
@@ -58,5 +59,6 @@ public class OnGameAssign : MonoBehaviour
         dragon.waterAttack = (int)saved[7];
         dragon.windAttack = (int)saved[8];
         dragon.earthAttack = (int)saved[9];
+        */
     }
 }

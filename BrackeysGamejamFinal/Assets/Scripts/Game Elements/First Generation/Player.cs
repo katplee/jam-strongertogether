@@ -3,68 +3,116 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
 
-/// <notes>
-/// kat 210219: trying something out for the scene management thing and the HUD task
-/// so I made player a child class of element
-/// </notes>
+/*
+ * Things to decide on:
+ * *when fused with a dragon, how will the attack of the player change?
+ * *how will the player's attacks be initialized? there should be some correlation with the current level?
+ *      (for now it is same with the enemy)
+ */
 
 public class Player : Element
 {
-    private Rigidbody2D rb2d;
-    public float speed;
-
+    #region Variables to sort
     private int direction, legion, dieForm;
-
-    [SerializeField] private float moveHorizontal;
-    [SerializeField] private float moveVertical;
-    [SerializeField] private float moveSpeed;
-
-    private Animator anim;
-    public bool isChoosingTame = false;
-
     private bool reloading = false, dead = false, armed;
-
+    #endregion
+    
     public override ElementType Type
     {
         get { return ElementType.PLAYER; }
-    }
-
+    }    
+    
+    private Rigidbody2D rb2d;
+    public float speed;    
+    
+    //variables used in the animator
+    private Animator anim;
+    private float moveHorizontal;
+    private float moveVertical;
+    private float moveSpeed;
+    
+    public bool isChoosingTame = false;
+       
     private Scene currentScene;
-    public string attackScene = "AttackScene";
+    public string attackScene = "AttackScene";       
 
-    private void Awake()
+
+    protected override void Start()
     {
-        base.Start(); //kat added this!        
-    }
-
-    // Start is called before the first frame update
-    protected new void Start()
-    {
-        rb2d = GetComponent<Rigidbody2D>();
-        anim = GetComponent<Animator>(); 
-        direction = 0;
-        legion = -1;
-
-
+        base.Start();
+        SubscribeEvents();
         
-        SceneTransition.JustAfterSceneTransition += MovePlayerToPreTransPosition;
+        rb2d = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>();
+
+        #region Private parameters check
+        string playerStats =
+            $"dType : {DType}\n" +
+            $"hp : {hp}\n" +
+            $"maxHP : {maxHP}\n" +
+            $"armor : {Armor}\n" +
+            $"maxArmor : {maxArmor}\n" +
+            $"fireAttack : {fireAttack}\n" +
+            $"waterAttack : {waterAttack}\n" +
+            $"windAttack : {windAttack}\n" +
+            $"earthAttack : {earthAttack}\n" +
+            $"baseAttack : {baseAttack}\n";
+
+        Debug.Log(playerStats);
+        #endregion
     }
 
     private void OnDestroy()
     {
-        SceneTransition.JustAfterSceneTransition -= MovePlayerToPreTransPosition;
+        UnsubscribeEvents();
     }
 
     protected override void InitializeAttributes()
     {
-        armor = 0;
-        maxArmor = 0.1f;
+        //set DType
+        DType = Dragon.DragonType.NOTDRAGON;
+
+        //each element's max HP is dependent on the level (temporary fix)
+        float elementMaxHP = (GameManager.currLvl * hpLevelFactor) +
+            Random.Range(-hpMargin, hpMargin);
+        SetStatMaximum(ref maxHP, elementMaxHP);
+        hp = maxHP;
+
+        //player's max armor is initialized to 0
+        SetStatMaximum(ref maxArmor, 0);
+        Armor = maxArmor;
+
+        //determine weakness
+        //in the meantime, weakness is randomly generated
+        //  but for the final version, we might want to establish a correlation
+        //  between the element and its weakness
+        //weakness will be set at the moment of instantiation
+        int weaknessInd = Random.Range(0, 4);
+        Weakness = (WeaknessType)weaknessInd;
     }
 
     protected override void InitializeAttacks()
-    { 
+    {
+        int currentLvl = GameManager.currLvl;
+        int attack = Random.Range(1, GameManager.currLvl * attackMargin + 1);
 
+        baseAttack = ((currentLvl == GameManager.baseLevel) ? specialtyAttackMultiplier : 0) * attack;
+        fireAttack = ((currentLvl == GameManager.fireLevel) ? specialtyAttackMultiplier : 0) * attack;
+        waterAttack = ((currentLvl == GameManager.waterLevel) ? specialtyAttackMultiplier : 0) * attack;
+        windAttack = ((currentLvl == GameManager.windLevel) ? specialtyAttackMultiplier : 0) * attack;
+        earthAttack = ((currentLvl == GameManager.earthLevel) ? specialtyAttackMultiplier : 0) * attack;
+    }
+
+    private void SubscribeEvents()
+    {
+        SceneTransition.JustAfterSceneTransition += MovePlayerToPreTransPosition;
+    }
+
+    private void UnsubscribeEvents()
+    {
+        SceneTransition.JustAfterSceneTransition -= MovePlayerToPreTransPosition;
     }
        
 

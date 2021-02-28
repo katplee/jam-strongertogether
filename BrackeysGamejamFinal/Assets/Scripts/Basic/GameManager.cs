@@ -9,6 +9,12 @@ public class GameManager : MonoBehaviour
 
     public static GameManager Instance { get; private set; }
 
+    public const int baseLevel = 1;
+    public const int fireLevel = 2;
+    public const int waterLevel = 3;
+    public const int windLevel = 4;
+    public const int earthLevel = 5;
+
     [Header("General")]
     private bool onMission;
     public GameObject winGameUI;
@@ -29,14 +35,13 @@ public class GameManager : MonoBehaviour
                 winLvlUI.SetActive(false);
         */
 
-        OnLevelChange += WinCurrentLevel;
-
+        SubscribeEvents();
         ConvertToPersistentData();
     }
 
     private void OnDestroy()
     {
-        OnLevelChange -= WinCurrentLevel;
+        UnsubscribeEvents();
     }
 
     private void ConvertToPersistentData()
@@ -54,15 +59,8 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
-    private void Update()
-    {
-        
-    }
-
-
-    //will act as mission manager alsoi
-
+       
+    //will act as mission manager also
     public void EndMission()
     {
         winGameUI.SetActive(true);
@@ -70,7 +68,9 @@ public class GameManager : MonoBehaviour
 
     public void WinCurrentLevel()
     {
+        //increase the level number
         currLvl++;
+
         winLvlUI.SetActive(true);
     }
 
@@ -82,5 +82,15 @@ public class GameManager : MonoBehaviour
     public virtual void EndDialogue()
     {
         Debug.Log("Endof dialogue");
+    }
+
+    private void SubscribeEvents()
+    {
+        OnLevelChange += WinCurrentLevel;
+    }
+
+    private void UnsubscribeEvents()
+    {
+        OnLevelChange -= WinCurrentLevel;
     }
 }

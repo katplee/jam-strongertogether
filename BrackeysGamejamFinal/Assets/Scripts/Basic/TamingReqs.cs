@@ -106,7 +106,7 @@ public class TamingReqs : MonoBehaviour
         PlayerData.Instance.dragonCount++;
 
         //save the dragon's script in the dragonsdata script
-        DragonsData.Instance.SaveDragon(dragon);
+        //DragonsData.Instance.SaveDragon(dragon);
 
         Destroy(gameObject);
     }

@@ -16,9 +16,9 @@ public class BattleHUD : MonoBehaviour
     {
         playerNameText.text = element.Type.ToString();
         //playerLevelText.text = "Lvl " + element.armor.ToString();
-        Debug.Log(element.hp / 100);
-        hpStatsBar.fillAmount = element.hp / element.maxHP;
-        armorStatsBar.fillAmount = element.armor / element.maxArmor;
+        //Debug.Log(element.hp / 100);
+        //hpStatsBar.fillAmount = element.hp / element.maxHP;
+        //armorStatsBar.fillAmount = element.armor / element.maxArmor;
     }
 
     public void UpdateHPArmor<T>(float hp, float armor, float maxHP, float maxArmor)

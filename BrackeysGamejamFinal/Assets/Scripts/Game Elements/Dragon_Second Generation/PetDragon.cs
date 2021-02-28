@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//kat 210220: made pet dragon into a child of dragon class
+/*
+ * petDragon will not be attached to dragons that have been tamed
+ *      it only attached to the pet dragon game object that appears in the basic screen
+ */
 
 public class PetDragon : Dragon
 {
@@ -11,21 +14,17 @@ public class PetDragon : Dragon
     private float angle;
     public bool detect;
     private Vector3 rec, rotation;
-    public GameObject target;    
+    public GameObject target;
     private Animator anim;
 
-    private void Awake()
-    {
-        base.Start(); //kat added this!
-    }
-
-    protected new void Start()
+    protected override void Start()
     {
         rb2d = GetComponent<Rigidbody2D>();
         target = GameObject.FindGameObjectWithTag("Player");
         rec = target.transform.position;
         speed = target.GetComponent<Player>().speed;
-        anim = GetComponent<Animator>();       
+        anim = GetComponent<Animator>();
+
         switch (DType)
         {
             case Dragon.DragonType.BASE:
@@ -43,23 +42,22 @@ public class PetDragon : Dragon
             case Dragon.DragonType.WIND:
                 anim.SetInteger("DType", 4);
                 break;
-
         }
     }
-        
-    void Update()
+
+    private void Update()
     {
         if (target != null)
         {
             Move();
-            Direction();         
+            Direction();
         }
     }
 
     void Move()
     {
 
-        if (Vector2.Distance(transform.position, target.transform.position)>=2.5f)
+        if (Vector2.Distance(transform.position, target.transform.position) >= 2.5f)
         {
             rec = (target.transform.position - transform.position).normalized * speed * 1.2f;
             rb2d.velocity = new Vector2(rec.x, rec.y);
@@ -68,14 +66,12 @@ public class PetDragon : Dragon
         {
             rb2d.velocity = new Vector2(0, 0);
         }
-
     }
 
-    
     void Direction()
     {
         Vector3 dir = target.transform.position - transform.position;
-        Quaternion lookRotation = Quaternion.LookRotation(dir, new Vector3(0,0,1f));
+        Quaternion lookRotation = Quaternion.LookRotation(dir, new Vector3(0, 0, 1f));
         Vector3 rotation = Quaternion.Lerp(transform.rotation, lookRotation, Time.deltaTime * 25.0f).eulerAngles;
         transform.rotation = Quaternion.Euler(0f, 0f, rotation.z);
         /*
@@ -128,6 +124,4 @@ public class PetDragon : Dragon
         }
         */
     }
-    
-
 }

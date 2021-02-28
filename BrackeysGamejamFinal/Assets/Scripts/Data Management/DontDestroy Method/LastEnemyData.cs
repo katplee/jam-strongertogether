@@ -53,15 +53,15 @@ public class LastEnemyData : MonoBehaviour
         enemyName = lastEnemy.gameObject.name;
 
         enemyType = lastEnemy.Type;
-        enemyHP = lastEnemy.hp;
-        enemyArmor = lastEnemy.armor;
+        //enemyHP = lastEnemy.hp;
+        //enemyArmor = lastEnemy.armor;
         enemyDamageAmount = lastEnemy.DamageAmount();
-        enemyWeakness = lastEnemy.weakness;
-        enemyWeaknessFactor = lastEnemy.weaknessFactor;
+        //enemyWeakness = lastEnemy.weakness;
+        //enemyWeaknessFactor = lastEnemy.weaknessFactor;
 
-        enemyFireAttack = lastEnemy.fireAttack;
-        enemyWaterAttack = lastEnemy.waterAttack;
-        enemyWindAttack = lastEnemy.windAttack;
-        enemyEarthAttack = lastEnemy.earthAttack;
+        //enemyFireAttack = lastEnemy.fireAttack;
+        //enemyWaterAttack = lastEnemy.waterAttack;
+        //enemyWindAttack = lastEnemy.windAttack;
+        //enemyEarthAttack = lastEnemy.earthAttack;
     }
 }

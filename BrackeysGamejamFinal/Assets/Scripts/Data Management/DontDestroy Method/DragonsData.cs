@@ -98,16 +98,16 @@ public class DragonsData : MonoBehaviour
         List<Object> dragonStats = new List<Object>()
         {
             dragon.DType,
-            dragon.hp,
-            dragon.armor,
+            //dragon.hp,
+            //dragon.armor,
             dragon.DamageAmount(),
-            dragon.weakness,
-            dragon.weaknessFactor,
-            dragon.fireAttack,
-            dragon.waterAttack,
-            dragon.windAttack,
-            dragon.earthAttack,
-            dragon.maxHP
+            //dragon.weakness,
+            //dragon.weaknessFactor,
+            //dragon.fireAttack,
+            //dragon.waterAttack,
+            //dragon.windAttack,
+            //dragon.earthAttack,
+            //dragon.maxHP
         };
 
         dragonsStats.Add(dragonStats);

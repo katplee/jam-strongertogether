@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// kat, 2/17/2021:
-/// include all methods and parameters specific to a boss here
-/// </summary>
+/*
+ * Things to decide on:
+ * *what will we do with the boss??
+ * *will there be one boss per level or one overall??
+ */
 
-public class Boss : Enemy
+public class Boss : Dragon
 {
     public override ElementType Type
     {

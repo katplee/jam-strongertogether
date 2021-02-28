@@ -75,12 +75,12 @@ public class FightManager : MonoBehaviour
     {
         playerGO = Instantiate(playerPrefab, playerCorner);
         player = playerGO.AddComponent<Player>();
-        SetPlayerStats();
+        //SetPlayerStats();
         playerHUD.UpdateHUD(player);
 
         enemyGO = Instantiate(enemyPrefab, enemyCorner);
         enemy = enemyGO.GetComponent<Enemy>();
-        SetEnemyStats();        
+        //SetEnemyStats();        
         enemyHUD.UpdateHUD<Element>(enemy);
 
         yield return new WaitForSeconds(timeToWait);
@@ -96,6 +96,7 @@ public class FightManager : MonoBehaviour
 
     private void SetEnemyStats()
     {
+        /*
         LastEnemyData saved = LastEnemyData.Instance;
 
         enemyGO.GetComponent<SpriteRenderer>().sprite = saved.enemySprite;
@@ -111,10 +112,12 @@ public class FightManager : MonoBehaviour
         enemy.waterAttack = saved.enemyWaterAttack;
         enemy.windAttack = saved.enemyWindAttack;
         enemy.earthAttack = saved.enemyEarthAttack;
+        */
     }
 
     private void SetPlayerStats()
     {
+        /*
         if (player.Type == Element.ElementType.PLAYER)
         {
             PlayerData saved = PlayerData.Instance;
@@ -131,10 +134,12 @@ public class FightManager : MonoBehaviour
             player.windAttack = saved.playerWindAttack;
             player.earthAttack = saved.playerEarthAttack;
         }
+        */
     }
 
     private void UpdateSavedPlayerStats()
     {   
+        /*
         Debug.Log("It's a human!");
         PlayerData saved = PlayerData.Instance;
 
@@ -149,6 +154,7 @@ public class FightManager : MonoBehaviour
         saved.playerWaterAttack = player.waterAttack;
         saved.playerWindAttack = player.windAttack;
         saved.playerEarthAttack = player.earthAttack;
+        */
     }
 
     private void UpdateSavedDragonStats()
@@ -165,7 +171,7 @@ public class FightManager : MonoBehaviour
         ///         wind attack,
         ///         earth attack
 
-        saved[1] = player.armor;        
+        //saved[1] = player.armor;        
     }
 
     private void OnPlayerTurn()
@@ -194,7 +200,7 @@ public class FightManager : MonoBehaviour
         bool playerIsDead = player.TakeDamage(enemy.DamageAmount());
 
         //update the saved stats
-        UpdateSavedPlayerStats();
+        //UpdateSavedPlayerStats();
         if (currentDragonIndex != 0)
         {
             UpdateSavedDragonStats();
@@ -202,7 +208,7 @@ public class FightManager : MonoBehaviour
         OnFightEnd?.Invoke();        
 
         //update the player stats
-        playerHUD.UpdateHPArmor<Element>(player.hp, player.armor, player.maxHP, player.maxArmor);
+        //playerHUD.UpdateHPArmor<Element>(player.hp, player.armor, player.maxHP, player.maxArmor);
 
         //update the dialogue
         dialogueBox.text = "ENEMYATTACKDONE";
@@ -237,7 +243,7 @@ public class FightManager : MonoBehaviour
         bool enemyIsDead = enemy.TakeDamage(player.DamageAmount());
 
         //update the enemy stats
-        enemyHUD.UpdateHPArmor<Element>(enemy.hp, enemy.armor, enemy.maxHP, enemy.maxArmor);
+        //enemyHUD.UpdateHPArmor<Element>(enemy.hp, enemy.armor, enemy.maxHP, enemy.maxArmor);
 
         //update the dialogue
         dialogueBox.text = "PLAYERATTACKDONE";
@@ -268,7 +274,7 @@ public class FightManager : MonoBehaviour
         //save the current armor to the hp of the old dragon
         if (currentDragonIndex != 0)
         {
-            currentDragon.hp = player.armor;
+            //currentDragon.hp = player.armor;
             UpdateSavedDragonStats();
             OnFightEnd?.Invoke();
         }        
@@ -281,8 +287,8 @@ public class FightManager : MonoBehaviour
 
         ///add the dragon's hp to your armor
         currentDragon = dragonChosen;
-        player.armor = dragonChosen.hp;
-        player.maxArmor = dragonChosen.maxHP;
+        //player.armor = dragonChosen.hp;
+        //player.maxArmor = dragonChosen.maxHP;
 
         //change the sprite to the chosen dragon
         playerGO.GetComponent<SpriteRenderer>().sprite = ChoosePlayerSprite(dragonChosen.DType);

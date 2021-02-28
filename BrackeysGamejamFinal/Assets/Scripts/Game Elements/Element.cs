@@ -20,8 +20,9 @@ public abstract class Element : MonoBehaviour
 
     public WeaknessType Weakness { get; protected set; }
 
-    protected int specialtyAttack = 15;
-    protected int weaknessFactor = 2;
+    protected int specialtyAttackMultiplier = 2; //the multiplier with which to multiply the basic attacks to get the speciality attack
+    protected int specialtyAttack = 15; //the value to which a dragon's specialty attack will be set to
+    protected int weaknessFactor = 2; //the factor by which a dragon's attack will be multiplied
 
     public enum WeaknessType
     {
@@ -53,12 +54,15 @@ public abstract class Element : MonoBehaviour
     protected int waterAttack;
     protected int windAttack;
     protected int earthAttack;
+    protected int baseAttack;
+    protected int attackMargin = 5;
 
-    protected float maxHP = 0;
+    protected float maxHP = 0f;
     protected int hpMargin = 3;
-    protected float hpLevelFactor = 10;
+    protected float hpLevelFactor = 10f;
 
     protected float maxArmor = 0;
+    protected int armorFactor = 5;
 
 
     protected virtual void Start()
@@ -70,16 +74,18 @@ public abstract class Element : MonoBehaviour
     protected virtual void InitializeAttributes()
     {
         //set DType
-        dType = Dragon.DragonType.NOTDRAGON;
+        DType = Dragon.DragonType.NOTDRAGON;
 
         //each element's max HP is dependent on the level (temporary fix)
         float elementMaxHP = (GameManager.currLvl * hpLevelFactor) +
             Random.Range(-hpMargin, hpMargin);
-        SetMaximumStat(ref maxHP, elementMaxHP);
+        SetStatMaximum(ref maxHP, elementMaxHP);
         hp = maxHP;
 
-        //each element's max HP is dependent on the level (temporary fix)
-        maxArmor = 0;
+        //each element's max armor is dependent on the level (temporary fix)
+        float elementMaxArmor = Random.Range(GameManager.currLvl * armorFactor,
+            GameManager.currLvl * armorFactor - armorFactor);
+        SetStatMaximum(ref maxArmor, elementMaxArmor);
         Armor = maxArmor;
 
         //determine weakness
@@ -93,14 +99,22 @@ public abstract class Element : MonoBehaviour
 
     protected abstract void InitializeAttacks();
 
-    public void SetMaximumStat(ref float maxStat, float newMaxStat)
+    protected void SetStatMaximum(ref float maxStat, float newMaxStat)
     {
         maxStat = Mathf.Max(maxStat, newMaxStat);
     }
 
-    //if the enemy is not a dragon
+    /*
+     * This method will be called when:
+     * METHOD CALLER: not a dragon | ELEMENT WHOSE TAKEDAMAGE METHOD IS CALLED: not a dragon
+     *      call format: TakeDamage(float damageAmount)
+     * METHOD CALLER: not a dragon | ELEMENT WHOSE TAKEDAMAGE METHOD IS CALLED: dragon
+     *      received format: TakeDamage(float effDamageAmount)
+     * METHOD CALLER: dragon/player fused with a dragon | ELEMENT WHOSE TAKEDAMAGE METHOD IS CALLED: not a dragon
+     *      received format: TakeDamage(float damageAmount)     
+     */
     //called to take damage by the enemy
-    public virtual bool TakeDamage(float damageAmount, WeaknessType enemyWeakness = WeaknessType.NOTCONSIDERED)
+    public virtual bool TakeDamage(float damageAmount, WeaknessType enemyWeakness = WeaknessType.NOTCONSIDERED, GameObject enemyGO = null)
     {
         //the armor gets damaged first!
         if (armor != 0)
@@ -140,8 +154,14 @@ public abstract class Element : MonoBehaviour
         return true;
     }
 
-    //if the enemy is a dragon (the boss)
-    //called to take damage by the enemy
+    /*
+     * This method will be called when:
+     * METHOD CALLER: dragon/player fused with a dragon | ELEMENT WHOSE TAKEDAMAGE METHOD IS CALLED: not a dragon
+     *      call format: TakeDamage(float damageAmount, DragonType callerDType)
+     * METHOD CALLER: dragon/player fused with a dragon | ELEMENT WHOSE TAKEDAMAGE METHOD IS CALLED: dragon
+     *      received format: TakeDamage(float effDamageAmount, DragonType callerDType)
+     *      
+     */
     public bool TakeDamage(float damageAmount, Dragon.DragonType dragonType)
     {
         /*OPTIONAL CODE:
@@ -152,7 +172,7 @@ public abstract class Element : MonoBehaviour
          *      DRAGON TYPE: FIRE
          *      When the dragon attacks, the effect will be multiplied by 2 or something.
          *      And when the enemy attacks, since it's its weakness and the dragon's strength, the effect is diminished to half.
-        */
+         */
 
         if (dragonType.ToString() == Weakness.ToString())
         {
