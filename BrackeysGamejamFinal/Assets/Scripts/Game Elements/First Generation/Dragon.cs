@@ -80,9 +80,14 @@ public class Dragon : Element
         xp = maxXP;
     }
 
-    public override void InitializeSerialization()
+    public override void InitialSerialization()
     {
         
+    }
+
+    protected override void InitializeSerialization()
+    {
+        throw new NotImplementedException();
     }
 
     public override void InitializeDeserialization()

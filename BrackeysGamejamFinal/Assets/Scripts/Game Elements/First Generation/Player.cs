@@ -132,7 +132,13 @@ public class Player : Element
         earthAttack = ((currentLvl == GameManager.earthLevel) ? specialtyAttackMultiplier : 0) * attack;
     }
 
-    public override void InitializeSerialization()
+    public override void InitialSerialization()
+    {
+        //assign player to save file
+        AssignPlayer();
+    }
+
+    protected override void InitializeSerialization()
     {
         playerData = new PlayerData();
 
@@ -158,9 +164,6 @@ public class Player : Element
 
         //DRAGON STATS        
         playerData.dragons = Inventory.Instance.Dragons;
-
-        //assign player to save file
-        AssignPlayer();
     }
 
     public override void InitializeDeserialization()
@@ -168,9 +171,11 @@ public class Player : Element
         playerData = PlayerSave.Instance.LoadPlayerData().player;
     }
 
-    private void AssignPlayer()
+    public void AssignPlayer()
     {
+        InitializeSerialization();
         PlayerSave.Instance.AssignPlayer(playerData);
+        PlayerSave.Instance.SavePlayerData();
     }
 
     private void Move()

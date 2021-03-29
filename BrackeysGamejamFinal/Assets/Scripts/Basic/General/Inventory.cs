@@ -46,10 +46,9 @@ public class Inventory : MonoBehaviour
     public Dragon _dragon;
     #endregion
 
-
-    private void Start()
+    private void Awake()
     {
-        ConvertToPersistentData();
+        ConvertToPersistentData();       
     }
 
     public void AddDragon(Dragon d)

@@ -9,7 +9,9 @@ using UnityEngine;
 
 public class SerializationCommander : MonoBehaviour
 {
-    public static Action SerializeAllEnemies;
+    #region Enemy events
+    public static Action ResaveAllEnemies;
+    #endregion
 
     private static SerializationCommander instance;
     public static SerializationCommander Instance
@@ -108,11 +110,10 @@ public class SerializationCommander : MonoBehaviour
         if (SceneTransition.currentSceneName == SceneTransition.attackScene) { return; }
 
         //save enemy data - includes the last enemy data, all enemies' stats
-        EnemySave.Instance.SaveEnemyData();
+        ResaveAllEnemies?.Invoke();
 
         //save the position of the player
-        Player.Instance.InitializeSerialization();
-        PlayerSave.Instance.SavePlayerData();
+        Player.Instance.AssignPlayer();
     }
 
     private void B_AToBSerialization()
@@ -127,7 +128,7 @@ public class SerializationCommander : MonoBehaviour
 
         //bring player to the pre-fight position
         Player.Instance.InitializeDeserialization();
-        Player.Instance.Reposition();
+        Player.Instance.Reposition();        
     }
 
 }

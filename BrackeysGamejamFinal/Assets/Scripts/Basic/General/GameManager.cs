@@ -13,7 +13,6 @@ public class GameManager : MonoBehaviour
 {
     //OnLevelFirstInstance starts the initialization of variables in the game elements script
     public static event Action OnLevelFirstInstance;
-
     public static event Action OnLevelWin;
 
     public static GameManager Instance { get; private set; }
@@ -36,9 +35,26 @@ public class GameManager : MonoBehaviour
     //if the level number is already tallied in this list,
     //then it is not the first time unlocking the level
     //and, therefore, variable initialization is not necessary
-    public static List<int> levelList;
+    public static List<int> levelList = new List<int>();
+
+    private void Awake()
+    {
+        //ConvertToPersistentData will be invoked only once to convert this object to persistent data
+        ConvertToPersistentData();        
+    }
 
     private void Start()
+    {
+        SubscribeEvents();
+        LevelStart();
+    }
+
+    private void OnDestroy()
+    {
+        UnsubscribeEvents();
+    }
+
+    private void LevelStart()
     {
         /*
             if(winGameUI!=null)
@@ -49,7 +65,7 @@ public class GameManager : MonoBehaviour
                 winLvlUI.SetActive(false);
         */
 
-        SubscribeEvents();
+        if (SceneTransition.currentSceneName == SceneTransition.attackScene) { return; }
 
         //OnLevelFirstInstance will be invoked upon Level 1's first instantiation
         //if it is not the first instantiation, a different method will be called
@@ -58,20 +74,9 @@ public class GameManager : MonoBehaviour
             OnNormalInstantiation();
         }
 
-        //SerializeAll will be invoked upon Level 1's first instantiation
-        SerializationCommander.Instance.SerializeAll();
-
         //TESTING...
         EnemySave trial = SerializationManager.Load(EnemySave.Instance.path) as EnemySave;
         Debug.Log($"{trial.enemies.Count}");
-
-        //ConvertToPersistentData will be invoked only once to convert this object to persistent data
-        ConvertToPersistentData();
-    }
-
-    private void OnDestroy()
-    {
-        UnsubscribeEvents();
     }
 
     private void ConvertToPersistentData()
@@ -89,7 +94,7 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
-       
+
     //will act as mission manager also
     public void EndMission()
     {
@@ -110,6 +115,8 @@ public class GameManager : MonoBehaviour
 
     private bool OnFirstInstantiation()
     {
+        Debug.Log("FirstInstant is called");
+
         if (!levelList.Contains(currLvl))
         {
             //set a variable/call a method or event
@@ -128,6 +135,7 @@ public class GameManager : MonoBehaviour
     private void OnNormalInstantiation()
     {
         //load binary files and assign them to the game objects
+        Debug.Log("OnNormalInstantiation is called");
     }
 
     public void EndGame()
@@ -142,11 +150,13 @@ public class GameManager : MonoBehaviour
 
     private void SubscribeEvents()
     {
+        SceneTransition.JustAfterSceneTransition += LevelStart;
         OnLevelWin += LevelUp;
     }
 
     private void UnsubscribeEvents()
     {
+        SceneTransition.JustAfterSceneTransition -= LevelStart;
         OnLevelWin -= LevelUp;
     }
 }

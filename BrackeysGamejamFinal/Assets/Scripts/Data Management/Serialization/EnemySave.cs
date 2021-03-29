@@ -47,6 +47,7 @@ public class EnemySave
             {
                 return enemies.IndexOf(enemy);
             }
+            continue;
         }
 
         throw new NotFoundInListException();

@@ -41,7 +41,13 @@ public class Enemy : Element
         earthAttack = ((currentLvl == GameManager.earthLevel) ? specialtyAttackMultiplier : 0) * attack;
     }
 
-    public override void InitializeSerialization()
+    public override void InitialSerialization()
+    {        
+        //add enemy to level enemy list
+        PopulateWithEnemy();        
+    }
+
+    protected override void InitializeSerialization()
     {
         enemyData = new EnemyData();
 
@@ -62,11 +68,7 @@ public class Enemy : Element
         enemyData.waterAttack = waterAttack;
         enemyData.windAttack = windAttack;
         enemyData.earthAttack = earthAttack;
-        enemyData.baseAttack = baseAttack; 
-
-        //add enemy to level enemy list
-        PopulateWithEnemy(enemyData);
-        //Debug.Log($"Enemy {enemyData.id} was saved.");
+        enemyData.baseAttack = baseAttack;
     }
 
     public override void InitializeDeserialization()
@@ -76,21 +78,32 @@ public class Enemy : Element
 
     public void AssignAsLastEnemy()
     {
+        InitializeSerialization();
         EnemySave.Instance.AssignLastEnemy(enemyData);
+        EnemySave.Instance.SaveEnemyData();
     }
 
-    public void PopulateWithEnemy(EnemyData enemyData)
+    public void PopulateWithEnemy()
     {
+        InitializeSerialization();
         EnemySave.Instance.PopulateEnemyList(enemyData);
+        EnemySave.Instance.SaveEnemyData();        
+    }
+
+    public void ReplaceThisEnemy()
+    {
+        InitializeSerialization();
+        EnemySave.Instance.ReplaceEnemyList(enemyData);
+        EnemySave.Instance.SaveEnemyData();
     }
 
     private void SubscribeEvents()
     {
-        SerializationCommander.SerializeAllEnemies += InitializeSerialization;
+        SerializationCommander.ResaveAllEnemies += ReplaceThisEnemy;
     }
 
     private void UnsubscribeEvents()
     {
-        SerializationCommander.SerializeAllEnemies -= InitializeSerialization;
+        SerializationCommander.ResaveAllEnemies -= ReplaceThisEnemy;
     }
 }

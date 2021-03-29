@@ -80,7 +80,7 @@ public abstract class Element : MonoBehaviour
     {
         InitializeAttributes();
         InitializeAttacks();
-        InitializeSerialization();
+        InitialSerialization();
     }
 
     protected virtual void InitializeAttributes()
@@ -111,7 +111,9 @@ public abstract class Element : MonoBehaviour
 
     protected abstract void InitializeAttacks();
 
-    public abstract void InitializeSerialization();
+    public abstract void InitialSerialization();
+
+    protected abstract void InitializeSerialization();
 
     public abstract void InitializeDeserialization();
 
