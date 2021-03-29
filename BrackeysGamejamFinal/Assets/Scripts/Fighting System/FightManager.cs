@@ -220,7 +220,7 @@ public class FightManager : MonoBehaviour
 
     private bool DealDamage()
     {
-        if (enemy.Type == Element.ElementType.DRAGON)
+        if (enemy.Type == ElementType.DRAGON)
         {
 
         }
@@ -299,23 +299,23 @@ public class FightManager : MonoBehaviour
         StartCoroutine(SwitchDragon());
     }
 
-    private Sprite ChoosePlayerSprite(Dragon.DragonType dType)
+    private Sprite ChoosePlayerSprite(DragonType dType)
     {
         switch (dType)
         {
-            case Dragon.DragonType.FIRE:
+            case DragonType.FIRE:
                 return fireFusedSprite;
 
-            case Dragon.DragonType.WATER:
+            case DragonType.WATER:
                 return waterFusedSprite;
 
-            case Dragon.DragonType.WIND:
+            case DragonType.WIND:
                 return windFusedSprite;
 
-            case Dragon.DragonType.EARTH:
+            case DragonType.EARTH:
                 return earthFusedSprite;
 
-            case Dragon.DragonType.BASE:
+            case DragonType.BASE:
                 return baseFusedSprite;
         }
 

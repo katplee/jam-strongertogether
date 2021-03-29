@@ -10,20 +10,87 @@ using UnityEngine;
 
 public class Enemy : Element
 {
+    private EnemyData enemyData;
+    
     public override ElementType Type
     {
         get { return ElementType.ENEMY; }
-    }    
+    }
+
+    protected override void Start()
+    {
+        base.Start();
+        SubscribeEvents();
+    }
+
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        UnsubscribeEvents();
+    }
 
     protected override void InitializeAttacks()
     {
         int currentLvl = GameManager.currLvl;
-        int attack = Random.Range(1, GameManager.currLvl * attackMargin + 1);
+        int attack = Random.Range(1, currentLvl * attackMargin + 1);
 
         baseAttack = ((currentLvl == GameManager.baseLevel) ? specialtyAttackMultiplier : 0) * attack;
         fireAttack = ((currentLvl == GameManager.fireLevel) ? specialtyAttackMultiplier : 0) * attack;
         waterAttack = ((currentLvl == GameManager.waterLevel) ? specialtyAttackMultiplier : 0) * attack;
         windAttack = ((currentLvl == GameManager.windLevel) ? specialtyAttackMultiplier : 0) * attack;
         earthAttack = ((currentLvl == GameManager.earthLevel) ? specialtyAttackMultiplier : 0) * attack;
-    }        
+    }
+
+    public override void InitializeSerialization()
+    {
+        enemyData = new EnemyData();
+
+        //BASIC STATS
+        enemyData.hp = hp;
+        enemyData.maxHP = maxHP;
+        enemyData.type = Type;
+        enemyData.dType = DType;
+        enemyData.id = GetInstanceID();
+        enemyData.name = name;
+
+        //COMBAT STATS
+        enemyData.armor = Armor;
+        enemyData.maxArmor = maxArmor;
+        enemyData.weakness = Weakness;
+        enemyData.weaknessFactor = weaknessFactor;
+        enemyData.fireAttack = fireAttack;
+        enemyData.waterAttack = waterAttack;
+        enemyData.windAttack = windAttack;
+        enemyData.earthAttack = earthAttack;
+        enemyData.baseAttack = baseAttack; 
+
+        //add enemy to level enemy list
+        PopulateWithEnemy(enemyData);
+        //Debug.Log($"Enemy {enemyData.id} was saved.");
+    }
+
+    public override void InitializeDeserialization()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void AssignAsLastEnemy()
+    {
+        EnemySave.Instance.AssignLastEnemy(enemyData);
+    }
+
+    public void PopulateWithEnemy(EnemyData enemyData)
+    {
+        EnemySave.Instance.PopulateEnemyList(enemyData);
+    }
+
+    private void SubscribeEvents()
+    {
+        SerializationCommander.SerializeAllEnemies += InitializeSerialization;
+    }
+
+    private void UnsubscribeEvents()
+    {
+        SerializationCommander.SerializeAllEnemies -= InitializeSerialization;
+    }
 }

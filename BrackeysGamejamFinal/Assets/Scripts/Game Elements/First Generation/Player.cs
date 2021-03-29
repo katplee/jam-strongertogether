@@ -14,36 +14,54 @@ using Random = UnityEngine.Random;
 
 public class Player : Element
 {
+    private static Player instance;
+    public static Player Instance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                instance = FindObjectOfType<Player>();
+            }
+            return instance;
+        }
+    }
+
     #region Variables to sort
     private int direction, legion, dieForm;
     private bool reloading = false, dead = false, armed;
     #endregion
-    
+
+    #region Basic Stats
     public override ElementType Type
     {
         get { return ElementType.PLAYER; }
-    }    
-    
+    }
+    #endregion
+
+    #region General Parameters
     private Rigidbody2D rb2d;
-    public float speed;    
-    
-    //variables used in the animator
+    #endregion
+
+    #region Animation/Movement Parameters
+    public float speed;
     private Animator anim;
     private float moveHorizontal;
     private float moveVertical;
     private float moveSpeed;
-    
-    public bool isChoosingTame = false;
-       
-    private Scene currentScene;
-    public string attackScene = "AttackScene";       
+    #endregion
 
+    #region Serialization Parameters
+    private PlayerData playerData;
+    #endregion
+
+    public bool isChoosingTame = false;
 
     protected override void Start()
     {
         base.Start();
         SubscribeEvents();
-        
+
         rb2d = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
 
@@ -64,15 +82,24 @@ public class Player : Element
         #endregion
     }
 
-    private void OnDestroy()
+    void Update()
     {
+        if (!dead)
+        {
+            Move();
+        }
+    }
+
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
         UnsubscribeEvents();
     }
 
     protected override void InitializeAttributes()
     {
         //set DType
-        DType = Dragon.DragonType.NOTDRAGON;
+        DType = DragonType.NOTDRAGON;
 
         //each element's max HP is dependent on the level (temporary fix)
         float elementMaxHP = (GameManager.currLvl * hpLevelFactor) +
@@ -105,44 +132,51 @@ public class Player : Element
         earthAttack = ((currentLvl == GameManager.earthLevel) ? specialtyAttackMultiplier : 0) * attack;
     }
 
-    private void SubscribeEvents()
+    public override void InitializeSerialization()
     {
-        SceneTransition.JustAfterSceneTransition += MovePlayerToPreTransPosition;
+        playerData = new PlayerData();
+
+        //BASIC STATS
+        playerData.position = transform.position;
+        playerData.hp = hp;
+        playerData.maxHP = maxHP;
+        playerData.type = Type;
+        playerData.dType = DType;
+        playerData.id = GetInstanceID();
+        playerData.name = name;
+
+        //COMBAT STATS
+        playerData.armor = Armor;
+        playerData.maxArmor = maxArmor;
+        playerData.weakness = Weakness;
+        playerData.weaknessFactor = weaknessFactor;
+        playerData.fireAttack = fireAttack;
+        playerData.waterAttack = waterAttack;
+        playerData.windAttack = windAttack;
+        playerData.earthAttack = earthAttack;
+        playerData.baseAttack = baseAttack;
+
+        //DRAGON STATS        
+        playerData.dragons = Inventory.Instance.Dragons;
+
+        //assign player to save file
+        AssignPlayer();
     }
 
-    private void UnsubscribeEvents()
+    public override void InitializeDeserialization()
     {
-        SceneTransition.JustAfterSceneTransition -= MovePlayerToPreTransPosition;
-    }
-       
-
-    ///in transitioning back to the basic scene,
-    ///the 
-    private void MovePlayerToPreTransPosition()
-    {
-        currentScene = SceneManager.GetActiveScene();
-        if (currentScene.name == attackScene) { return; }
-
-        if (PlayerData.Instance == null) { return; }
-
-        transform.position = PlayerData.Instance.playerBasicPosition;
+        playerData = PlayerSave.Instance.LoadPlayerData().player;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void AssignPlayer()
     {
-        if (!dead)
-        {
-            Move();
-        }
+        PlayerSave.Instance.AssignPlayer(playerData);
     }
 
     private void Move()
-    {
-        #region kat added this!
-        currentScene = SceneManager.GetActiveScene();
-        if (currentScene.name == attackScene) { return; }
-        #endregion
+    {        
+        if (SceneTransition.currentSceneName == SceneTransition.attackScene) { return; }
+        
         if (isChoosingTame)
         {
             if (rb2d.velocity.magnitude != 0)
@@ -189,28 +223,22 @@ public class Player : Element
         anim.SetFloat("Horizontal", moveHorizontal);
         anim.SetFloat("Vertical", moveVertical);
         anim.SetFloat("Speed", moveSpeed);
+    }  
+
+    public void Reposition()
+    {
+        Vector3 savedPostion = playerData.position;
+
+        transform.position = savedPostion;
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
-    {
-        CheckForVictories(collision.gameObject);
-
-        if (collision.gameObject.CompareTag("Enemy"))
-        {
-            Debug.Log("Enemy");
-            Element enemy = collision.gameObject.GetComponent<Element>();
-            LastEnemyData.Instance.SaveEnemyData(enemy);
-        }
+    private void SubscribeEvents()
+    {        
+        
     }
 
-    private void CheckForVictories(GameObject enemyGO)
+    private void UnsubscribeEvents()
     {
-        currentScene = SceneManager.GetActiveScene();
-        if (currentScene.name == attackScene) { return; }
-
-        if (LastEnemyData.enemyDefeated == false) { return; }
-
-        LastEnemyData.enemyDefeated = false;
-        Destroy(enemyGO);
+        
     }
 }

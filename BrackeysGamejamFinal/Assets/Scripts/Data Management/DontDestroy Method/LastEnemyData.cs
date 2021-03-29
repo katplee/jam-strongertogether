@@ -13,11 +13,11 @@ public class LastEnemyData : MonoBehaviour
     //enemy stats
     public string enemyName;
     public Sprite enemySprite;
-    public Element.ElementType enemyType;
+    public ElementType enemyType;
     public float enemyHP;
     public float enemyArmor;
     public float enemyDamageAmount;
-    public Element.WeaknessType enemyWeakness;
+    public WeaknessType enemyWeakness;
     public float enemyWeaknessFactor;
     public int enemyFireAttack;
     public int enemyWaterAttack;

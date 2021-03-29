@@ -2,23 +2,27 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 
 public class SerializationManager
 {
-    public static bool Save(string saveName, object saveData)
+    public static bool Save(string subFileName, string saveName, object saveData, out string pathCopy)
+        //in this case, the subFileName would be the level of the game you are in
     {
         BinaryFormatter formatter = GetBinaryFormatter();
 
         //code to create the saves directory
-        if(!Directory.Exists(Application.persistentDataPath + "/saves"))
+        if (!Directory.Exists(Application.persistentDataPath + $"/saves/{subFileName}"))
         {
-            Directory.CreateDirectory(Application.persistentDataPath + "/saves");
+            Directory.CreateDirectory(Application.persistentDataPath + $"/saves/{subFileName}");
         }
 
         //create the path in which a stream will be opened
-        string path = Application.persistentDataPath + "/saves/" + saveName + ".save";
+        string path = Application.persistentDataPath + $"/saves/{subFileName}/" + saveName + ".save";
+        //create a copy of the path generated to be stored in the class whose info were serialized
+        pathCopy = path;
 
         //open the stream using the path which was just created
         FileStream stream = File.Create(path);
@@ -31,6 +35,7 @@ public class SerializationManager
         stream.Close();
 
         //to indicate a successful save
+        Debug.Log("Save done!");
         return true;
     }
 
@@ -57,10 +62,18 @@ public class SerializationManager
         }        
     }
 
-    //this is where the serialization surrogats will be set
+    //this is where the serialization surrogates will be set
     private static BinaryFormatter GetBinaryFormatter()
     {
         BinaryFormatter formatter = new BinaryFormatter();
+
+        SurrogateSelector selector = new SurrogateSelector();
+
+        Vector3SerializationSurrogate vector3Surrogate = new Vector3SerializationSurrogate();
+
+        selector.AddSurrogate(typeof(Vector3), new StreamingContext(StreamingContextStates.All), vector3Surrogate);
+
+        formatter.SurrogateSelector = selector;
 
         return formatter;
     }

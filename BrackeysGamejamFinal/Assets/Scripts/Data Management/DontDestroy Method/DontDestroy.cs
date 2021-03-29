@@ -14,7 +14,7 @@ public class DontDestroy : MonoBehaviour
     public List<Dragon> dragons;
 
     //player stats
-    public Element.ElementType playerType;
+    public ElementType playerType;
     public float playerHP;
     public float playerArmor;
     public float playerDamageAmount;

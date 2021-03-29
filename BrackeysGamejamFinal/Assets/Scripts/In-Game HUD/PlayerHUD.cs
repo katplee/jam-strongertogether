@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class PlayerHUD : MonoBehaviour
 {
-    private PlayerData saved;
+    private TPlayerData saved;
 
     //hp    
     public TMP_Text hpValueText;
@@ -22,7 +22,7 @@ public class PlayerHUD : MonoBehaviour
 
     private void Update()
     {
-        saved = PlayerData.Instance;
+        saved = TPlayerData.Instance;
 
         UpdateHP();
         UpdateArmor();

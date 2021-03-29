@@ -9,45 +9,49 @@ using Random = UnityEngine.Random;
  * *what will the weakness factor be equal to? (a variable in the TakeDamage method)
 */
 
+[System.Serializable]
+public enum ElementType
+{
+    GOLEM, BOSS, DRAGON, ENEMY, PLAYER
+}
+
+[System.Serializable]
+public enum WeaknessType
+{
+    FIRE, WATER, WIND, EARTH, NOTCONSIDERED
+}
+
 public abstract class Element : MonoBehaviour
 {
-    public enum ElementType
-    {
-        GOLEM, BOSS, DRAGON, ENEMY, PLAYER
-    }
-
+    #region Basic Stats
+    protected float hp;
+    protected float maxHP = 0f;
+    protected int hpMargin = 3;
+    protected float hpLevelFactor = 10f;
     public abstract ElementType Type { get; }
-
-    public WeaknessType Weakness { get; protected set; }
-
-    protected int specialtyAttackMultiplier = 2; //the multiplier with which to multiply the basic attacks to get the speciality attack
-    protected int specialtyAttack = 15; //the value to which a dragon's specialty attack will be set to
-    protected int weaknessFactor = 2; //the factor by which a dragon's attack will be multiplied
-
-    public enum WeaknessType
-    {
-        FIRE, WATER, WIND, EARTH, NOTCONSIDERED
-    }
-
-    private Dragon.DragonType dType;
-    public virtual Dragon.DragonType DType
+    private DragonType dType;
+    public virtual DragonType DType
     {
         get => dType;
         protected set => dType = value;
     }
+    #endregion
 
-    protected float hp;
-
+    #region Combat Stats
     private float armor; //dragons do not have armor because they become the armor
+    protected float maxArmor = 0f;
+    protected int armorFactor = 5;
     public virtual float Armor
     {
         get => armor;
         protected set => armor = value;
     }
-
-    protected float remainder; //used in the computation of armor/hp to subtract
-    //protected float damageAmount; //for testing only, because this will be computed
-
+    public WeaknessType Weakness { get; protected set; }
+    protected int weaknessFactor = 2; //the factor by which a dragon's attack will be multiplied
+    protected int specialtyAttack = 15; //the value to which a dragon's specialty attack will be set to
+    
+    protected int attackMargin = 5;
+    protected int specialtyAttackMultiplier = 2; //the multiplier with which to multiply the basic attacks to get the speciality attack
     //pertains to the amount of damage an element could cause
     //for example, if the fire attack is 3, the element could inflict 3 more damage points
     protected int fireAttack;
@@ -55,26 +59,34 @@ public abstract class Element : MonoBehaviour
     protected int windAttack;
     protected int earthAttack;
     protected int baseAttack;
-    protected int attackMargin = 5;
+    #endregion
 
-    protected float maxHP = 0f;
-    protected int hpMargin = 3;
-    protected float hpLevelFactor = 10f;
-
-    protected float maxArmor = 0;
-    protected int armorFactor = 5;
-
+    #region Miscellaneous Stats
+    protected float remainder; //used in the computation of armor/hp to subtract
+    //protected float damageAmount; //for testing only, because this will be computed
+    #endregion
 
     protected virtual void Start()
     {
+        SubscribeEvents();
+    }
+
+    protected virtual void OnDestroy()
+    {
+        UnsubscribeEvents();
+    }
+
+    protected virtual void Initialization()
+    {
         InitializeAttributes();
         InitializeAttacks();
+        InitializeSerialization();
     }
 
     protected virtual void InitializeAttributes()
     {
         //set DType
-        DType = Dragon.DragonType.NOTDRAGON;
+        DType = DragonType.NOTDRAGON;
 
         //each element's max HP is dependent on the level (temporary fix)
         float elementMaxHP = (GameManager.currLvl * hpLevelFactor) +
@@ -99,9 +111,23 @@ public abstract class Element : MonoBehaviour
 
     protected abstract void InitializeAttacks();
 
+    public abstract void InitializeSerialization();
+
+    public abstract void InitializeDeserialization();
+
     protected void SetStatMaximum(ref float maxStat, float newMaxStat)
     {
         maxStat = Mathf.Max(maxStat, newMaxStat);
+    }
+
+    private void SubscribeEvents()
+    {
+        GameManager.OnLevelFirstInstance += Initialization;
+    }
+
+    private void UnsubscribeEvents()
+    {
+        GameManager.OnLevelFirstInstance -= Initialization;
     }
 
     /*
@@ -162,7 +188,7 @@ public abstract class Element : MonoBehaviour
      *      received format: TakeDamage(float effDamageAmount, DragonType callerDType)
      *      
      */
-    public bool TakeDamage(float damageAmount, Dragon.DragonType dragonType)
+    public bool TakeDamage(float damageAmount, DragonType dragonType)
     {
         /*OPTIONAL CODE:
          * I added this because maybe we would want to increase the effect of the damage
@@ -188,7 +214,7 @@ public abstract class Element : MonoBehaviour
     //may be used together with the TakeDamage method
     public float DamageAmount()
     {
-        float damageAmount = fireAttack + waterAttack + windAttack + earthAttack;
+        float damageAmount = baseAttack + fireAttack + waterAttack + windAttack + earthAttack;
 
         return damageAmount;
     }

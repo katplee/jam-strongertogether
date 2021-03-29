@@ -27,19 +27,19 @@ public class PetDragon : Dragon
 
         switch (DType)
         {
-            case Dragon.DragonType.BASE:
+            case DragonType.BASE:
                 anim.SetInteger("DType", 0);
                 break;
-            case Dragon.DragonType.FIRE:
+            case DragonType.FIRE:
                 anim.SetInteger("DType", 1);
                 break;
-            case Dragon.DragonType.WATER:
+            case DragonType.WATER:
                 anim.SetInteger("DType", 2);
                 break;
-            case Dragon.DragonType.EARTH:
+            case DragonType.EARTH:
                 anim.SetInteger("DType", 3);
                 break;
-            case Dragon.DragonType.WIND:
+            case DragonType.WIND:
                 anim.SetInteger("DType", 4);
                 break;
         }

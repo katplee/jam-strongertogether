@@ -16,18 +16,19 @@ using Random = UnityEngine.Random;
  * *maybe it would be nice to also include the weaknesses, etc. on the player HUD
  */
 
+[System.Serializable]
+public enum DragonType
+{
+    FIRE, WATER, WIND, EARTH, BASE, NOTDRAGON
+}
+
 public class Dragon : Element
 {
     public TamingReqs tamingReqs;
     public override ElementType Type
     {
         get { return ElementType.DRAGON; }
-    }
-
-    public enum DragonType
-    {
-        FIRE, WATER, WIND, EARTH, BASE, NOTDRAGON
-    }
+    }    
 
     private const string baseDragonTag = "BaseDragon";
     private const string fireDragonTag = "FireDragon";
@@ -58,9 +59,10 @@ public class Dragon : Element
         base.Start();
     }
 
-    private void OnDestroy()
+    protected override void OnDestroy()
     {
         UnsubscribeEvents();
+        base.OnDestroy();
     }
 
     protected override void InitializeAttributes()
@@ -76,7 +78,17 @@ public class Dragon : Element
         //dragon's maxXP is set to 0 at first
         maxXP = 0;
         xp = maxXP;
-    }    
+    }
+
+    public override void InitializeSerialization()
+    {
+        
+    }
+
+    public override void InitializeDeserialization()
+    {
+        
+    }
 
     private void SetDragonTypeWeakness()
     {
@@ -174,13 +186,13 @@ public class Dragon : Element
 
     private void SubscribeEvents()
     {
-        GameManager.OnLevelChange += OnLevelChange;
+        GameManager.OnLevelWin += OnLevelChange;
         FightManager.OnFightEnd += OnFightEnd;
     }
 
     private void UnsubscribeEvents()
     {
-        GameManager.OnLevelChange -= OnLevelChange;
+        GameManager.OnLevelWin -= OnLevelChange;
         FightManager.OnFightEnd -= OnFightEnd;
     }
 }

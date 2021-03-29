@@ -25,26 +25,26 @@ public class DragonSpriteAssign : MonoBehaviour
 
     private Sprite AssignDragonSprite()
     {
-        Dragon.DragonType dragonType = 
-            (Dragon.DragonType)DragonsData.sortedDragonsStats[index.index - 1][0];
+        DragonType dragonType = 
+            (DragonType)DragonsData.sortedDragonsStats[index.index - 1][0];
 
         Debug.Log($"type: {dragonType}");
 
         switch (dragonType)
         {
-            case Dragon.DragonType.FIRE:
+            case DragonType.FIRE:
                 return fireDragonSprite;
 
-            case Dragon.DragonType.WATER:
+            case DragonType.WATER:
                 return waterDragonSprite;
 
-            case Dragon.DragonType.WIND:
+            case DragonType.WIND:
                 return windDragonSprite;
 
-            case Dragon.DragonType.EARTH:
+            case DragonType.EARTH:
                 return earthDragonSprite;
 
-            case Dragon.DragonType.BASE:
+            case DragonType.BASE:
                 return baseDragonSprite;
         }
 
