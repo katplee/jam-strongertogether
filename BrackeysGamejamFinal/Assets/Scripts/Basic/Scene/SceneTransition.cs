@@ -34,8 +34,6 @@ public class SceneTransition : MonoBehaviour
     }
     IEnumerator FadeIn()
     {
-        Debug.Log("FadeIn was called");
-
         float t = 1f;
         while (t > 0f)
         {

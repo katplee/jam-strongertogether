@@ -12,6 +12,7 @@ public class SerializationCommander : MonoBehaviour
     #region Enemy events
     public static Action ResaveAllEnemies;
     public static Action ReloadAllEnemies;
+    public static Action UpdateLastEnemy;
     #endregion
 
     private static SerializationCommander instance;
@@ -57,11 +58,11 @@ public class SerializationCommander : MonoBehaviour
          *        - save the position of the player
          */
 
-        //1.1 BASIC SCENE TO THE ATTACK SCENE
-        SceneTransition.JustBeforeSceneTransition += B_BToASerialization;
-
-        //2.1 ATTACK SCENE TO THE BASIC SCENE
+        //1.1 ATTACK SCENE TO THE BASIC SCENE
         SceneTransition.JustBeforeSceneTransition += B_AToBSerialization;
+
+        //2.1 BASIC SCENE TO THE ATTACK SCENE
+        SceneTransition.JustBeforeSceneTransition += B_BToASerialization;
 
         /* 
          * JUST AFTER THE SCENE TRANSITIONS TO: [CODE:A]
@@ -119,6 +120,10 @@ public class SerializationCommander : MonoBehaviour
 
     private void B_AToBSerialization()
     {
+        if (GameManager.currentSceneName != GameManager.attackScene) { return; }
+
+        //save the stats of the enemy
+        EnemySave.Instance.SaveEnemyData();
 
     }
 
@@ -131,6 +136,9 @@ public class SerializationCommander : MonoBehaviour
 
         //load the enemies based on the enemies in the list of enemies
         ReloadAllEnemies?.Invoke();
+
+        //reload the stats of the last enemy
+        UpdateLastEnemy?.Invoke();
 
         //bring player to the pre-fight position
         Player.Instance.InitializeDeserialization();

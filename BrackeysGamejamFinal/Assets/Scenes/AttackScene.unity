@@ -1054,7 +1054,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1337018391}
-        m_MethodName: OnAttackButton
+        m_MethodName: TESTOnEnemyDefeated
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

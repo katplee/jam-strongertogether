@@ -80,11 +80,29 @@ public class Enemy : Element
     {
         EnemySave enemySave = EnemySave.Instance.LoadEnemyData();
 
-        foreach (EnemyData enemy in enemySave.enemies)
+        foreach (EnemyData _enemyData in enemySave.enemies)
         {
-            if (enemy.name == enemyData.name)
+            if (enemyData.name == _enemyData.name)
             {
-                enemyData = enemy;
+                enemyData = _enemyData;
+
+                //BASIC STATS
+                hp = enemyData.hp;
+                maxHP = enemyData.maxHP;
+                DType = enemyData.dType;
+                name = enemyData.name;
+
+                //COMBAT STATS
+                Armor = enemyData.armor;
+                maxArmor = enemyData.maxArmor;
+                Weakness = enemyData.weakness;
+                weaknessFactor = enemyData.weaknessFactor;
+                fireAttack = enemyData.fireAttack;
+                waterAttack = enemyData.waterAttack;
+                windAttack = enemyData.windAttack;
+                earthAttack = enemyData.earthAttack;
+                baseAttack = enemyData.baseAttack;
+
                 Debug.Log(enemyData.name);
             }
         }
@@ -97,6 +115,13 @@ public class Enemy : Element
         EnemySave.Instance.SaveEnemyData();
     }
 
+    /*
+     * POPULATE WITH ENEMY:
+     * This method adds the enemy data to the List<EnemyData> enemies list in EnemySave.
+     * Before calling this method, make sure that the enemy data in this class is the version you want to add.
+     * Populating the list does not mean replacing elements in the list; therefore, calling this will ADD more elements to the enemies list.
+     * In case you wish to REPLACE elements in the enemies list, call the ResaveThisEnemy method instead.
+     */
     public void PopulateWithEnemy()
     {
         InitializeSerialization();
@@ -104,31 +129,78 @@ public class Enemy : Element
         EnemySave.Instance.SaveEnemyData();
     }
 
-    public void ResaveThisEnemy()
+    /*
+     * RESAVE THIS ENEMY:
+     * This method updates the enemy data that is included in the array.
+     * Before calling this method, make sure that the enemy data in this class is the updated one.
+     * Also, make sure that the data of the enemy whose data you wish to add is ALREADY in the list.
+     * Calling this method without the enemy already added will throw an exception and crash the game.
+     */
+    private void ResaveThisEnemy()
     {
         InitializeSerialization();
         EnemySave.Instance.ReplaceEnemyList(enemyData);
         EnemySave.Instance.SaveEnemyData();
     }
 
+    /*
+     * IS LAST ENEMY:
+     * This method checks, upon returning to the basic scene, if the enemy which holds this script was the enemy that was in battle with the player.
+     * Note that the game object's name is used in checking.
+     */
+    private bool IsLastEnemy()
+    {
+        EnemySave enemySave = EnemySave.Instance.LoadEnemyData();
+
+        if (enemySave.lastEnemy.name == null) { return false; }
+
+        return (enemySave.lastEnemy.name == gameObject.name) ?
+            true : false;
+    }
+
+    /*
+     * UPDATE DATA IF LAST ENEMY:
+     * This method updates the enemy data in this class if this enemy was the one in battle with the player.
+     * NOTE!!!!! This does also updates this enemy's data in the List<EnemyData> enemies list.
+     */
+    public void UpdateDataIfLastEnemy()
+    {        
+        EnemySave enemySave = EnemySave.Instance.LoadEnemyData();
+
+        enemyData = enemySave.lastEnemy;        
+
+        ResaveThisEnemy();
+    }
+
+    /*
+     * RELOAD THIS ENEMY:
+     * This method downloads this enemy's corresponding data from the List<EnemyData> enemies list.
+     * In the event that this enemy was defeated (hp + armor = 0), this method also destroys the game object which holds this script,
+     *    and the data from the List<EnemyData> enemies list.
+     */
     public void ReloadThisEnemy()
     {
         InitializeDeserialization();
 
-        /*
+        if (IsLastEnemy())
+        {
+            UpdateDataIfLastEnemy();
+        }
+        
+
         float life = enemyData.hp + enemyData.armor;
         if (life == 0)
         {
             EnemySave.Instance.RemoveEnemyList(enemyData);
             Destroy(gameObject);
-        } 
-        */
+        }
     }
 
     private void SubscribeEvents()
     {
         SerializationCommander.ResaveAllEnemies += ResaveThisEnemy;
         SerializationCommander.ReloadAllEnemies += ReloadThisEnemy;
+        SerializationCommander.UpdateLastEnemy += UpdateDataIfLastEnemy;
 
     }
 
@@ -136,6 +208,7 @@ public class Enemy : Element
     {
         SerializationCommander.ResaveAllEnemies -= ResaveThisEnemy;
         SerializationCommander.ReloadAllEnemies -= ReloadThisEnemy;
+        SerializationCommander.UpdateLastEnemy -= UpdateDataIfLastEnemy;
     }
 
     private void TESTPrintEnemyData()

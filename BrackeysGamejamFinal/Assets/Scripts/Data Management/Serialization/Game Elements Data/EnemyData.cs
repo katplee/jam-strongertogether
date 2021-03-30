@@ -17,7 +17,7 @@ public class EnemyData
     public float armor;
     public float maxArmor;
     public WeaknessType weakness;
-    public float weaknessFactor;
+    public int weaknessFactor;
     public int fireAttack;
     public int waterAttack;
     public int windAttack;

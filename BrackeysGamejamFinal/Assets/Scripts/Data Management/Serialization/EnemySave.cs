@@ -20,7 +20,7 @@ public class EnemySave
     }
     public string path;
 
-    public EnemyData lastEnemy;
+    public EnemyData lastEnemy = new EnemyData();
     public List<EnemyData> enemies = new List<EnemyData>();
 
     public void AssignLastEnemy(EnemyData lastEnemy)

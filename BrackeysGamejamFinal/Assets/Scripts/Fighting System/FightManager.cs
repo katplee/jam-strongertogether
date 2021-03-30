@@ -8,12 +8,6 @@ using UnityEngine.UI;
 using Object = System.Object;
 using UnityEngine.SceneManagement;
 
-/// <summary>
-/// This script will only be activated in the event that a battle will ensue.
-/// Introduce a system so that the fight manager starts from the start method whenever a battle ensues.
-/// Make sure that the events are synced properly, called whenever it should be called.
-/// </summary>
-
 public enum BattleState { START, PLAYERTURN, ENEMYTURN, WON, LOST }
 
 public class FightManager : MonoBehaviour
@@ -138,7 +132,7 @@ public class FightManager : MonoBehaviour
     }
 
     private void UpdateSavedPlayerStats()
-    {   
+    {
         /*
         Debug.Log("It's a human!");
         PlayerData saved = PlayerData.Instance;
@@ -158,7 +152,7 @@ public class FightManager : MonoBehaviour
     }
 
     private void UpdateSavedDragonStats()
-    {                
+    {
         List<Object> saved = DragonsData.sortedDragonsStats[currentDragonIndex - 1];
         ///         dragon type,
         ///         hp,
@@ -205,7 +199,7 @@ public class FightManager : MonoBehaviour
         {
             UpdateSavedDragonStats();
         }
-        OnFightEnd?.Invoke();        
+        OnFightEnd?.Invoke();
 
         //update the player stats
         //playerHUD.UpdateHPArmor<Element>(player.hp, player.armor, player.maxHP, player.maxArmor);
@@ -236,6 +230,12 @@ public class FightManager : MonoBehaviour
         Debug.Log("Attack!");
 
         StartCoroutine(DealAttack());
+    }
+
+    public void TESTOnEnemyDefeated()
+    {
+        EnemySave.Instance.lastEnemy.hp = 0;
+        EnemySave.Instance.lastEnemy.armor = 0;
     }
 
     IEnumerator DealAttack()
