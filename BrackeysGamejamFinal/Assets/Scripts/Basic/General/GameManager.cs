@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /*
  * Things to do:
@@ -37,46 +38,26 @@ public class GameManager : MonoBehaviour
     //and, therefore, variable initialization is not necessary
     public static List<int> levelList = new List<int>();
 
+    #region Scene Control
+    public static string currentSceneName;
+    public const string attackScene = "AttackScene";
+    #endregion
+
     private void Awake()
     {
         //ConvertToPersistentData will be invoked only once to convert this object to persistent data
-        ConvertToPersistentData();        
+        ConvertToPersistentData();       
+        SubscribeEvents();
     }
 
     private void Start()
     {
-        SubscribeEvents();
-        LevelStart();
+        //LevelStart();
     }
 
     private void OnDestroy()
     {
         UnsubscribeEvents();
-    }
-
-    private void LevelStart()
-    {
-        /*
-            if(winGameUI!=null)
-                winGameUI.SetActive(false);
-            if(gameOverUI!=null)
-                gameOverUI.SetActive(false);
-            if (winLvlUI!= null)
-                winLvlUI.SetActive(false);
-        */
-
-        if (SceneTransition.currentSceneName == SceneTransition.attackScene) { return; }
-
-        //OnLevelFirstInstance will be invoked upon Level 1's first instantiation
-        //if it is not the first instantiation, a different method will be called
-        if (!OnFirstInstantiation())
-        {
-            OnNormalInstantiation();
-        }
-
-        //TESTING...
-        EnemySave trial = SerializationManager.Load(EnemySave.Instance.path) as EnemySave;
-        Debug.Log($"{trial.enemies.Count}");
     }
 
     private void ConvertToPersistentData()
@@ -95,10 +76,46 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public virtual void EndDialogue()
+    {
+        Debug.Log("Endof dialogue");
+    }
+
+    public void EndGame()
+    {
+        gameOverUI.SetActive(true);
+    }
+
     //will act as mission manager also
     public void EndMission()
     {
         winGameUI.SetActive(true);
+    }
+
+    private void LevelStart()
+    {
+        Debug.Log("LevelStart was invoked");
+        /*
+            if(winGameUI!=null)
+                winGameUI.SetActive(false);
+            if(gameOverUI!=null)
+                gameOverUI.SetActive(false);
+            if (winLvlUI!= null)
+                winLvlUI.SetActive(false);
+        */
+
+        if (currentSceneName == attackScene) { return; }
+
+        //OnLevelFirstInstance will be invoked upon Level 1's first instantiation
+        //if it is not the first instantiation, a different method will be called
+        if (!OnFirstInstantiation())
+        {
+            OnNormalInstantiation();
+        }
+
+        //TESTING...
+        EnemySave trial = SerializationManager.Load(EnemySave.Instance.path) as EnemySave;
+        Debug.Log($"{trial.enemies.Count}");
     }
 
     private void LevelUp()
@@ -138,25 +155,26 @@ public class GameManager : MonoBehaviour
         Debug.Log("OnNormalInstantiation is called");
     }
 
-    public void EndGame()
+    private static void UpdateSceneName()
     {
-        gameOverUI.SetActive(true);
-    }
+        Debug.Log($"UpdateSceneName was called");
+        Scene currentScene = SceneManager.GetActiveScene();
+        currentSceneName = currentScene.name;
 
-    public virtual void EndDialogue()
-    {
-        Debug.Log("Endof dialogue");
+        return;
     }
 
     private void SubscribeEvents()
     {
         SceneTransition.JustAfterSceneTransition += LevelStart;
+        SceneTransition.JustAfterSceneTransition += UpdateSceneName;
         OnLevelWin += LevelUp;
     }
 
     private void UnsubscribeEvents()
     {
         SceneTransition.JustAfterSceneTransition -= LevelStart;
+        SceneTransition.JustAfterSceneTransition -= UpdateSceneName;
         OnLevelWin -= LevelUp;
     }
 }

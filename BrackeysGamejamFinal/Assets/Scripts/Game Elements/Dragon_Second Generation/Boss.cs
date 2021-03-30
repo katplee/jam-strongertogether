@@ -14,9 +14,4 @@ public class Boss : Dragon
     {
         get { return ElementType.BOSS; }
     }
-
-    private void Awake()
-    {
-        base.Start();
-    }
 }

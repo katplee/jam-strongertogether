@@ -13,7 +13,7 @@ public class AttackTrigger : MonoBehaviour
 
     [HideInInspector]
     public bool interacting = false, press = false;
-    
+
     void Update()
     {
         if (interacting) { return; }

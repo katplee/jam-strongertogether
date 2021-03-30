@@ -39,7 +39,7 @@ public class PlayerSave
                 throw new WrongPathException();
             }
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             Debug.LogError(e.Message);
         }

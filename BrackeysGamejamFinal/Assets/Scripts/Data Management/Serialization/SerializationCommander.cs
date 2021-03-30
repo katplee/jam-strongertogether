@@ -11,6 +11,7 @@ public class SerializationCommander : MonoBehaviour
 {
     #region Enemy events
     public static Action ResaveAllEnemies;
+    public static Action ReloadAllEnemies;
     #endregion
 
     private static SerializationCommander instance;
@@ -26,7 +27,7 @@ public class SerializationCommander : MonoBehaviour
         }
     }
 
-    private void Start()
+    private void Awake()
     {
         SubscribeEvents();
     }
@@ -107,7 +108,7 @@ public class SerializationCommander : MonoBehaviour
     private void B_BToASerialization()
     {
         //this method will only be called during BASIC SCENE TO THE ATTACK SCENE
-        if (SceneTransition.currentSceneName == SceneTransition.attackScene) { return; }
+        if (GameManager.currentSceneName == GameManager.attackScene) { return; }
 
         //save enemy data - includes the last enemy data, all enemies' stats
         ResaveAllEnemies?.Invoke();
@@ -124,11 +125,16 @@ public class SerializationCommander : MonoBehaviour
     private void A_BFromASerialization()
     {
         //this method will only be called during BASIC SCENE FROM THE ATTACK SCENE
-        if (SceneTransition.currentSceneName == SceneTransition.attackScene) { return; }
+        if (GameManager.currentSceneName == GameManager.attackScene) { return; }
+
+        Debug.Log("A_BFromASerialization was called");
+
+        //load the enemies based on the enemies in the list of enemies
+        ReloadAllEnemies?.Invoke();
 
         //bring player to the pre-fight position
         Player.Instance.InitializeDeserialization();
-        Player.Instance.Reposition();        
+        Player.Instance.Reposition();
     }
 
 }

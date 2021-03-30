@@ -17,7 +17,7 @@ public class PetDragon : Dragon
     public GameObject target;
     private Animator anim;
 
-    protected override void Start()
+    private void Start()
     {
         rb2d = GetComponent<Rigidbody2D>();
         target = GameObject.FindGameObjectWithTag("Player");

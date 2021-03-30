@@ -8,24 +8,16 @@ using System;
 public class SceneTransition : MonoBehaviour
 {
     public static event Action JustBeforeSceneTransition;
-    public static event Action JustAfterSceneTransition;
-    public static string currentSceneName;
-
-    public const string attackScene = "AttackScene";
+    public static event Action JustAfterSceneTransition;    
 
     public Image img;
     public AnimationCurve curve;
 
-    void Start()
+    private void Start()
     {
-        SubscribeEvents();
-        StartCoroutine(FadeIn());
+        StartCoroutine(FadeIn());        
         JustAfterSceneTransition?.Invoke();
-    }
-
-    private void OnDestroy()
-    {
-        UnsubscribeEvents();
+        Debug.Log("JustAfter was invoked");
     }
 
     public void FadeTo(string scene)
@@ -42,6 +34,8 @@ public class SceneTransition : MonoBehaviour
     }
     IEnumerator FadeIn()
     {
+        Debug.Log("FadeIn was called");
+
         float t = 1f;
         while (t > 0f)
         {
@@ -63,23 +57,5 @@ public class SceneTransition : MonoBehaviour
             yield return 0;
         }
         SceneManager.LoadScene(scene);
-    }
-
-    private void UpdateSceneName()
-    {
-        Scene currentScene = SceneManager.GetActiveScene();
-        currentSceneName = currentScene.name;
-
-        return;
-    }
-
-    private void SubscribeEvents()
-    {
-        JustAfterSceneTransition += UpdateSceneName;
-    }
-
-    private void UnsubscribeEvents()
-    {
-        JustAfterSceneTransition -= UpdateSceneName;
     }
 }

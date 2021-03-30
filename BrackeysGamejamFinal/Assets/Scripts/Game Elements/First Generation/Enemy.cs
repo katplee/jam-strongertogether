@@ -11,16 +11,21 @@ using UnityEngine;
 public class Enemy : Element
 {
     private EnemyData enemyData;
-    
+
     public override ElementType Type
     {
         get { return ElementType.ENEMY; }
     }
 
-    protected override void Start()
+    protected override void Awake()
     {
-        base.Start();
+        base.Awake();
         SubscribeEvents();
+    }
+
+    private void Update()
+    {
+        //TESTPrintEnemyData();
     }
 
     protected override void OnDestroy()
@@ -42,9 +47,9 @@ public class Enemy : Element
     }
 
     public override void InitialSerialization()
-    {        
+    {
         //add enemy to level enemy list
-        PopulateWithEnemy();        
+        PopulateWithEnemy();
     }
 
     protected override void InitializeSerialization()
@@ -73,7 +78,16 @@ public class Enemy : Element
 
     public override void InitializeDeserialization()
     {
-        throw new System.NotImplementedException();
+        EnemySave enemySave = EnemySave.Instance.LoadEnemyData();
+
+        foreach (EnemyData enemy in enemySave.enemies)
+        {
+            if (enemy.name == enemyData.name)
+            {
+                enemyData = enemy;
+                Debug.Log(enemyData.name);
+            }
+        }
     }
 
     public void AssignAsLastEnemy()
@@ -87,23 +101,64 @@ public class Enemy : Element
     {
         InitializeSerialization();
         EnemySave.Instance.PopulateEnemyList(enemyData);
-        EnemySave.Instance.SaveEnemyData();        
+        EnemySave.Instance.SaveEnemyData();
     }
 
-    public void ReplaceThisEnemy()
+    public void ResaveThisEnemy()
     {
         InitializeSerialization();
         EnemySave.Instance.ReplaceEnemyList(enemyData);
         EnemySave.Instance.SaveEnemyData();
     }
 
+    public void ReloadThisEnemy()
+    {
+        InitializeDeserialization();
+
+        /*
+        float life = enemyData.hp + enemyData.armor;
+        if (life == 0)
+        {
+            EnemySave.Instance.RemoveEnemyList(enemyData);
+            Destroy(gameObject);
+        } 
+        */
+    }
+
     private void SubscribeEvents()
     {
-        SerializationCommander.ResaveAllEnemies += ReplaceThisEnemy;
+        SerializationCommander.ResaveAllEnemies += ResaveThisEnemy;
+        SerializationCommander.ReloadAllEnemies += ReloadThisEnemy;
+
     }
 
     private void UnsubscribeEvents()
     {
-        SerializationCommander.ResaveAllEnemies -= ReplaceThisEnemy;
+        SerializationCommander.ResaveAllEnemies -= ResaveThisEnemy;
+        SerializationCommander.ReloadAllEnemies -= ReloadThisEnemy;
+    }
+
+    private void TESTPrintEnemyData()
+    {
+        string enemyStats =
+            $"//BASIC STATS\n" +
+            $"hp : {enemyData.hp}\n" +
+            $"maxHP : {enemyData.maxHP}\n" +
+            $"type : {enemyData.type}\n" +
+            $"dType : {enemyData.dType}\n" +
+            $"id : {enemyData.id}\n" +
+            $"name : {enemyData.name}\n\n" +
+            $"//COMBAT STATS\n" +
+            $"armor : {enemyData.armor}\n" +
+            $"maxArmor : {enemyData.maxArmor}\n" +
+            $"weakness : {enemyData.weakness}\n" +
+            $"weaknessFactor : {enemyData.weaknessFactor}\n" +
+            $"fireAttack : {enemyData.fireAttack}\n" +
+            $"waterAttack : {enemyData.waterAttack}\n" +
+            $"windAttack : {enemyData.windAttack}\n" +
+            $"earthAttack : {enemyData.earthAttack}\n" +
+            $"baseAttack : {enemyData.baseAttack}\n";
+
+        Debug.Log(enemyStats);
     }
 }

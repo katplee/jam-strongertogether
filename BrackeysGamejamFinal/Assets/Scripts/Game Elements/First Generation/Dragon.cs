@@ -53,10 +53,10 @@ public class Dragon : Element
         protected set => Armor = 0f;
     }
 
-    protected override void Start()
+    protected override void Awake()
     {
         SubscribeEvents();
-        base.Start();
+        base.Awake();
     }
 
     protected override void OnDestroy()

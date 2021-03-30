@@ -49,7 +49,7 @@ public abstract class Element : MonoBehaviour
     public WeaknessType Weakness { get; protected set; }
     protected int weaknessFactor = 2; //the factor by which a dragon's attack will be multiplied
     protected int specialtyAttack = 15; //the value to which a dragon's specialty attack will be set to
-    
+
     protected int attackMargin = 5;
     protected int specialtyAttackMultiplier = 2; //the multiplier with which to multiply the basic attacks to get the speciality attack
     //pertains to the amount of damage an element could cause
@@ -66,9 +66,9 @@ public abstract class Element : MonoBehaviour
     //protected float damageAmount; //for testing only, because this will be computed
     #endregion
 
-    protected virtual void Start()
+    protected virtual void Awake()
     {
-        SubscribeEvents();
+        SubscribeEvents();        
     }
 
     protected virtual void OnDestroy()

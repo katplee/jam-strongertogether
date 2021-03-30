@@ -57,29 +57,17 @@ public class Player : Element
 
     public bool isChoosingTame = false;
 
-    protected override void Start()
+    protected override void Awake()
     {
-        base.Start();
+        base.Awake();
         SubscribeEvents();
 
+    }
+
+    private void Start()
+    {
         rb2d = GetComponent<Rigidbody2D>();
-        anim = GetComponent<Animator>();
-
-        #region Private parameters check
-        string playerStats =
-            $"dType : {DType}\n" +
-            $"hp : {hp}\n" +
-            $"maxHP : {maxHP}\n" +
-            $"armor : {Armor}\n" +
-            $"maxArmor : {maxArmor}\n" +
-            $"fireAttack : {fireAttack}\n" +
-            $"waterAttack : {waterAttack}\n" +
-            $"windAttack : {windAttack}\n" +
-            $"earthAttack : {earthAttack}\n" +
-            $"baseAttack : {baseAttack}\n";
-
-        Debug.Log(playerStats);
-        #endregion
+        anim = GetComponent<Animator>();               
     }
 
     void Update()
@@ -179,9 +167,9 @@ public class Player : Element
     }
 
     private void Move()
-    {        
-        if (SceneTransition.currentSceneName == SceneTransition.attackScene) { return; }
-        
+    {
+        if (GameManager.currentSceneName == GameManager.attackScene) { return; }
+
         if (isChoosingTame)
         {
             if (rb2d.velocity.magnitude != 0)
@@ -200,35 +188,35 @@ public class Player : Element
         {
             moveHorizontal = 0;
             moveVertical = -1;
-            moveSpeed = 1f;            
+            moveSpeed = 1f;
         }
         else if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
         {
             moveHorizontal = 0;
             moveVertical = 1;
-            moveSpeed = 1f;            
+            moveSpeed = 1f;
         }
         else if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
         {
             moveHorizontal = -1;
             moveVertical = 0;
-            moveSpeed = 1f;            
+            moveSpeed = 1f;
         }
         else if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
         {
             moveHorizontal = 1;
             moveVertical = 0;
-            moveSpeed = 1f;            
+            moveSpeed = 1f;
         }
         else
-        {   
+        {
             moveSpeed = 0f;
-        }        
+        }
 
         anim.SetFloat("Horizontal", moveHorizontal);
         anim.SetFloat("Vertical", moveVertical);
         anim.SetFloat("Speed", moveSpeed);
-    }  
+    }
 
     public void Reposition()
     {
@@ -238,12 +226,36 @@ public class Player : Element
     }
 
     private void SubscribeEvents()
-    {        
-        
+    {
+
     }
 
     private void UnsubscribeEvents()
     {
-        
+
+    }
+
+    private void TESTPrintPlayerData()
+    {        
+        string playerStats =
+            $"//BASIC STATS\n" +
+            $"hp : {playerData.hp}\n" +
+            $"maxHP : {playerData.maxHP}\n" +
+            $"type : {playerData.type}\n" +
+            $"dType : {playerData.dType}\n" +
+            $"id : {playerData.id}\n" +
+            $"name : {playerData.name}\n\n" +
+            $"//COMBAT STATS\n" +
+            $"armor : {playerData.armor}\n" +
+            $"maxArmor : {playerData.maxArmor}\n" +
+            $"weakness : {playerData.weakness}\n" +
+            $"weaknessFactor : {playerData.weaknessFactor}\n" +
+            $"fireAttack : {playerData.fireAttack}\n" +
+            $"waterAttack : {playerData.waterAttack}\n" +
+            $"windAttack : {playerData.windAttack}\n" +
+            $"earthAttack : {playerData.earthAttack}\n" +
+            $"baseAttack : {playerData.baseAttack}\n";
+
+        Debug.Log(playerStats);
     }
 }

@@ -19,10 +19,10 @@ public class EnemySave
         }
     }
     public string path;
-    
+
     public EnemyData lastEnemy;
     public List<EnemyData> enemies = new List<EnemyData>();
-    
+
     public void AssignLastEnemy(EnemyData lastEnemy)
     {
         this.lastEnemy = lastEnemy;
@@ -47,15 +47,42 @@ public class EnemySave
             {
                 return enemies.IndexOf(enemy);
             }
-            continue;
         }
 
         throw new NotFoundInListException();
     }
 
+    public EnemySave LoadEnemyData()
+    {
+        int found = path.IndexOf("/saves/");
+        int level = Int32.Parse(path.Substring(found + 7, 1));
+
+        try
+        {
+            if (level != GameManager.currLvl)
+            {
+                throw new WrongPathException();
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError(e.Message);
+        }
+
+        EnemySave enemy = SerializationManager.Load(path) as EnemySave;
+
+        return enemy;
+    }
+
+    public void RemoveEnemyList(EnemyData enemy)
+    {
+        int index = Find(enemy);
+        enemies.RemoveAt(index);
+    }
+
     public void SaveEnemyData()
-    {        
+    {
         SerializationManager.Save(GameManager.currLvl.ToString(), GetType().Name, this, out path);
     }
-    
+
 }
