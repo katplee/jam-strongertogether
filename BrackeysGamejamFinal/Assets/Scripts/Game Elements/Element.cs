@@ -125,11 +125,13 @@ public abstract class Element : MonoBehaviour
     private void SubscribeEvents()
     {
         GameManager.OnLevelFirstInstance += Initialization;
+        GameManager.OnLevelNormalInstance += InitializeSerialization;
     }
 
     private void UnsubscribeEvents()
     {
         GameManager.OnLevelFirstInstance -= Initialization;
+        GameManager.OnLevelNormalInstance -= InitializeSerialization;
     }
 
     /*

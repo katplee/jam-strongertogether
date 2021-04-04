@@ -23,15 +23,11 @@ public class Enemy : Element
         SubscribeEvents();
     }
 
-    private void Update()
-    {
-        //TESTPrintEnemyData();
-    }
-
     protected override void OnDestroy()
     {
         base.OnDestroy();
         UnsubscribeEvents();
+        Destroy(gameObject);
     }
 
     protected override void InitializeAttacks()
@@ -102,8 +98,6 @@ public class Enemy : Element
                 windAttack = enemyData.windAttack;
                 earthAttack = enemyData.earthAttack;
                 baseAttack = enemyData.baseAttack;
-
-                Debug.Log(enemyData.name);
             }
         }
     }
@@ -113,6 +107,27 @@ public class Enemy : Element
         InitializeSerialization();
         EnemySave.Instance.AssignLastEnemy(enemyData);
         EnemySave.Instance.SaveEnemyData();
+    }
+
+    /*
+     * ALIVE:
+     * This method checks if this enemy is included in the List<EnemyData> enemies list in EnemySave.
+     * Inclusion in this list means the enemy is alive.
+     * This method is included in the ReloadThisEnemy method.
+     */
+    public bool Alive()
+    {
+        List<EnemyData> enemies = EnemySave.Instance.enemies;
+
+        foreach (EnemyData enemy in enemies)
+        {
+            if (enemy.name == enemyData.name)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /*
@@ -162,7 +177,7 @@ public class Enemy : Element
 
         return (enemySave.lastEnemy.name == gameObject.name) ?
             true : false;
-    }    
+    }
 
     /*
      * RELOAD THIS ENEMY:
@@ -172,14 +187,18 @@ public class Enemy : Element
      */
     public void ReloadThisEnemy()
     {
+        if (!Alive())
+        { 
+            OnDestroy();
+            return;
+        }
+
         if (IsLastEnemy())
         {
-            Debug.Log("Is last enemy!");
             ResaveLastEnemy();
-            Debug.Log("Updated last enemy!");
         }
-        
-        InitializeDeserialization();        
+
+        InitializeDeserialization();
 
         float life = hp + Armor;
         if (life == 0)
@@ -187,7 +206,6 @@ public class Enemy : Element
             EnemySave.Instance.RemoveEnemyList(enemyData);
             EnemySave.Instance.SaveEnemyData();
             OnDestroy();
-            Destroy(gameObject);
         }
     }
 
@@ -225,5 +243,14 @@ public class Enemy : Element
             $"baseAttack : {enemyData.baseAttack}\n";
 
         Debug.Log(enemyStats);
+    }
+
+    private void TESTPrintAllEnemies()
+    {
+        List<EnemyData> enemies = EnemySave.Instance.enemies;
+        foreach (EnemyData enemy in enemies)
+        {
+            Debug.Log($"{enemy.name}");
+        }
     }
 }

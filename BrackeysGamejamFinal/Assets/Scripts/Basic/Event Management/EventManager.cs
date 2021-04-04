@@ -39,8 +39,6 @@ public class EventManager : MonoBehaviour
      */
     public void JustAfterSceneTransition()
     {
-        Debug.Log("JustAfterScene was invoked");
-
         GameManager.Instance.UpdateSceneName();
         GameManager.Instance.LevelStart();
         SerializationCommander.Instance.A_BFromASerialization();

@@ -61,7 +61,6 @@ public class Player : Element
     {
         base.Awake();
         SubscribeEvents();
-
     }
 
     private void Start()

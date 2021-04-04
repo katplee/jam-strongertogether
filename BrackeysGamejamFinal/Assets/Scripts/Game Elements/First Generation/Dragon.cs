@@ -87,7 +87,7 @@ public class Dragon : Element
 
     protected override void InitializeSerialization()
     {
-        throw new NotImplementedException();
+        
     }
 
     public override void InitializeDeserialization()

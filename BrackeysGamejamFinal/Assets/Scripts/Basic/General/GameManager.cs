@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
 {
     //OnLevelFirstInstance starts the initialization of variables in the game elements script
     public static event Action OnLevelFirstInstance;
+    public static event Action OnLevelNormalInstance;
     public static event Action OnLevelWin;
 
     public static GameManager Instance { get; private set; }
@@ -51,11 +52,6 @@ public class GameManager : MonoBehaviour
         SubscribeEvents();
     }
 
-    private void Start()
-    {
-        //LevelStart();
-    }
-
     private void OnDestroy()
     {
         UnsubscribeEvents();
@@ -79,7 +75,7 @@ public class GameManager : MonoBehaviour
 
     public virtual void EndDialogue()
     {
-        Debug.Log("Endof dialogue");
+
     }
 
     public void EndGame()
@@ -95,7 +91,6 @@ public class GameManager : MonoBehaviour
 
     public void LevelStart()
     {
-        Debug.Log("LevelStart was invoked");
         /*
             if(winGameUI!=null)
                 winGameUI.SetActive(false);
@@ -116,11 +111,7 @@ public class GameManager : MonoBehaviour
 
         //TESTING...
         EnemySave trial = SerializationManager.Load(EnemySave.Instance.path) as EnemySave;
-        Debug.Log($"{trial.enemies.Count}");
-        foreach (EnemyData enemy in trial.enemies)
-        {
-            Debug.Log($"{enemy.name}");
-        }
+        Debug.Log($"{trial.enemies.Count}");        
     }
 
     private void LevelUp()
@@ -137,8 +128,6 @@ public class GameManager : MonoBehaviour
 
     private bool OnFirstInstantiation()
     {
-        Debug.Log("FirstInstant is called");
-
         if (!levelList.Contains(currLvl))
         {
             //set a variable/call a method or event
@@ -156,13 +145,11 @@ public class GameManager : MonoBehaviour
 
     private void OnNormalInstantiation()
     {
-        //load binary files and assign them to the game objects
-        Debug.Log("OnNormalInstantiation is called");
+        OnLevelNormalInstance?.Invoke();
     }
 
     public void UpdateSceneName()
     {
-        Debug.Log($"UpdateSceneName was called");
         Scene currentScene = SceneManager.GetActiveScene();
 
         //set current scene name
