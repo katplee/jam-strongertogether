@@ -15,6 +15,7 @@ public class SceneTransition : MonoBehaviour
 
     private void Start()
     {
+        Debug.Log("Start was called");
         StartCoroutine(FadeIn());        
         JustAfterSceneTransition?.Invoke();
         Debug.Log("JustAfter was invoked");
@@ -34,6 +35,8 @@ public class SceneTransition : MonoBehaviour
     }
     IEnumerator FadeIn()
     {
+        Debug.Log("FadeIn was called");
+
         float t = 1f;
         while (t > 0f)
         {

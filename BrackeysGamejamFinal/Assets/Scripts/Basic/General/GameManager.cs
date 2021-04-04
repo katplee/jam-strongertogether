@@ -41,12 +41,13 @@ public class GameManager : MonoBehaviour
     #region Scene Control
     public static string currentSceneName;
     public const string attackScene = "AttackScene";
+    public static Stack<string> sceneStack = new Stack<string>();
     #endregion
 
     private void Awake()
     {
         //ConvertToPersistentData will be invoked only once to convert this object to persistent data
-        ConvertToPersistentData();       
+        ConvertToPersistentData();
         SubscribeEvents();
     }
 
@@ -92,7 +93,7 @@ public class GameManager : MonoBehaviour
         winGameUI.SetActive(true);
     }
 
-    private void LevelStart()
+    public void LevelStart()
     {
         Debug.Log("LevelStart was invoked");
         /*
@@ -116,6 +117,10 @@ public class GameManager : MonoBehaviour
         //TESTING...
         EnemySave trial = SerializationManager.Load(EnemySave.Instance.path) as EnemySave;
         Debug.Log($"{trial.enemies.Count}");
+        foreach (EnemyData enemy in trial.enemies)
+        {
+            Debug.Log($"{enemy.name}");
+        }
     }
 
     private void LevelUp()
@@ -155,26 +160,27 @@ public class GameManager : MonoBehaviour
         Debug.Log("OnNormalInstantiation is called");
     }
 
-    private static void UpdateSceneName()
+    public void UpdateSceneName()
     {
         Debug.Log($"UpdateSceneName was called");
         Scene currentScene = SceneManager.GetActiveScene();
+
+        //set current scene name
         currentSceneName = currentScene.name;
+
+        //push the scene name to the scene stack
+        sceneStack.Push(currentSceneName);
 
         return;
     }
 
     private void SubscribeEvents()
     {
-        SceneTransition.JustAfterSceneTransition += LevelStart;
-        SceneTransition.JustAfterSceneTransition += UpdateSceneName;
         OnLevelWin += LevelUp;
     }
 
     private void UnsubscribeEvents()
     {
-        SceneTransition.JustAfterSceneTransition -= LevelStart;
-        SceneTransition.JustAfterSceneTransition -= UpdateSceneName;
         OnLevelWin -= LevelUp;
     }
 }

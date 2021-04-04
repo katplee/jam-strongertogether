@@ -82,7 +82,7 @@ public class Enemy : Element
 
         foreach (EnemyData _enemyData in enemySave.enemies)
         {
-            if (enemyData.name == _enemyData.name)
+            if (name == _enemyData.name)
             {
                 enemyData = _enemyData;
 
@@ -129,6 +129,12 @@ public class Enemy : Element
         EnemySave.Instance.SaveEnemyData();
     }
 
+    private void ResaveLastEnemy()
+    {
+        EnemySave.Instance.ReplaceLastEnemyList();
+        EnemySave.Instance.SaveEnemyData();
+    }
+
     /*
      * RESAVE THIS ENEMY:
      * This method updates the enemy data that is included in the array.
@@ -156,21 +162,7 @@ public class Enemy : Element
 
         return (enemySave.lastEnemy.name == gameObject.name) ?
             true : false;
-    }
-
-    /*
-     * UPDATE DATA IF LAST ENEMY:
-     * This method updates the enemy data in this class if this enemy was the one in battle with the player.
-     * NOTE!!!!! This does also updates this enemy's data in the List<EnemyData> enemies list.
-     */
-    public void UpdateDataIfLastEnemy()
-    {        
-        EnemySave enemySave = EnemySave.Instance.LoadEnemyData();
-
-        enemyData = enemySave.lastEnemy;        
-
-        ResaveThisEnemy();
-    }
+    }    
 
     /*
      * RELOAD THIS ENEMY:
@@ -180,18 +172,21 @@ public class Enemy : Element
      */
     public void ReloadThisEnemy()
     {
-        InitializeDeserialization();
-
         if (IsLastEnemy())
         {
-            UpdateDataIfLastEnemy();
+            Debug.Log("Is last enemy!");
+            ResaveLastEnemy();
+            Debug.Log("Updated last enemy!");
         }
         
+        InitializeDeserialization();        
 
-        float life = enemyData.hp + enemyData.armor;
+        float life = hp + Armor;
         if (life == 0)
         {
             EnemySave.Instance.RemoveEnemyList(enemyData);
+            EnemySave.Instance.SaveEnemyData();
+            OnDestroy();
             Destroy(gameObject);
         }
     }
@@ -200,15 +195,12 @@ public class Enemy : Element
     {
         SerializationCommander.ResaveAllEnemies += ResaveThisEnemy;
         SerializationCommander.ReloadAllEnemies += ReloadThisEnemy;
-        SerializationCommander.UpdateLastEnemy += UpdateDataIfLastEnemy;
-
     }
 
     private void UnsubscribeEvents()
     {
         SerializationCommander.ResaveAllEnemies -= ResaveThisEnemy;
         SerializationCommander.ReloadAllEnemies -= ReloadThisEnemy;
-        SerializationCommander.UpdateLastEnemy -= UpdateDataIfLastEnemy;
     }
 
     private void TESTPrintEnemyData()

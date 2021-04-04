@@ -12,24 +12,13 @@ public class SerializationCommander : MonoBehaviour
     #region Enemy events
     public static Action ResaveAllEnemies;
     public static Action ReloadAllEnemies;
-    public static Action UpdateLastEnemy;
     #endregion
 
-    private static SerializationCommander instance;
-    public static SerializationCommander Instance
-    {
-        get
-        {
-            if (instance == null)
-            {
-                instance = FindObjectOfType<SerializationCommander>();
-            }
-            return instance;
-        }
-    }
+    public static SerializationCommander Instance { get; private set; }
 
     private void Awake()
     {
+        ConvertToPersistentData();
         SubscribeEvents();
     }
 
@@ -78,9 +67,6 @@ public class SerializationCommander : MonoBehaviour
          *        - set the information of the player
          */
 
-        //1.1 BASIC SCENE FROM THE ATTACK SCENE
-        SceneTransition.JustAfterSceneTransition += A_BFromASerialization;
-
         //2.1 ATTACK SCENE FROM THE BASIC SCENE
     }
 
@@ -91,11 +77,24 @@ public class SerializationCommander : MonoBehaviour
 
         //B_2.1 ATTACK SCENE TO THE BASIC SCENE
         SceneTransition.JustBeforeSceneTransition -= B_AToBSerialization;
-
-        //A_1.1 BASIC SCENE FROM THE ATTACK SCENE
-        SceneTransition.JustAfterSceneTransition += A_BFromASerialization;
-
     }
+
+    private void ConvertToPersistentData()
+    {
+        DontDestroyOnLoad(this);
+
+        //to avoid duplication of game objects when transitioning between scenes
+        //this is not a singleton pattern
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
 
     public void SerializeAll()
     {
@@ -124,10 +123,10 @@ public class SerializationCommander : MonoBehaviour
 
         //save the stats of the enemy
         EnemySave.Instance.SaveEnemyData();
-
     }
 
-    private void A_BFromASerialization()
+    //A_1.1 BASIC SCENE FROM THE ATTACK SCENE
+    public void A_BFromASerialization()
     {
         //this method will only be called during BASIC SCENE FROM THE ATTACK SCENE
         if (GameManager.currentSceneName == GameManager.attackScene) { return; }
@@ -138,11 +137,15 @@ public class SerializationCommander : MonoBehaviour
         ReloadAllEnemies?.Invoke();
 
         //reload the stats of the last enemy
-        UpdateLastEnemy?.Invoke();
 
         //bring player to the pre-fight position
         Player.Instance.InitializeDeserialization();
         Player.Instance.Reposition();
+    }
+
+    public void A_AFromBSerialization()
+    {
+
     }
 
 }

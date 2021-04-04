@@ -157,6 +157,23 @@ public class Player : Element
     public override void InitializeDeserialization()
     {
         playerData = PlayerSave.Instance.LoadPlayerData().player;
+
+        //BASIC STATS
+        hp = playerData.hp;
+        maxHP = playerData.maxHP;
+        DType = playerData.dType;
+        name = playerData.name;
+
+        //COMBAT STATS
+        Armor = playerData.armor;
+        maxArmor = playerData.maxArmor;
+        Weakness = playerData.weakness;
+        weaknessFactor = playerData.weaknessFactor;
+        fireAttack = playerData.fireAttack;
+        waterAttack = playerData.waterAttack;
+        windAttack = playerData.windAttack;
+        earthAttack = playerData.earthAttack;
+        baseAttack = playerData.baseAttack;
     }
 
     public void AssignPlayer()

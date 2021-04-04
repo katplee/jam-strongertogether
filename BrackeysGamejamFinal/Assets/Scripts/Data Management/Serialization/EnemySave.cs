@@ -39,6 +39,12 @@ public class EnemySave
         enemies[index] = enemy;
     }
 
+    public void ReplaceLastEnemyList()
+    {
+        int index = Find(lastEnemy);
+        enemies[index] = lastEnemy;
+    }
+
     private int Find(EnemyData specificEnemy)
     {
         foreach (EnemyData enemy in enemies)
