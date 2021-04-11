@@ -12,72 +12,71 @@ public enum BattleState { START, PLAYERTURN, ENEMYTURN, WON, LOST }
 
 public class FightManager : MonoBehaviour
 {
-    //use this to update dragon stats
+    private static FightManager instance;
+    public static FightManager Instance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                instance = new FightManager();
+            }
+            return instance;
+        }
+    }
+
     public static event Action OnFightEnd;
 
-    public BattleState state;
+    //GENERAL PARAMETERS
+    private BattleState state;
+    public float timeToWait = 2f; //remove this eventually
+    public GameObject Player { get; set; }
+    public GameObject Enemy { get; set; }
 
+    //ACTIONS PANEL UI
     public TMP_Text dialogueBox;
     public Button attackButton;
     public Button leaveButton;
     public Button switchButton;
-    [SerializeField] private string lastButtonClicked;
-    public string _attack = "attack";
-    public string _switch = "switch";
-    public string _leave = "leave";
+    
+    //DRAGON PANEL UI
     public GameObject dragonPanel;
-    public float timeToWait = 2f;
 
-    public GameObject playerPrefab;
-    public GameObject enemyPrefab;
+    //PLAYER CORNER UI
+    public BattleHUD PHUD { get; set; }
+    public Player PScript { get; set; }
+    
+    //ENEMY CORNER UI
+    private Enemy enemy; //to delete
+    public BattleHUD EHUD { get; set; }
+    public Enemy EScript { get; set; }
 
-    public GameObject playerGO;
-    public GameObject enemyGO;
-
-    public Transform playerCorner;
-    public Transform enemyCorner;
-
-    //fix this part. make it more general
-    public Element player;
-    private Enemy enemy;
 
     public Dragon currentDragon;
     public int currentDragonIndex = 0;
 
-    [SerializeField] private Sprite fireFusedSprite;
-    [SerializeField] private Sprite waterFusedSprite;
-    [SerializeField] private Sprite windFusedSprite;
-    [SerializeField] private Sprite earthFusedSprite;
-    [SerializeField] private Sprite baseFusedSprite;
-    [SerializeField] private Sprite playerSprite;
-
-
-    public BattleHUD playerHUD;
-    public BattleHUD enemyHUD;
 
     [Header("Transition Values")]
     public SceneTransition sceneTransition;
 
-    // Start is called before the first frame update
     void Start()
     {
-        state = BattleState.START;
-        StartCoroutine(SetupBattle());
+        //state = BattleState.START;
+        //OnStateChange?.Invoke(state);
+        //Debug.Log(Player);
     }
 
-    IEnumerator SetupBattle()
+    private void SetupBattle()
     {
-        playerGO = Instantiate(playerPrefab, playerCorner);
-        player = playerGO.AddComponent<Player>();
-        //SetPlayerStats();
-        playerHUD.UpdateHUD(player);
+        //playerGO = Instantiate(playerPrefab, playerCorner);
+        //player = playerGO.AddComponent<Player>();
+        //playerHUD.UpdateHUD(player);
 
-        enemyGO = Instantiate(enemyPrefab, enemyCorner);
-        enemy = enemyGO.GetComponent<Enemy>();
-        //SetEnemyStats();        
-        enemyHUD.UpdateHUD<Element>(enemy);
+        //enemyGO = Instantiate(enemyPrefab, enemyCorner);
+        //enemy = enemyGO.GetComponent<Enemy>();
+        //enemyHUD.UpdateHUD<Element>(enemy);
 
-        yield return new WaitForSeconds(timeToWait);
+        
 
         state = BattleState.PLAYERTURN;
         OnPlayerTurn();
@@ -85,7 +84,7 @@ public class FightManager : MonoBehaviour
 
     private void SetEnemySprite()
     {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
     }
 
     private void SetEnemyStats()
@@ -153,7 +152,7 @@ public class FightManager : MonoBehaviour
 
     private void UpdateSavedDragonStats()
     {
-        List<Object> saved = DragonsData.sortedDragonsStats[currentDragonIndex - 1];
+        ///List<Object> saved = DragonsData.sortedDragonsStats[currentDragonIndex - 1];
         ///         dragon type,
         ///         hp,
         ///         armor,
@@ -191,7 +190,7 @@ public class FightManager : MonoBehaviour
 
         yield return new WaitForSeconds(timeToWait);
 
-        bool playerIsDead = player.TakeDamage(enemy.DamageAmount());
+        //bool playerIsDead = player.TakeDamage(enemy.DamageAmount());
 
         //update the saved stats
         //UpdateSavedPlayerStats();
@@ -209,18 +208,18 @@ public class FightManager : MonoBehaviour
 
         yield return new WaitForSeconds(timeToWait);
 
-        CheckForEnemyWin(playerIsDead);
+        //CheckForEnemyWin(playerIsDead);
     }
 
-    private bool DealDamage()
+    private void DealDamage()
     {
         if (enemy.Type == ElementType.DRAGON)
         {
 
         }
 
-        bool playerIsDead = player.TakeDamage(enemy.DamageAmount());
-        return playerIsDead;
+        //bool playerIsDead = player.TakeDamage(enemy.DamageAmount());
+        //return playerIsDead;
     }
 
     public void OnAttackButton()
@@ -240,7 +239,7 @@ public class FightManager : MonoBehaviour
 
     IEnumerator DealAttack()
     {
-        bool enemyIsDead = enemy.TakeDamage(player.DamageAmount());
+        //bool enemyIsDead = enemy.TakeDamage(player.DamageAmount());
 
         //update the enemy stats
         //enemyHUD.UpdateHPArmor<Element>(enemy.hp, enemy.armor, enemy.maxHP, enemy.maxArmor);
@@ -250,7 +249,7 @@ public class FightManager : MonoBehaviour
 
         yield return new WaitForSeconds(timeToWait);
 
-        CheckForPlayerWin(enemyIsDead);
+        //CheckForPlayerWin(enemyIsDead);
     }
 
     public void OnSwitchButton()
@@ -291,16 +290,17 @@ public class FightManager : MonoBehaviour
         //player.maxArmor = dragonChosen.maxHP;
 
         //change the sprite to the chosen dragon
-        playerGO.GetComponent<SpriteRenderer>().sprite = ChoosePlayerSprite(dragonChosen.DType);
+        //playerGO.GetComponent<SpriteRenderer>().sprite = ChoosePlayerSprite(dragonChosen.DType);
 
         //update the HUD
-        playerHUD.UpdateHUD(player);
+        //playerHUD.UpdateHUD(player);
 
         StartCoroutine(SwitchDragon());
     }
 
-    private Sprite ChoosePlayerSprite(DragonType dType)
+    private void ChoosePlayerSprite(DragonType dType)
     {
+        /*
         switch (dType)
         {
             case DragonType.FIRE:
@@ -318,8 +318,9 @@ public class FightManager : MonoBehaviour
             case DragonType.BASE:
                 return baseFusedSprite;
         }
+        */
 
-        return playerSprite;
+        //return playerSprite;
     }
 
     IEnumerator SwitchDragon()

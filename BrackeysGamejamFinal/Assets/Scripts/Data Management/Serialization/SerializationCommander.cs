@@ -131,8 +131,6 @@ public class SerializationCommander : MonoBehaviour
         //this method will only be called during BASIC SCENE FROM THE ATTACK SCENE
         if (GameManager.currentSceneName == GameManager.attackScene) { return; }
 
-        Debug.Log("A_BFromASerialization was called");
-
         //load the enemies based on the enemies in the list of enemies
         ReloadAllEnemies?.Invoke();
 
