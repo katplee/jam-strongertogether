@@ -13,9 +13,9 @@ public class BattleStartState : StateMachineBehaviour
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        FM = FightManager.Instance;
-        PM = PrefabManager.Instance;
-        TM = TransformManager.Instance;
+        Debug.Log("Battle state start!");
+
+        SetManagers();
 
         //instantiate the player prefab at the player transform
         FM.Player = Instantiate(PM.PPlayer, TM.TPlayer);
@@ -53,4 +53,11 @@ public class BattleStartState : StateMachineBehaviour
     //{
     //    // Implement code that sets up animation IK (inverse kinematics)
     //}
+
+    private void SetManagers()
+    {
+        FM = FightManager.Instance;
+        PM = PrefabManager.Instance;
+        TM = TransformManager.Instance;
+    }
 }

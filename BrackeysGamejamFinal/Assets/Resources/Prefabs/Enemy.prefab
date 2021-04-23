@@ -9,10 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8373822766257155222}
-  - component: {fileID: 2190028659210859672}
   - component: {fileID: 6496601878568394879}
   m_Layer: 0
-  m_Name: Enemy_
+  m_Name: Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -32,31 +31,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2190028659210859672
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6283360413482932523}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5c441bd936ed5a74b985d5879c292d8d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _dType: 0
-  hp: 0
-  armor: 0
-  remainder: 0
-  damageAmount: 20
-  weakness: 0
-  weaknessFactor: 2
-  fireAttack: 0
-  waterAttack: 0
-  windAttack: 0
-  earthAttack: 0
-  maxHP: 100
-  maxArmor: 0
 --- !u!212 &6496601878568394879
 SpriteRenderer:
   m_ObjectHideFlags: 0

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,6 +18,30 @@ public class TransformManager : MonoBehaviour
         }
     }
 
-    public Transform TPlayer;
-    public Transform TEnemy;
+    public Transform TPlayer { get; private set; }
+    public Transform TEnemy { get; private set; }
+
+    private void SetTPlayer(Transform TPlayer)
+    {
+        this.TPlayer = TPlayer;
+    }
+
+    private void SetTEnemy(Transform TEnemy)
+    {
+        this.TEnemy = TEnemy;
+    }
+
+    public void DeclareThis(string tag, Transform transform)
+    {
+        switch (tag)
+        {
+            case "Player":
+                SetTPlayer(transform);
+                break;
+
+            case "Enemy":
+                SetTEnemy(transform);
+                break;
+        }
+    }
 }

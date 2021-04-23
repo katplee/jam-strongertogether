@@ -12,6 +12,8 @@ public enum BattleState { START, PLAYERTURN, ENEMYTURN, WON, LOST }
 
 public class FightManager : MonoBehaviour
 {
+    public static event Action OnFightEnd;
+
     private static FightManager instance;
     public static FightManager Instance
     {
@@ -25,13 +27,9 @@ public class FightManager : MonoBehaviour
         }
     }
 
-    public static event Action OnFightEnd;
-
     //GENERAL PARAMETERS
     private BattleState state;
     public float timeToWait = 2f; //remove this eventually
-    public GameObject Player { get; set; }
-    public GameObject Enemy { get; set; }
 
     //ACTIONS PANEL UI
     public TMP_Text dialogueBox;
@@ -43,11 +41,12 @@ public class FightManager : MonoBehaviour
     public GameObject dragonPanel;
 
     //PLAYER CORNER UI
+    public GameObject Player { get; set; }
     public BattleHUD PHUD { get; set; }
     public Player PScript { get; set; }
     
     //ENEMY CORNER UI
-    private Enemy enemy; //to delete
+    public GameObject Enemy { get; set; }
     public BattleHUD EHUD { get; set; }
     public Enemy EScript { get; set; }
 
@@ -213,10 +212,10 @@ public class FightManager : MonoBehaviour
 
     private void DealDamage()
     {
-        if (enemy.Type == ElementType.DRAGON)
-        {
+        //if (enemy.Type == ElementType.DRAGON)
+        //{
 
-        }
+        //}
 
         //bool playerIsDead = player.TakeDamage(enemy.DamageAmount());
         //return playerIsDead;

@@ -17,6 +17,15 @@ public class PrefabManager : MonoBehaviour
         }
     }
 
-    public GameObject PPlayer;
-    public GameObject PEnemy;
+    public GameObject PPlayer { get; private set; }
+    public GameObject PEnemy { get; private set; }
+
+    private void Start()
+    {
+        Debug.Log("All prefabs setting...");
+
+        PPlayer = Resources.Load("Prefabs/Player") as GameObject;
+        
+        PEnemy = Resources.Load("Prefabs/Enemy") as GameObject;
+    }
 }
