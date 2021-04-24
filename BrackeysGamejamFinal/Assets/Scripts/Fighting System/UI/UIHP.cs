@@ -2,7 +2,7 @@
 
 public class UIHP : UIObject
 {
-    private BattleHUD parent;
+    private UIBattleHUD parent;
 
     private Image image;
 
@@ -17,12 +17,17 @@ public class UIHP : UIObject
 
         if (transform.parent.TryGetComponent(out parent))
         {
-            parent.DeclareThis(Label, image);
+            parent.DeclareThis(Label, this);
         }
     }
 
     public void ChangeFillAmount(float hp, float maxHP)
     {
         image.fillAmount = hp / maxHP;
+    }
+
+    public void ChangeFillAmount(float normalHP)
+    {
+        image.fillAmount = normalHP;
     }
 }

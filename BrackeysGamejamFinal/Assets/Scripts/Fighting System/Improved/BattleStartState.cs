@@ -9,6 +9,7 @@ public class BattleStartState : StateMachineBehaviour
     private FightManager FM;
     private PrefabManager PM;
     private TransformManager TM;
+    private HUDManager HM;
 
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -18,16 +19,22 @@ public class BattleStartState : StateMachineBehaviour
         SetManagers();
 
         //instantiate the player prefab at the player transform
-        FM.Player = Instantiate(PM.PPlayer, TM.TPlayer);
-        //add the player script
-        FM.PScript = FM.Player.AddComponent<Player>();
+        FM.PGO = Instantiate(PM.PPlayer, TM.TPlayer);
+        //add the player script and add the data
+        FM.Player = FM.PGO.AddComponent<Player>();
+        FM.Player.InitializeDeserialization();
         //update the player's HUD
-        //FM.PHUD.UpdateHUD(FM.PScript);
+        FM.PHUD = HM.HPlayer;
+        FM.PHUD.UpdateHUD(FM.Player);
 
         //do the same for the enemy
-        FM.Enemy = Instantiate(PM.PEnemy, TM.TEnemy);
-        FM.EScript = FM.Enemy.AddComponent<Enemy>();
-        //FM.EHUD.UpdateHUD(FM.EScript);
+        FM.EGO = Instantiate(PM.PEnemy, TM.TEnemy);
+
+        FM.Enemy = FM.EGO.AddComponent<Enemy>();
+        FM.Enemy.ReloadAsLastEnemy();
+        
+        FM.EHUD = HM.HEnemy;
+        FM.EHUD.UpdateHUD(FM.Enemy);
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
@@ -59,5 +66,6 @@ public class BattleStartState : StateMachineBehaviour
         FM = FightManager.Instance;
         PM = PrefabManager.Instance;
         TM = TransformManager.Instance;
+        HM = HUDManager.Instance;
     }
 }

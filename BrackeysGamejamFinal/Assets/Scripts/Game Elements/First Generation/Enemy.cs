@@ -180,6 +180,21 @@ public class Enemy : Element
     }
 
     /*
+     * RELOAD AS LAST ENEMY:
+     * This method changes the name of the prefab to the name of the last enemy, so that the InitializeDeserialization method can be used.
+     * With the deserialization, the data of the last enemy is assigned to the variables of the enemy script attached to the clone of the prefab.
+     */
+
+    public void ReloadAsLastEnemy()
+    {
+        EnemySave enemySave = EnemySave.Instance.LoadEnemyData();
+
+        gameObject.name = enemySave.lastEnemy.name;        
+
+        InitializeDeserialization();            
+    }
+
+    /*
      * RELOAD THIS ENEMY:
      * This method downloads this enemy's corresponding data from the List<EnemyData> enemies list.
      * In the event that this enemy was defeated (hp + armor = 0), this method also destroys the game object which holds this script,
@@ -188,7 +203,7 @@ public class Enemy : Element
     public void ReloadThisEnemy()
     {
         if (!Alive())
-        { 
+        {
             OnDestroy();
             return;
         }

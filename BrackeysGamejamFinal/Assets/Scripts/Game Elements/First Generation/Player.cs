@@ -182,6 +182,11 @@ public class Player : Element
         PlayerSave.Instance.SavePlayerData();
     }
 
+    public void ChangeCode(string code)
+    {
+        this.code = code;
+    }
+
     private void Move()
     {
         if (GameManager.currentSceneName == GameManager.attackScene) { return; }
@@ -236,9 +241,7 @@ public class Player : Element
 
     public void Reposition()
     {
-        Vector3 savedPostion = playerData.position;
-
-        transform.position = savedPostion;
+        transform.position = playerData.position;
     }
 
     private void SubscribeEvents()

@@ -23,29 +23,21 @@ public enum WeaknessType
 
 public abstract class Element : MonoBehaviour
 {
+    public string code; //to delete
+
     #region Basic Stats
     protected float hp;
     protected float maxHP = 0f;
     protected int hpMargin = 3;
     protected float hpLevelFactor = 10f;
     public abstract ElementType Type { get; }
-    private DragonType dType;
-    public virtual DragonType DType
-    {
-        get => dType;
-        protected set => dType = value;
-    }
+    public virtual DragonType DType { get; protected set; }
     #endregion
 
     #region Combat Stats
-    private float armor; //dragons do not have armor because they become the armor
+    public virtual float Armor { get; protected set; } //dragons do not have armor because they become the armor
     protected float maxArmor = 0f;
     protected int armorFactor = 5;
-    public virtual float Armor
-    {
-        get => armor;
-        protected set => armor = value;
-    }
     public WeaknessType Weakness { get; protected set; }
     protected int weaknessFactor = 2; //the factor by which a dragon's attack will be multiplied
     protected int specialtyAttack = 15; //the value to which a dragon's specialty attack will be set to
@@ -68,7 +60,7 @@ public abstract class Element : MonoBehaviour
 
     protected virtual void Awake()
     {
-        SubscribeEvents();        
+        SubscribeEvents();
     }
 
     protected virtual void OnDestroy()
@@ -147,11 +139,11 @@ public abstract class Element : MonoBehaviour
     public virtual bool TakeDamage(float damageAmount, WeaknessType enemyWeakness = WeaknessType.NOTCONSIDERED, GameObject enemyGO = null)
     {
         //the armor gets damaged first!
-        if (armor != 0)
+        if (Armor != 0)
         {
             //subtract the damage from the armor
-            remainder = armor - damageAmount;
-            armor = Mathf.Max(armor - damageAmount, 0);
+            remainder = Armor - damageAmount;
+            Armor = Mathf.Max(Armor - damageAmount, 0);
 
             //if there is positive remainder (meaning there is still armor), return the element is not dead
             if (remainder > 0) { return false; }
@@ -221,5 +213,23 @@ public abstract class Element : MonoBehaviour
         float damageAmount = baseAttack + fireAttack + waterAttack + windAttack + earthAttack;
 
         return damageAmount;
+    }
+
+    public float NormalHP()
+    {
+        if (maxHP == 0) { return 0; }
+
+        float normalHP = hp / maxHP;
+        return normalHP;
+    }
+
+    public float NormalArmor()
+    {
+        Debug.Log($"{Armor}/{maxArmor}");
+
+        if(maxArmor == 0) { return 0; }
+
+        float normalArmor = Armor / maxArmor;
+        return normalArmor;
     }
 }

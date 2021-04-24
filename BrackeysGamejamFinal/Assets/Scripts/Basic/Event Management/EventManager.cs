@@ -40,9 +40,20 @@ public class EventManager : MonoBehaviour
     public void JustAfterSceneTransition()
     {
         GameManager.Instance.UpdateSceneName();
-        GameManager.Instance.LevelStart();
-        SerializationCommander.Instance.A_BFromASerialization();
-        SerializationCommander.Instance.A_AFromBSerialization();
+
+        if (GameManager.currentSceneName != GameManager.attackScene)
+        {
+            GameManager.Instance.LevelStart(); //will not be called at AttackScene
+            SerializationCommander.Instance.A_BFromASerialization();
+            return; 
+        }
+
+        if (GameManager.currentSceneName == GameManager.attackScene)
+        {
+            SerializationCommander.Instance.A_AFromBSerialization();
+            return;
+        }
+
     }
 
     private void SubscribeEvents()

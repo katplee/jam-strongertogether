@@ -143,6 +143,14 @@ public class SerializationCommander : MonoBehaviour
 
     public void A_AFromBSerialization()
     {
+        if (GameManager.currentSceneName != GameManager.attackScene) { return; }
+
+        //set the information of the enemy to fight
+        
+        //set the information of the player
+
+        //Player.Instance.InitializeDeserialization();
+        //Debug.Log(Player.Instance.transform.position);
 
     }
 

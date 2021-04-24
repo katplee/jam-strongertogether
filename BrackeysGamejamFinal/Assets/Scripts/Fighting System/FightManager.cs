@@ -41,14 +41,14 @@ public class FightManager : MonoBehaviour
     public GameObject dragonPanel;
 
     //PLAYER CORNER UI
-    public GameObject Player { get; set; }
-    public BattleHUD PHUD { get; set; }
-    public Player PScript { get; set; }
+    public Player Player { get; set; }
+    public GameObject PGO { get; set; }
+    public UIBattleHUD PHUD { get; set; }
     
     //ENEMY CORNER UI
-    public GameObject Enemy { get; set; }
-    public BattleHUD EHUD { get; set; }
-    public Enemy EScript { get; set; }
+    public Enemy Enemy { get; set; }
+    public GameObject EGO { get; set; }
+    public UIBattleHUD EHUD { get; set; }
 
 
     public Dragon currentDragon;

@@ -2,7 +2,7 @@
 
 public class UIArmor : UIObject
 {
-    private BattleHUD parent;
+    private UIBattleHUD parent;
 
     private Image image;
 
@@ -17,12 +17,17 @@ public class UIArmor : UIObject
 
         if (transform.parent.TryGetComponent(out parent))
         {
-            parent.DeclareThis(Label, image);
+            parent.DeclareThis(Label, this);
         }
     }
 
     public void ChangeFillAmount(float armor, float maxArmor)
     {
         image.fillAmount = armor / maxArmor;
+    }
+
+    public void ChangeFillAmount(float normalArmor)
+    {
+        image.fillAmount = normalArmor;
     }
 }

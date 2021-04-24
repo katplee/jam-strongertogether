@@ -111,7 +111,7 @@ public class GameManager : MonoBehaviour
 
         //TESTING...
         EnemySave trial = SerializationManager.Load(EnemySave.Instance.path) as EnemySave;
-        Debug.Log($"{trial.enemies.Count}");        
+        Debug.Log($"{trial.enemies.Count}");
     }
 
     private void LevelUp()
@@ -145,6 +145,7 @@ public class GameManager : MonoBehaviour
 
     private void OnNormalInstantiation()
     {
+        Debug.Log("OnNormalInstantiation");
         OnLevelNormalInstance?.Invoke();
     }
 

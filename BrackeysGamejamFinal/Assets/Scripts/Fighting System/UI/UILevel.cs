@@ -2,7 +2,7 @@
 
 public class UILevel : UIObject
 {
-    private BattleHUD parent;
+    private UIBattleHUD parent;
 
     private TMP_Text text;
 
@@ -17,7 +17,7 @@ public class UILevel : UIObject
 
         if(transform.parent.TryGetComponent(out parent))
         {
-            parent.DeclareThis(Label, text);
+            parent.DeclareThis(Label, this);
         }        
     }
 
