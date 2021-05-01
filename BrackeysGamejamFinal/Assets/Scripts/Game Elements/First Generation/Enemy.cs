@@ -188,9 +188,7 @@ public class Enemy : Element
     public void ReloadAsLastEnemy()
     {
         EnemySave enemySave = EnemySave.Instance.LoadEnemyData();
-
         gameObject.name = enemySave.lastEnemy.name;        
-
         InitializeDeserialization();            
     }
 

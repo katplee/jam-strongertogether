@@ -50,10 +50,10 @@ public class EventManager : MonoBehaviour
 
         if (GameManager.currentSceneName == GameManager.attackScene)
         {
-            SerializationCommander.Instance.A_AFromBSerialization();
-            return;
+            // currently empty
+            // SerializationCommander.Instance.A_AFromBSerialization();
+            // return;
         }
-
     }
 
     private void SubscribeEvents()

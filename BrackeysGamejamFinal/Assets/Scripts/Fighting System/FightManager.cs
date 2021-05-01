@@ -8,10 +8,11 @@ using UnityEngine.UI;
 using Object = System.Object;
 using UnityEngine.SceneManagement;
 
-public enum BattleState { START, PLAYERTURN, ENEMYTURN, WON, LOST }
+public enum BattleState { START, PLAYERTURN, ENEMYTURN, ATTACKING, WON, LOST }
 
 public class FightManager : MonoBehaviour
 {
+    public static event Action OnTurnEnd;
     public static event Action OnFightEnd;
 
     private static FightManager instance;
@@ -21,15 +22,16 @@ public class FightManager : MonoBehaviour
         {
             if (instance == null)
             {
-                instance = new FightManager();
+                instance = FindObjectOfType<FightManager>();
             }
             return instance;
         }
     }
 
     //GENERAL PARAMETERS
-    private BattleState state;
+    public BattleState State { get; private set; }
     public float timeToWait = 2f; //remove this eventually
+    private float test = 0;
 
     //ACTIONS PANEL UI
     public TMP_Text dialogueBox;
@@ -54,32 +56,84 @@ public class FightManager : MonoBehaviour
     public Dragon currentDragon;
     public int currentDragonIndex = 0;
 
-
     [Header("Transition Values")]
     public SceneTransition sceneTransition;
 
-    void Start()
+    public void ChangeStateName(BattleState state)
     {
-        //state = BattleState.START;
-        //OnStateChange?.Invoke(state);
-        //Debug.Log(Player);
+        State = state;
     }
 
-    private void SetupBattle()
+    //IT IS THE PLAYER'S TURN
+    public void OnAttackButton()
     {
-        //playerGO = Instantiate(playerPrefab, playerCorner);
-        //player = playerGO.AddComponent<Player>();
-        //playerHUD.UpdateHUD(player);
+        if (State != BattleState.ATTACKING) { return; }
 
-        //enemyGO = Instantiate(enemyPrefab, enemyCorner);
-        //enemy = enemyGO.GetComponent<Enemy>();
-        //enemyHUD.UpdateHUD<Element>(enemy);
+        DealAttack(Player, Enemy);
 
-        
-
-        state = BattleState.PLAYERTURN;
-        OnPlayerTurn();
+        OnTurnEnd?.Invoke();
     }
+
+    private void DealAttack(Element attacker, Element receiver)
+    {
+
+        if (attacker as Player)
+        {
+            //CASE: player is not fused with a dragon
+            if (attacker.Armor == 0)
+            {
+                receiver.TakeDamage(attacker.DamageAmount());
+            }
+        }
+
+
+
+
+        //bool enemyIsDead = enemy.TakeDamage(player.DamageAmount());
+
+
+
+        //update the enemy stats
+        //enemyHUD.UpdateHPArmor<Element>(enemy.hp, enemy.armor, enemy.maxHP, enemy.maxArmor);
+
+
+        //CheckForPlayerWin(enemyIsDead);
+    }
+
+    private void NonDragonAttackNonDragon()
+    {
+
+    }
+
+    private void NonDragonAttackDragon()
+    {
+
+    }
+
+    /*
+     * METHOD CALLER: dragon / player fused with a dragon | ELEMENT WHOSE TAKEDAMAGE METHOD IS CALLED: not a dragon
+     *      call format: TakeDamage(float damageAmount, DragonType callerDType)
+     */
+
+    private void DragonAttackNonDragon()
+    {
+
+    }
+
+    private void DragonAttackDragon()
+    {
+
+    }
+
+
+
+
+
+
+
+
+
+    /*
 
     private void SetEnemySprite()
     {
@@ -104,7 +158,7 @@ public class FightManager : MonoBehaviour
         enemy.waterAttack = saved.enemyWaterAttack;
         enemy.windAttack = saved.enemyWindAttack;
         enemy.earthAttack = saved.enemyEarthAttack;
-        */
+        
     }
 
     private void SetPlayerStats()
@@ -126,7 +180,7 @@ public class FightManager : MonoBehaviour
             player.windAttack = saved.playerWindAttack;
             player.earthAttack = saved.playerEarthAttack;
         }
-        */
+        
     }
 
     private void UpdateSavedPlayerStats()
@@ -146,7 +200,7 @@ public class FightManager : MonoBehaviour
         saved.playerWaterAttack = player.waterAttack;
         saved.playerWindAttack = player.windAttack;
         saved.playerEarthAttack = player.earthAttack;
-        */
+        
     }
 
     private void UpdateSavedDragonStats()
@@ -166,20 +220,10 @@ public class FightManager : MonoBehaviour
         //saved[1] = player.armor;        
     }
 
-    private void OnPlayerTurn()
-    {
-        dialogueBox.text = state.ToString();
-
-        //player can attack
-        attackButton.interactable = true;
-
-        //player can leave
-        leaveButton.interactable = true;
-    }
 
     IEnumerator OnEnemyTurn()
     {
-        dialogueBox.text = state.ToString();
+        //dialogueBox.text = state.ToString();
 
         //player cannot attack
         attackButton.interactable = false;
@@ -221,34 +265,10 @@ public class FightManager : MonoBehaviour
         //return playerIsDead;
     }
 
-    public void OnAttackButton()
-    {
-        if (state != BattleState.PLAYERTURN) { return; }
-
-        Debug.Log("Attack!");
-
-        StartCoroutine(DealAttack());
-    }
-
     public void TESTOnEnemyDefeated()
     {
         EnemySave.Instance.lastEnemy.hp = 0;
         EnemySave.Instance.lastEnemy.armor = 0;
-    }
-
-    IEnumerator DealAttack()
-    {
-        //bool enemyIsDead = enemy.TakeDamage(player.DamageAmount());
-
-        //update the enemy stats
-        //enemyHUD.UpdateHPArmor<Element>(enemy.hp, enemy.armor, enemy.maxHP, enemy.maxArmor);
-
-        //update the dialogue
-        dialogueBox.text = "PLAYERATTACKDONE";
-
-        yield return new WaitForSeconds(timeToWait);
-
-        //CheckForPlayerWin(enemyIsDead);
     }
 
     public void OnSwitchButton()
@@ -262,7 +282,7 @@ public class FightManager : MonoBehaviour
 
     public void OnSwitchDragon(GameObject dragonGO)
     {
-        if (state != BattleState.PLAYERTURN) { return; }
+        //if (state != BattleState.PLAYERTURN) { return; }
 
         dragonGO.TryGetComponent<PanelLabel>(out PanelLabel dragonLabel);
 
@@ -317,7 +337,7 @@ public class FightManager : MonoBehaviour
             case DragonType.BASE:
                 return baseFusedSprite;
         }
-        */
+        
 
         //return playerSprite;
     }
@@ -326,7 +346,7 @@ public class FightManager : MonoBehaviour
     {
         yield return new WaitForSeconds(timeToWait);
 
-        state = BattleState.ENEMYTURN;
+        //state = BattleState.ENEMYTURN;
         StartCoroutine(OnEnemyTurn());
     }
 
@@ -354,7 +374,7 @@ public class FightManager : MonoBehaviour
         else
         {
             state = BattleState.PLAYERTURN;
-            OnPlayerTurn();
+            //OnPlayerTurn();
         }
     }
 
@@ -390,4 +410,6 @@ public class FightManager : MonoBehaviour
             dragonList[1] = dragonList[10];
         }
     }
+
+    */
 }

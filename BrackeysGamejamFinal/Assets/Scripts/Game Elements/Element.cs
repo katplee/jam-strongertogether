@@ -225,8 +225,6 @@ public abstract class Element : MonoBehaviour
 
     public float NormalArmor()
     {
-        Debug.Log($"{Armor}/{maxArmor}");
-
         if(maxArmor == 0) { return 0; }
 
         float normalArmor = Armor / maxArmor;
