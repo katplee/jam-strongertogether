@@ -13,7 +13,7 @@ public enum BattleState { START, PLAYERTURN, ENEMYTURN, ATTACKING, WON, LOST }
 public class FightManager : MonoBehaviour
 {
     public static event Action OnTurnEnd;
-    public static event Action OnFightEnd;
+    public static event Action<BattleState> OnFightEnd;
 
     private static FightManager instance;
     public static FightManager Instance
@@ -38,20 +38,21 @@ public class FightManager : MonoBehaviour
     public Button attackButton;
     public Button leaveButton;
     public Button switchButton;
-    
+
     //DRAGON PANEL UI
     public GameObject dragonPanel;
 
-    //PLAYER CORNER UI
+    #region PLAYER CORNER UI
     public Player Player { get; set; }
     public GameObject PGO { get; set; }
     public UIBattleHUD PHUD { get; set; }
-    
-    //ENEMY CORNER UI
+    #endregion
+
+    #region ENEMY CORNER UI
     public Enemy Enemy { get; set; }
     public GameObject EGO { get; set; }
     public UIBattleHUD EHUD { get; set; }
-
+    #endregion
 
     public Dragon currentDragon;
     public int currentDragonIndex = 0;
@@ -64,12 +65,12 @@ public class FightManager : MonoBehaviour
         State = state;
     }
 
-    //IT IS THE PLAYER'S TURN
-    public void OnAttackButton()
+    public void OnAttack(bool isPlayerTurn)
     {
         if (State != BattleState.ATTACKING) { return; }
 
-        DealAttack(Player, Enemy);
+        if (isPlayerTurn) { DealAttack(Player, Enemy); }
+        else { DealAttack(Enemy, Player); }
 
         OnTurnEnd?.Invoke();
     }
@@ -79,41 +80,32 @@ public class FightManager : MonoBehaviour
 
         if (attacker as Player)
         {
-            //CASE: player is not fused with a dragon
-            if (attacker.Armor == 0)
-            {
-                receiver.TakeDamage(attacker.DamageAmount());
-            }
+            // METHOD CALLER: not a dragon | ELEMENT WHOSE TAKEDAMAGE METHOD IS CALLED: not a dragon
+            // call format: TakeDamage(float damageAmount)
+            if (attacker.Armor == 0) { NonDragonAttackNonDragon(attacker, receiver); }
         }
 
-
-
-
-        //bool enemyIsDead = enemy.TakeDamage(player.DamageAmount());
-
-
-
-        //update the enemy stats
-        //enemyHUD.UpdateHPArmor<Element>(enemy.hp, enemy.armor, enemy.maxHP, enemy.maxArmor);
-
-
-        //CheckForPlayerWin(enemyIsDead);
+        else if (attacker as Enemy)
+        {
+            // METHOD CALLER: not a dragon | ELEMENT WHOSE TAKEDAMAGE METHOD IS CALLED: not a dragon
+            // call format: TakeDamage(float damageAmount)
+            if (!(attacker as Dragon)) { NonDragonAttackNonDragon(attacker, receiver); }
+        }
     }
 
-    private void NonDragonAttackNonDragon()
+    private void NonDragonAttackNonDragon(Element attacker, Element receiver)
     {
+        //inflict damage upon the enemy
+        bool end = receiver.TakeDamage(attacker.DamageAmount());
 
+        //check if there's a winner
+        Check(end, receiver);
     }
 
     private void NonDragonAttackDragon()
     {
 
     }
-
-    /*
-     * METHOD CALLER: dragon / player fused with a dragon | ELEMENT WHOSE TAKEDAMAGE METHOD IS CALLED: not a dragon
-     *      call format: TakeDamage(float damageAmount, DragonType callerDType)
-     */
 
     private void DragonAttackNonDragon()
     {
@@ -125,6 +117,20 @@ public class FightManager : MonoBehaviour
 
     }
 
+    private void Check(bool end, Element receiver)
+    {
+        if (end == false) { return; }
+
+        if (receiver as Player) { State = BattleState.LOST; }
+        else if (receiver as Enemy) { State = BattleState.WON; }
+
+        OnFightEnd?.Invoke(State);
+    }
+
+    public void OnFuse()
+    {
+
+    }
 
 
 
@@ -350,33 +356,7 @@ public class FightManager : MonoBehaviour
         StartCoroutine(OnEnemyTurn());
     }
 
-    private void CheckForPlayerWin(bool enemyIsDead)
-    {
-        if (enemyIsDead)
-        {
-            state = BattleState.WON;
-            OnEndFight();
-        }
-        else
-        {
-            state = BattleState.ENEMYTURN;
-            StartCoroutine(OnEnemyTurn());
-        }
-    }
-
-    private void CheckForEnemyWin(bool playerIsDead)
-    {
-        if (playerIsDead)
-        {
-            state = BattleState.LOST;
-            OnEndFight();
-        }
-        else
-        {
-            state = BattleState.PLAYERTURN;
-            //OnPlayerTurn();
-        }
-    }
+    
 
     public void OnEndFight()
     {

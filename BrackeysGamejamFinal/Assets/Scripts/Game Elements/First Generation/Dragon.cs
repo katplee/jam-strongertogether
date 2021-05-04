@@ -192,13 +192,13 @@ public class Dragon : Element
     private void SubscribeEvents()
     {
         GameManager.OnLevelWin += OnLevelChange;
-        FightManager.OnFightEnd += OnFightEnd;
+        //FightManager.OnFightEnd += OnFightEnd;
     }
 
     private void UnsubscribeEvents()
     {
         GameManager.OnLevelWin -= OnLevelChange;
-        FightManager.OnFightEnd -= OnFightEnd;
+        //FightManager.OnFightEnd -= OnFightEnd;
     }
 }
 

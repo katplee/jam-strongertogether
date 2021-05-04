@@ -72,7 +72,7 @@ public class DragonsData : MonoBehaviour
     {
         //SceneTransition.JustAfterSceneTransition += LogDragonStats;
         NewDragonSaved += SortLogDragonStats;
-        FightManager.OnFightEnd += RefreshLogs;
+        //FightManager.OnFightEnd += RefreshLogs;
 
         DontDestroyOnLoad(this);
 
@@ -89,7 +89,7 @@ public class DragonsData : MonoBehaviour
     private void OnDestroy()
     {
         NewDragonSaved -= SortLogDragonStats;
-        FightManager.OnFightEnd -= RefreshLogs;
+        //FightManager.OnFightEnd -= RefreshLogs;
     }
 
     public void SaveDragon(Dragon dragon)

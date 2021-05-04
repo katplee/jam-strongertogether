@@ -8,7 +8,6 @@ public class PlayerTurnState : StateMachineBehaviour
     public BattleState State { get { return BattleState.PLAYERTURN; } }
 
     private ActionManager AM;
-    private FightManager FM;
 
     private Animator animator;
 
@@ -17,7 +16,6 @@ public class PlayerTurnState : StateMachineBehaviour
     {
         Debug.Log("Player turn state start!");
         FightManager.Instance.ChangeStateName(State);
-        animator.SetBool("isPlayerTurn", true);
         
         this.animator = animator;
 
@@ -53,17 +51,14 @@ public class PlayerTurnState : StateMachineBehaviour
     private void SetManagers()
     {
         AM = ActionManager.Instance;
-        FM = FightManager.Instance;
     }
 
     private void SetButtonAccess()
     {
         //player can attack
-        AM.AAttack.SetInteractability(true);
         //player can leave
-        AM.ALeave.SetInteractability(true);
         //player can fuse with a dragon
-        AM.ASwitch.SetInteractability(true);
+        AM.SetAllInteractability(true);
     }
 
     private void FireButtonResponse(string buttonName)
@@ -74,7 +69,7 @@ public class PlayerTurnState : StateMachineBehaviour
                 animator.SetBool("isAttacking", true);
                 break;
 
-            case "Switch":
+            case "Fuse":
                 //do something
                 //animator.SetBool("isPlayerTurn", false);
                 break;

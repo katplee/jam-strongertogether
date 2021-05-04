@@ -1,44 +1,22 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BattleStartState : StateMachineBehaviour
+public class PlayerWonState : StateMachineBehaviour
 {
-    public BattleState State { get { return BattleState.START; } }
+    public BattleState State { get { return BattleState.WON; } }
 
-    private FightManager FM;
-    private PrefabManager PM;
-    private TransformManager TM;
-    private HUDManager HM;
+    private ActionManager AM;
 
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        Debug.Log("Battle state start!");
+        Debug.Log("Player won state start!");
         FightManager.Instance.ChangeStateName(State);
 
         SetManagers();
-
-        //instantiate the player prefab at the player transform
-        FM.PGO = Instantiate(PM.PPlayer, TM.TPlayer);
-        //add the player script and add the data
-        FM.Player = FM.PGO.AddComponent<Player>();
-        FM.Player.InitializeDeserialization();
-        //update the player's HUD
-        FM.PHUD = HM.HPlayer;
-        FM.PHUD.UpdateHUD(FM.Player);
-
-        //do the same for the enemy
-        FM.EGO = Instantiate(PM.PEnemy, TM.TEnemy);
-
-        FM.Enemy = FM.EGO.AddComponent<Enemy>();
-        FM.Enemy.ReloadAsLastEnemy();
-        
-        FM.EHUD = HM.HEnemy;
-        FM.EHUD.UpdateHUD(FM.Enemy);
-
-        MoveToPlayerTurn(animator);
+        SetButtonAccess();
+        DisplayFightOverUI();
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
@@ -50,7 +28,7 @@ public class BattleStartState : StateMachineBehaviour
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-
+        
     }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()
@@ -67,15 +45,26 @@ public class BattleStartState : StateMachineBehaviour
 
     private void SetManagers()
     {
-        FM = FightManager.Instance;
-        PM = PrefabManager.Instance;
-        TM = TransformManager.Instance;
-        HM = HUDManager.Instance;
+        AM = ActionManager.Instance;
     }
 
-    private void MoveToPlayerTurn(Animator animator)
+    private void SetButtonAccess()
     {
-        animator.SetBool("hasStarted", true);
-        animator.SetBool("isPlayerTurn", true);
+        //player cannot attack
+        //player can leave
+        //player cannot fuse with a dragon
+        AM.SetAllInteractability(false);
+
+        //for testing purposes.. delete this after the fight over UI has been improved.
+        AM.ALeave.SetInteractability(true);
     }
+
+    private void DisplayFightOverUI()
+    {
+        //the fight ends here
+        //UI should contain all buttons the player can choose, including the leave button
+        //maybe show some statistics of the player? win rate, etc.
+        //show the inventory and provide actions the player can do with his/her dragons
+    }
+
 }

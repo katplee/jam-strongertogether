@@ -22,7 +22,7 @@ public class ActionManager : MonoBehaviour
 
     public UIButton AAttack { get; private set; }
     public UIButton ALeave { get; private set; }
-    public UIButton ASwitch { get; private set; }
+    public UIButton AFuse { get; private set; }
 
     private void SetAAttack(UIButton button)
     {
@@ -34,9 +34,16 @@ public class ActionManager : MonoBehaviour
         this.ALeave = button;
     }
 
-    private void SetASwitch(UIButton button)
+    private void SetAFuse(UIButton button)
     {
-        this.ASwitch = button;
+        this.AFuse = button;
+    }
+
+    public void SetAllInteractability(bool value)
+    {
+        AAttack.SetInteractability(value);
+        ALeave.SetInteractability(value);
+        AFuse.SetInteractability(value);
     }
 
     public void DeclareThis(string name, UIButton button)
@@ -51,8 +58,8 @@ public class ActionManager : MonoBehaviour
                 SetALeave(button);
                 break;
 
-            case "Switch":
-                SetASwitch(button);
+            case "Fuse":
+                SetAFuse(button);
                 break;
         }
     }
