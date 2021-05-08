@@ -14,6 +14,10 @@ public class SerializationCommander : MonoBehaviour
     public static Action ReloadAllEnemies;
     #endregion
 
+    #region Stone events
+    public static Action ReloadAllStones;
+    #endregion
+
     public static SerializationCommander Instance { get; private set; }
 
     private void Awake()
@@ -133,6 +137,7 @@ public class SerializationCommander : MonoBehaviour
 
         //load the enemies based on the enemies in the list of enemies
         ReloadAllEnemies?.Invoke();
+        ReloadAllStones?.Invoke();
 
         //reload the stats of the last enemy
 

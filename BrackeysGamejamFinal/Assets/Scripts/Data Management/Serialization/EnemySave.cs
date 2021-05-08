@@ -49,18 +49,6 @@ public class EnemySave
     {
         foreach (EnemyData enemy in enemies)
         {
-            if (enemy == null) 
-            {
-                Debug.Log("enemy is null.");    
-                continue; 
-            }
-
-            if (specificEnemy == null)
-            {
-                Debug.Log("specificEnemy is null.");
-                continue;
-            }
-
             if (enemy.name == specificEnemy.name)
             {
                 return enemies.IndexOf(enemy);

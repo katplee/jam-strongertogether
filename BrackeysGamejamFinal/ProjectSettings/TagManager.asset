@@ -8,8 +8,8 @@ TagManager:
   - BaseDragon
   - FireDragon
   - WaterDragon
-  - WindDragon
   - EarthDragon
+  - AirDragon
   layers:
   - Default
   - TransparentFX

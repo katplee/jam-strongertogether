@@ -70,7 +70,7 @@ public class Inventory : MonoBehaviour
                 hasEarthD = true;
                 earthDragon = _dragon;
                 break;
-            case DragonType.WIND:
+            case DragonType.AIR:
                 _dragon = aDragoPrefab.GetComponent<Dragon>();
                 hasAirD = true;
                 airDragon = _dragon;
@@ -96,27 +96,28 @@ public class Inventory : MonoBehaviour
         GameObject.FindGameObjectWithTag("Player").GetComponent<TameMenu>().UpdateMenu();
     }
 
+    //OKAY!
     public void AddStone(PStone stone)
     {
         switch (stone.type)
         {
-            case PStone.StoneType.BASE:
+            case StoneType.BASE:
                 baseStones++;
                 break;
 
-            case PStone.StoneType.FIRE:
+            case StoneType.FIRE:
                 fireStones++;
                 break;
 
-            case PStone.StoneType.WATER:
+            case StoneType.WATER:
                 waterStones++;
                 break;
 
-            case PStone.StoneType.WIND:
+            case StoneType.AIR:
                 airStones++;
                 break;
 
-            case PStone.StoneType.EARTH:
+            case StoneType.EARTH:
                 earthStones++;
                 break;
         }
@@ -138,23 +139,24 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    public void UseStone(PStone.StoneType type, int amt)
+    //OKAY!
+    public void UseStone(StoneType type, int amt)
     {
         switch (type)
         {
-            case PStone.StoneType.BASE:
+            case StoneType.BASE:
                 baseStones++;
                 break;
-            case PStone.StoneType.FIRE:
+            case StoneType.FIRE:
                 fireStones++;
                 break;
-            case PStone.StoneType.WATER:
+            case StoneType.WATER:
                 waterStones++;
                 break;
-            case PStone.StoneType.WIND:
+            case StoneType.AIR:
                 airStones++;
                 break;
-            case PStone.StoneType.EARTH:
+            case StoneType.EARTH:
                 earthStones++;
                 break;
         }

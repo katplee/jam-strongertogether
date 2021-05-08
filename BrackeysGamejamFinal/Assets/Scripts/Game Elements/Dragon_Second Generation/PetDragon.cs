@@ -39,7 +39,7 @@ public class PetDragon : Dragon
             case DragonType.EARTH:
                 anim.SetInteger("DType", 3);
                 break;
-            case DragonType.WIND:
+            case DragonType.AIR:
                 anim.SetInteger("DType", 4);
                 break;
         }

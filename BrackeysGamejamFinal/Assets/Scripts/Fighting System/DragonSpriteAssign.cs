@@ -38,7 +38,7 @@ public class DragonSpriteAssign : MonoBehaviour
             case DragonType.WATER:
                 return waterDragonSprite;
 
-            case DragonType.WIND:
+            case DragonType.AIR:
                 return windDragonSprite;
 
             case DragonType.EARTH:

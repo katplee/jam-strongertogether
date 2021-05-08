@@ -19,7 +19,7 @@ using Random = UnityEngine.Random;
 [System.Serializable]
 public enum DragonType
 {
-    FIRE, WATER, WIND, EARTH, BASE, NOTDRAGON
+    FIRE, WATER, AIR, EARTH, BASE, NOTDRAGON
 }
 
 public class Dragon : Element
@@ -33,7 +33,7 @@ public class Dragon : Element
     private const string baseDragonTag = "BaseDragon";
     private const string fireDragonTag = "FireDragon";
     private const string waterDragonTag = "WaterDragon";
-    private const string windDragonTag = "WindDragon";
+    private const string airDragonTag = "AirDragon";
     private const string earthDragonTag = "EarthDragon";
 
     protected float dragonImmunity = 0.5f;
@@ -117,8 +117,8 @@ public class Dragon : Element
                 Weakness = WeaknessType.FIRE;
                 break;
 
-            case windDragonTag:
-                DType = DragonType.WIND;
+            case airDragonTag:
+                DType = DragonType.AIR;
                 Weakness = WeaknessType.EARTH;
                 break;
 
@@ -136,7 +136,7 @@ public class Dragon : Element
     {
         fireAttack = (DType == DragonType.FIRE) ? specialtyAttack : 0;
         waterAttack = (DType == DragonType.WATER) ? specialtyAttack : 0;
-        windAttack = (DType == DragonType.WIND) ? specialtyAttack : 0;
+        windAttack = (DType == DragonType.AIR) ? specialtyAttack : 0;
         earthAttack = (DType == DragonType.EARTH) ? specialtyAttack : 0;
         baseAttack = (DType == DragonType.BASE) ? specialtyAttack : 0;
     }

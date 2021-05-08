@@ -33,6 +33,26 @@ public class TamingReqs : MonoBehaviour
         }               
     }
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        string tag = collision.gameObject.tag;
+
+        InventorySave inventorySave = InventorySave.Instance.LoadInventoryData();
+        InventoryData inventory = inventorySave.inventory;
+
+        int type = (int)dragon.DType;
+        StoneType element = (StoneType)type;
+
+        if (tag == "Player")
+        {
+            if (inventory.CountCollectedStones(element) >= pStones)
+            {
+                Destroy(gameObject);
+            }
+        }
+    }
+
+    /*
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
@@ -66,7 +86,7 @@ public class TamingReqs : MonoBehaviour
                     }
                     break;
 
-                case DragonType.WIND:
+                case DragonType.AIR:
                     if (Inventory.Instance.airStones >= pStones)
                     {
                         Inventory.Instance.airStones -= pStones; //kat added this!
@@ -106,4 +126,5 @@ public class TamingReqs : MonoBehaviour
         //destroy the dragon in the scene
         Destroy(gameObject);
     }
+    */
 }

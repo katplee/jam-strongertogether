@@ -117,7 +117,9 @@ public class Enemy : Element
      */
     public bool Alive()
     {
-        List<EnemyData> enemies = EnemySave.Instance.enemies;
+        EnemySave enemySave = EnemySave.Instance.LoadEnemyData();
+        List<EnemyData> enemies = enemySave.enemies;
+        //List<EnemyData> enemies = EnemySave.Instance.enemies;
 
         foreach (EnemyData enemy in enemies)
         {
@@ -198,7 +200,7 @@ public class Enemy : Element
      * In the event that this enemy was defeated (hp + armor = 0), this method also destroys the game object which holds this script,
      *    and the data from the List<EnemyData> enemies list.
      */
-    public void ReloadThisEnemy()
+    private void ReloadThisEnemy()
     {
         if (!Alive())
         {

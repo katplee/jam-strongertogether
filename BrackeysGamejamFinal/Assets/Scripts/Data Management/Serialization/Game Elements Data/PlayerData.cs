@@ -24,7 +24,7 @@ public class PlayerData
     public int windAttack;
     public int earthAttack;
     public int baseAttack;
-
+    
     //DRAGON STATS
     public int dragons;
 }

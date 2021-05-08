@@ -132,9 +132,18 @@ public class FightManager : MonoBehaviour
 
     }
 
+    public void TESTOnEnemyDefeated()
+    {
+        EnemySave.Instance.lastEnemy.hp = 0;
+        EnemySave.Instance.lastEnemy.armor = 0;
+    }
 
-
-
+    public void OnLeaveButton()
+    {
+        //RestartDragonStats();
+        //OnFightEnd?.Invoke();
+        sceneTransition.FadeTo(LevelData.mapScene);
+    }
 
 
 
