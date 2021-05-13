@@ -5712,7 +5712,7 @@ PrefabInstance:
     - target: {fileID: 2229290202662044384, guid: ba98b40d3c574184ab89ff926fa767d8,
         type: 3}
       propertyPath: pStones
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2229290202662044384, guid: ba98b40d3c574184ab89ff926fa767d8,
         type: 3}

@@ -16,46 +16,53 @@ public class InventoryData
     public int dragons;
 
     //QUANTITY PER TYPE
-    public INVDragon baseDragon;
-    public INVDragon fireDragon;
-    public INVDragon waterDragon;
-    public INVDragon earthDragon;
-    public INVDragon airDragon;
+    public DragonData baseDragons = new DragonData();
+    public DragonData fireDragons = new DragonData();
+    public DragonData waterDragons = new DragonData();
+    public DragonData earthDragons = new DragonData();
+    public DragonData airDragons = new DragonData();
 
-    public void AddDragon(DragonType type)
+    #region Dragons
+
+    public void AddDragon(Dragon dragon)
+    {
+        DragonData data = ChooseDragonType(dragon.DType);
+
+        data.tamed = true;
+        data.quantity++;
+        data.list.Add(dragon);
+    }
+
+    public DragonData ChooseDragonType(DragonType type)
     {
         switch (type)
         {
             case DragonType.FIRE:
-                fireDragon.tamed = true;
-                fireDragon.quantity++;
-                break;
+                return fireDragons;
 
             case DragonType.WATER:
-                waterDragon.tamed = true;
-                waterDragon.quantity++;
-                break;
+                return waterDragons;
 
             case DragonType.AIR:
-                airDragon.tamed = true;
-                airDragon.quantity++;
-                break;
+                return airDragons;
 
             case DragonType.EARTH:
-                earthDragon.tamed = true;
-                earthDragon.quantity++;
-                break;
+                return earthDragons;
 
             case DragonType.BASE:
-                baseDragon.tamed = true;
-                baseDragon.quantity++;
-                break;
+                return baseDragons;
 
-            default:
-                break;
+            case DragonType.NOTDRAGON:
+                return null;
         }
+
+        return null;
     }
 
+    #endregion
+
+    #region Stones
+    
     public List<StoneData> ChooseStoneList(StoneType type)
     {
         switch (type)
@@ -76,7 +83,7 @@ public class InventoryData
                 return baseStones;
         }
 
-        return baseStones;
+        return null;
     }
 
     public int CountCollectedStones(StoneType type)
@@ -100,15 +107,22 @@ public class InventoryData
 
     public void UseStone(StoneType type, int quantity)
     {
-        
-    }
-}
+        List<StoneData> list = ChooseStoneList(type);
+        int i = 0;
+        int count = 0;
 
-[System.Serializable]
-public class INVDragon
-{
-    public bool tamed;
-    public int quantity;
+        while(count < quantity)
+        {
+            if (list[i].collected == true) 
+            {
+                list.Remove(list[i]);
+                count++;
+            }
+            else { i++; }
+        }
+    }
+
+    #endregion
 }
 
 [System.Serializable]

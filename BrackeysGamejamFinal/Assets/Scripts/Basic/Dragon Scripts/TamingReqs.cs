@@ -47,8 +47,33 @@ public class TamingReqs : MonoBehaviour
         {
             if (inventory.CountCollectedStones(element) >= pStones)
             {
+                //use the required pStones and save inventory data
+                InventorySave.Instance.UseStone(element, pStones);
+                InventorySave.Instance.SaveInventoryData();
+
+                //add the tamed dragon to the inventory and save inventory data
+                Debug.Log($"{dragon.DType}");
+                InventorySave.Instance.AddDragon(dragon);
+                InventorySave.Instance.SaveInventoryData();
+
+                //destroy the dragon's game object
                 Destroy(gameObject);
             }
+            else
+            {
+                pStonesReq.SetActive(true);
+            }
+        }
+        
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        string tag = collision.gameObject.tag;
+
+        if (tag == "Player")
+        {
+            pStonesReq.SetActive(false);
         }
     }
 

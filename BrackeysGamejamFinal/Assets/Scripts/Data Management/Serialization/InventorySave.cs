@@ -22,21 +22,27 @@ public class InventorySave
 
     public InventoryData inventory = new InventoryData();
 
-    public void AddDragon(DragonType type)
+    #region Dragons
+    
+    public void AddDragon(Dragon dragon)
     {
         //increment the total number of dragons by 1
         inventory.dragons++;
 
         //update the dragons inventory
-        inventory.AddDragon(type);
+        inventory.AddDragon(dragon);
     }
+
+    #endregion
+
+    #region Stones
 
     public int CountCollectedStones(StoneType type)
     {
         return inventory.CountCollectedStones(type);
     }
 
-    private int Find(StoneData specificStone)
+    private int FindStone(StoneData specificStone)
     {
         List<StoneData>list = inventory.ChooseStoneList(specificStone.type);
 
@@ -50,6 +56,25 @@ public class InventorySave
 
         throw new NotFoundInListException();
     }
+
+    public void UseStone(StoneType type, int quantity)
+    {
+        inventory.UseStone(type, quantity);
+    }
+
+    public void PopulateStoneList(StoneType type, StoneData stone)
+    {
+        inventory.PopulateStoneList(type, stone);
+    }
+
+    public void ReplaceStoneList(StoneData stone)
+    {
+        int index = FindStone(stone);
+        List<StoneData> list = inventory.ChooseStoneList(stone.type);
+        list[index] = stone;
+    }
+
+    #endregion
 
     public InventorySave LoadInventoryData()
     {
@@ -71,23 +96,6 @@ public class InventorySave
         InventorySave inventory = SerializationManager.Load(path) as InventorySave;
 
         return inventory;
-    }
-
-    public void UseStone(StoneType type, int quantity)
-    {
-        inventory.UseStone(type, quantity);
-    }
-
-    public void PopulateStoneList(StoneType type, StoneData stone)
-    {
-        inventory.PopulateStoneList(type, stone);
-    }
-
-    public void ReplaceStoneList(StoneData stone)
-    {
-        int index = Find(stone);
-        List<StoneData> list = inventory.ChooseStoneList(stone.type);
-        list[index] = stone;
     }
 
     public void SaveInventoryData()

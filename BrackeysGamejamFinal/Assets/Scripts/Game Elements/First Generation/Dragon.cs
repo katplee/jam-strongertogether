@@ -24,6 +24,8 @@ public enum DragonType
 
 public class Dragon : Element
 {
+    DragonData dragonData;
+
     public TamingReqs tamingReqs;
     public override ElementType Type
     {
@@ -55,14 +57,14 @@ public class Dragon : Element
 
     protected override void Awake()
     {
-        SubscribeEvents();
         base.Awake();
+        SubscribeEvents();
     }
 
     protected override void OnDestroy()
     {
-        UnsubscribeEvents();
         base.OnDestroy();
+        UnsubscribeEvents();
     }
 
     protected override void InitializeAttributes()
@@ -78,6 +80,15 @@ public class Dragon : Element
         //dragon's maxXP is set to 0 at first
         maxXP = 0;
         xp = maxXP;
+    }
+
+    protected override void InitializeAttacks()
+    {
+        fireAttack = (DType == DragonType.FIRE) ? specialtyAttack : 0;
+        waterAttack = (DType == DragonType.WATER) ? specialtyAttack : 0;
+        windAttack = (DType == DragonType.AIR) ? specialtyAttack : 0;
+        earthAttack = (DType == DragonType.EARTH) ? specialtyAttack : 0;
+        baseAttack = (DType == DragonType.BASE) ? specialtyAttack : 0;
     }
 
     public override void InitialSerialization()
@@ -130,15 +141,6 @@ public class Dragon : Element
             default:
                 break;
         }
-    }
-
-    protected override void InitializeAttacks()
-    {
-        fireAttack = (DType == DragonType.FIRE) ? specialtyAttack : 0;
-        waterAttack = (DType == DragonType.WATER) ? specialtyAttack : 0;
-        windAttack = (DType == DragonType.AIR) ? specialtyAttack : 0;
-        earthAttack = (DType == DragonType.EARTH) ? specialtyAttack : 0;
-        baseAttack = (DType == DragonType.BASE) ? specialtyAttack : 0;
     }
 
     /*
