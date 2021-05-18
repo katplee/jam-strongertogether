@@ -51,11 +51,13 @@ public class TamingReqs : MonoBehaviour
                 InventorySave.Instance.UseStone(element, pStones);
                 InventorySave.Instance.SaveInventoryData();
 
-                //add the tamed dragon to the inventory and save inventory data
-                Debug.Log($"{dragon.DType}");
-                InventorySave.Instance.AddDragon(dragon);
-                InventorySave.Instance.SaveInventoryData();
+                //increase dragon count
+                InventorySave.Instance.AddDragon();
 
+                //change dragon data property isTame to true
+                dragon.TameDragon();
+                dragon.ResaveThisDragon();
+                
                 //destroy the dragon's game object
                 Destroy(gameObject);
             }

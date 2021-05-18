@@ -914,6 +914,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2342021335866471125, guid: 305264a09842eb143b9d26cbe5a24591,
         type: 3}
+      propertyPath: type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2342021335866471125, guid: 305264a09842eb143b9d26cbe5a24591,
+        type: 3}
       propertyPath: stoneData.collected
       value: 0
       objectReference: {fileID: 0}
@@ -1628,6 +1633,11 @@ PrefabInstance:
     - target: {fileID: 2342021335866471124, guid: 305264a09842eb143b9d26cbe5a24591,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2342021335866471125, guid: 305264a09842eb143b9d26cbe5a24591,
+        type: 3}
+      propertyPath: type
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2342021335866471130, guid: 305264a09842eb143b9d26cbe5a24591,
@@ -5140,6 +5150,11 @@ PrefabInstance:
     - target: {fileID: 2342021335866471124, guid: 305264a09842eb143b9d26cbe5a24591,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2342021335866471125, guid: 305264a09842eb143b9d26cbe5a24591,
+        type: 3}
+      propertyPath: type
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2342021335866471130, guid: 305264a09842eb143b9d26cbe5a24591,

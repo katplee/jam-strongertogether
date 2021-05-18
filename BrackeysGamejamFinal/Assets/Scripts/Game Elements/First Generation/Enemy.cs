@@ -98,6 +98,8 @@ public class Enemy : Element
                 windAttack = enemyData.windAttack;
                 earthAttack = enemyData.earthAttack;
                 baseAttack = enemyData.baseAttack;
+
+                return;
             }
         }
     }
@@ -115,7 +117,7 @@ public class Enemy : Element
      * Inclusion in this list means the enemy is alive.
      * This method is included in the ReloadThisEnemy method.
      */
-    public bool Alive()
+    private bool Alive()
     {
         EnemySave enemySave = EnemySave.Instance.LoadEnemyData();
         List<EnemyData> enemies = enemySave.enemies;
@@ -139,7 +141,7 @@ public class Enemy : Element
      * Populating the list does not mean replacing elements in the list; therefore, calling this will ADD more elements to the enemies list.
      * In case you wish to REPLACE elements in the enemies list, call the ResaveThisEnemy method instead.
      */
-    public void PopulateWithEnemy()
+    private void PopulateWithEnemy()
     {
         InitializeSerialization();
         EnemySave.Instance.PopulateEnemyList(enemyData);

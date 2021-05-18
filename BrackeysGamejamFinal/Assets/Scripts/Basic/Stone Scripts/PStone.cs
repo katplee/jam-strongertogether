@@ -4,14 +4,14 @@ using UnityEngine;
 
 public enum StoneType
 {
-    FIRE, WATER, AIR, EARTH, BASE
+    BASE, FIRE, WATER, EARTH, AIR
 }
 
 public class PStone : MonoBehaviour
 {
     public StoneType type;
 
-    private StoneData stoneData = new StoneData();
+    private StoneData stoneData;
 
     private void Awake()
     {
@@ -31,6 +31,8 @@ public class PStone : MonoBehaviour
 
     private void InitializeSerialization()
     {
+        stoneData = new StoneData();
+
         stoneData.type = type;
         stoneData.name = name;
         stoneData.collected = false;
@@ -47,6 +49,8 @@ public class PStone : MonoBehaviour
             if(stoneData.name == stone.name)
             {
                 stoneData = stone;
+
+                return;
             }
         }
     }
@@ -69,11 +73,8 @@ public class PStone : MonoBehaviour
 
     private bool Collected()
     {
-        //InventorySave inventorySave = InventorySave.Instance.LoadInventoryData();
-        //InventoryData inventory = inventorySave.inventory;
-        //List<StoneData> list = inventory.ChooseStoneList(type);
-
-        InventoryData inventory = InventorySave.Instance.inventory;
+        InventorySave inventorySave = InventorySave.Instance.LoadInventoryData();
+        InventoryData inventory = inventorySave.inventory;
         List<StoneData> list = inventory.ChooseStoneList(type);
 
         foreach (StoneData stone in list)
@@ -91,7 +92,7 @@ public class PStone : MonoBehaviour
     private void PopulateWithStone()
     {
         InitializeSerialization();
-        InventorySave.Instance.PopulateStoneList(type, stoneData);
+        InventorySave.Instance.PopulateStoneList(stoneData);
         InventorySave.Instance.SaveInventoryData();
     }
 

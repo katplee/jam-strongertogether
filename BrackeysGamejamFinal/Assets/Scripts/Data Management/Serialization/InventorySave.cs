@@ -23,14 +23,42 @@ public class InventorySave
     public InventoryData inventory = new InventoryData();
 
     #region Dragons
-    
-    public void AddDragon(Dragon dragon)
-    {
-        //increment the total number of dragons by 1
-        inventory.dragons++;
 
-        //update the dragons inventory
-        inventory.AddDragon(dragon);
+    public void AddDragon()
+    {
+        inventory.dragons++;
+    }
+
+    public int CountTamedDragons(DragonType type)
+    {
+        return inventory.CountTamedDragons(type);
+    }
+
+    private int FindDragon(DragonData specificDragon)
+    {
+        List<DragonData> list = inventory.ChooseDragonList(specificDragon.dType);
+
+        foreach (DragonData dragon in list)
+        {
+            if (dragon.name == specificDragon.name)
+            {
+                return list.IndexOf(dragon);
+            }
+        }
+
+        throw new NotFoundInListException();
+    }
+
+    public void PopulateDragonList(DragonData dragon)
+    {
+        inventory.PopulateDragonList(dragon);
+    }
+
+    public void ReplaceDragonList(DragonData dragon)
+    {
+        int index = FindDragon(dragon);
+        List<DragonData> list = inventory.ChooseDragonList(dragon.dType);
+        list[index] = dragon;
     }
 
     #endregion
@@ -44,7 +72,7 @@ public class InventorySave
 
     private int FindStone(StoneData specificStone)
     {
-        List<StoneData>list = inventory.ChooseStoneList(specificStone.type);
+        List<StoneData> list = inventory.ChooseStoneList(specificStone.type);
 
         foreach (StoneData stone in list)
         {
@@ -62,14 +90,15 @@ public class InventorySave
         inventory.UseStone(type, quantity);
     }
 
-    public void PopulateStoneList(StoneType type, StoneData stone)
+    public void PopulateStoneList(StoneData stone)
     {
-        inventory.PopulateStoneList(type, stone);
+        inventory.PopulateStoneList(stone);
     }
 
     public void ReplaceStoneList(StoneData stone)
     {
         int index = FindStone(stone);
+
         List<StoneData> list = inventory.ChooseStoneList(stone.type);
         list[index] = stone;
     }

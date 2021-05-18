@@ -19,18 +19,18 @@ using Random = UnityEngine.Random;
 [System.Serializable]
 public enum DragonType
 {
-    FIRE, WATER, AIR, EARTH, BASE, NOTDRAGON
+    BASE, FIRE, WATER, EARTH, AIR, NOTDRAGON
 }
 
 public class Dragon : Element
 {
-    DragonData dragonData;
+    public DragonData DragonData { get; private set; }
 
     public TamingReqs tamingReqs;
     public override ElementType Type
     {
         get { return ElementType.DRAGON; }
-    }    
+    }
 
     private const string baseDragonTag = "BaseDragon";
     private const string fireDragonTag = "FireDragon";
@@ -41,18 +41,17 @@ public class Dragon : Element
     protected float dragonImmunity = 0.5f;
 
     [Header("Leveling System")]
-    protected bool isTame = false; //boolean condition connected to leveling system
+    protected bool isTame; //boolean condition connected to leveling system
     protected float xpPerMinute = 10f;
     protected float xpPerWonFight = 120f;
     protected float xpPerLvl = 100f;
     protected int maxLvl = 5;
-    protected float maxXP = 0;
     protected float xp = 0;
+    protected float maxXP = 0;
 
     public override float Armor
     {
-        get => 0f;
-        protected set => Armor = 0f;
+        get => 0f;        
     }
 
     protected override void Awake()
@@ -65,6 +64,7 @@ public class Dragon : Element
     {
         base.OnDestroy();
         UnsubscribeEvents();
+        Destroy(gameObject);
     }
 
     protected override void InitializeAttributes()
@@ -93,17 +93,100 @@ public class Dragon : Element
 
     public override void InitialSerialization()
     {
-        
+        PopulateWithDragon();
     }
 
     protected override void InitializeSerialization()
     {
-        
+        DragonData = new DragonData();
+
+        //BASIC STATS
+        DragonData.isTame = isTame;
+        DragonData.hp = hp;
+        DragonData.maxHP = maxHP;
+        DragonData.xp = xp;
+        DragonData.maxXP = maxXP;
+        DragonData.type = Type;
+        DragonData.dType = DType;
+        DragonData.id = GetInstanceID();
+        DragonData.name = name;
+
+        //COMBAT STATS
+        DragonData.armor = Armor;
+        DragonData.maxArmor = maxArmor;
+        DragonData.weakness = Weakness;
+        DragonData.weaknessFactor = weaknessFactor;
+        DragonData.dragonImmunity = dragonImmunity;
+        DragonData.fireAttack = fireAttack;
+        DragonData.waterAttack = waterAttack;
+        DragonData.windAttack = windAttack;
+        DragonData.earthAttack = earthAttack;
+        DragonData.baseAttack = baseAttack;
     }
 
     public override void InitializeDeserialization()
     {
+        InventorySave inventorySave = InventorySave.Instance.LoadInventoryData();
+        InventoryData inventory = inventorySave.inventory;
+        List<DragonData> list = inventory.ChooseDragonList(DType);
+
+        foreach (DragonData dragon in list)
+        {
+            if(dragon.name == DragonData.name)
+            {
+                DragonData = dragon;
+
+                //BASIC STATS
+                isTame = DragonData.isTame;
+                hp = DragonData.hp;
+                maxHP = DragonData.maxHP;
+                xp = DragonData.xp;
+                maxXP = DragonData.maxXP;
+                DType = DragonData.dType;
+                name = DragonData.name;
+
+                //COMBAT STATS
+                Armor = DragonData.armor;
+                maxArmor = DragonData.maxArmor;
+                Weakness = DragonData.weakness;
+                weaknessFactor = DragonData.weaknessFactor;
+                dragonImmunity = DragonData.dragonImmunity;
+                fireAttack = DragonData.fireAttack;
+                waterAttack = DragonData.waterAttack;
+                windAttack = DragonData.windAttack;
+                earthAttack = DragonData.earthAttack;
+                baseAttack = DragonData.baseAttack;
+
+                return;
+            }
+        }
+    }
+
+    private void PopulateWithDragon()
+    {
+        InitializeSerialization();
+        InventorySave.Instance.PopulateDragonList(DragonData);
+        InventorySave.Instance.SaveInventoryData();
+    }
+
+    private void ReloadThisDragon()
+    {
+        SetDragonTypeWeakness();
         
+        if (Tamed())
+        {
+            OnDestroy();
+            return;
+        }
+
+        InitializeDeserialization();
+    }
+
+    public void ResaveThisDragon()
+    {
+        InitializeSerialization();
+        InventorySave.Instance.ReplaceDragonList(DragonData);
+        InventorySave.Instance.SaveInventoryData();
     }
 
     private void SetDragonTypeWeakness()
@@ -157,14 +240,32 @@ public class Dragon : Element
 
         //if caller is also a dragon (dragon vs dragon)
         if (enemyGO.TryGetComponent(out Dragon dragon)) { return TakeDamage(effDamageAmount, dragon.DType); }
-        
+
         //if caller is not a dragon (non-dragon vs dragon)
         return base.TakeDamage(effDamageAmount);
     }
 
-    public void Tame()
+    public void TameDragon()
     {
+        isTame = true;
+    }
 
+    public bool Tamed()
+    {
+        InventorySave inventorySave = InventorySave.Instance.LoadInventoryData();
+        InventoryData inventory = inventorySave.inventory;
+        List<DragonData> list = inventory.ChooseDragonList(DType);
+
+        foreach (DragonData dragon in list)
+        {
+            if (dragon.name == DragonData.name)
+            {
+                bool tamed = dragon.isTame ? true : false;
+                return tamed;
+            }
+        }
+
+        return false;
     }
 
     private void OnLevelChange()
@@ -193,12 +294,22 @@ public class Dragon : Element
 
     private void SubscribeEvents()
     {
+        GameManager.OnLevelFirstInstance += InitialSerialization;
+        GameManager.OnLevelNormalInstance += InitializeSerialization;
+        SerializationCommander.ReloadAllDragons += ReloadThisDragon;
+
+        //to sort
         GameManager.OnLevelWin += OnLevelChange;
         //FightManager.OnFightEnd += OnFightEnd;
     }
 
     private void UnsubscribeEvents()
     {
+        GameManager.OnLevelFirstInstance -= InitialSerialization;
+        GameManager.OnLevelNormalInstance -= InitializeSerialization;
+        SerializationCommander.ReloadAllDragons -= ReloadThisDragon;
+
+        //to sort
         GameManager.OnLevelWin -= OnLevelChange;
         //FightManager.OnFightEnd -= OnFightEnd;
     }

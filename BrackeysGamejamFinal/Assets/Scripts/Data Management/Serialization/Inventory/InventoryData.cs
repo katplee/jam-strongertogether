@@ -16,24 +16,15 @@ public class InventoryData
     public int dragons;
 
     //QUANTITY PER TYPE
-    public DragonData baseDragons = new DragonData();
-    public DragonData fireDragons = new DragonData();
-    public DragonData waterDragons = new DragonData();
-    public DragonData earthDragons = new DragonData();
-    public DragonData airDragons = new DragonData();
+    public List<DragonData> baseDragons = new List<DragonData>();
+    public List<DragonData> fireDragons = new List<DragonData>();
+    public List<DragonData> waterDragons = new List<DragonData>();
+    public List<DragonData> earthDragons = new List<DragonData>();
+    public List<DragonData> airDragons = new List<DragonData>();
 
     #region Dragons
 
-    public void AddDragon(Dragon dragon)
-    {
-        DragonData data = ChooseDragonType(dragon.DType);
-
-        data.tamed = true;
-        data.quantity++;
-        data.list.Add(dragon);
-    }
-
-    public DragonData ChooseDragonType(DragonType type)
+    public List<DragonData> ChooseDragonList(DragonType type)
     {
         switch (type)
         {
@@ -57,6 +48,27 @@ public class InventoryData
         }
 
         return null;
+    }
+
+    public int CountTamedDragons(DragonType type)
+    {
+        List<DragonData> list = ChooseDragonList(type);
+        int count = 0;
+
+        foreach (DragonData dragon in list)
+        {
+            if (dragon.isTame == true)
+            {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public void PopulateDragonList(DragonData dragon)
+    {
+        List<DragonData> list = ChooseDragonList(dragon.dType);
+        list.Add(dragon);
     }
 
     #endregion
@@ -95,13 +107,12 @@ public class InventoryData
         {
             if(stone.collected == true) { count++; }
         }
-
         return count;
     }
 
-    public void PopulateStoneList(StoneType type, StoneData stone)
+    public void PopulateStoneList(StoneData stone)
     {
-        List<StoneData> list = ChooseStoneList(type);
+        List<StoneData> list = ChooseStoneList(stone.type);
         list.Add(stone);
     }
 
