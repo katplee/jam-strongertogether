@@ -566,7 +566,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 892c4aa592b8de4488245172323b9e90, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  code: 
   speed: 5
   isChoosingTame: 0
 --- !u!212 &381816429
@@ -1474,7 +1473,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1.0625, y: 1.25}
+    oldSize: {x: 1.4375, y: 1.8125}
     newSize: {x: 0.68, y: 0.8}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -1511,7 +1510,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c441bd936ed5a74b985d5879c292d8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  code: 
 --- !u!1 &687869392
 GameObject:
   m_ObjectHideFlags: 0
@@ -2131,7 +2129,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c441bd936ed5a74b985d5879c292d8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  code: 
 --- !u!1 &867023002
 GameObject:
   m_ObjectHideFlags: 0
@@ -3657,7 +3654,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c441bd936ed5a74b985d5879c292d8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  code: 
 --- !u!1 &1351932756
 GameObject:
   m_ObjectHideFlags: 0

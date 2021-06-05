@@ -182,11 +182,6 @@ public class Player : Element
         PlayerSave.Instance.SavePlayerData();
     }
 
-    public void ChangeCode(string code)
-    {
-        this.code = code;
-    }
-
     private void Move()
     {
         if (GameManager.currentSceneName == GameManager.attackScene) { return; }

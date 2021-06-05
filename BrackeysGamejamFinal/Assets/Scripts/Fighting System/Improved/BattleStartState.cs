@@ -22,6 +22,7 @@ public class BattleStartState : StateMachineBehaviour
 
         //instantiate the player prefab at the player transform
         FM.PGO = Instantiate(PM.PPlayer, TM.TPlayer);
+        //FM.PGO = TM.TPlayer.transform.GetChild(0).gameObject;
         //add the player script and add the data
         FM.Player = FM.PGO.AddComponent<Player>();
         FM.Player.InitializeDeserialization();
@@ -30,7 +31,8 @@ public class BattleStartState : StateMachineBehaviour
         FM.PHUD.UpdateHUD(FM.Player);
 
         //do the same for the enemy
-        FM.EGO = Instantiate(PM.PEnemy, TM.TEnemy);
+        //FM.EGO = Instantiate(PM.PEnemy, TM.TEnemy);
+        FM.EGO = TM.TEnemy.transform.GetChild(0).gameObject;
 
         FM.Enemy = FM.EGO.AddComponent<Enemy>();
         FM.Enemy.ReloadAsLastEnemy();

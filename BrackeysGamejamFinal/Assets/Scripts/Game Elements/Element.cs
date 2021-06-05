@@ -23,8 +23,6 @@ public enum WeaknessType
 
 public abstract class Element : MonoBehaviour
 {
-    public string code; //to delete
-
     #region Basic Stats
     protected float hp;
     protected float maxHP = 0f;
