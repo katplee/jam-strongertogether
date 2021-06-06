@@ -1,6 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 /*
  * Things to decide on:
@@ -11,6 +14,7 @@ using UnityEngine;
 public class Enemy : Element
 {
     private EnemyData enemyData;
+    private int spriteIndex;
 
     public override ElementType Type
     {
@@ -21,6 +25,13 @@ public class Enemy : Element
     {
         base.Awake();
         SubscribeEvents();
+
+        if (GameManager.currentSceneName == GameManager.attackScene) { return; }
+
+        if (TryGetComponent<SpriteRenderer>(out SpriteRenderer component))
+        {
+            spriteIndex = Int32.Parse(component.sprite.name.ToCharArray().Reverse().ToString().Substring(0, 1));
+        }
     }
 
     protected override void OnDestroy()
@@ -59,6 +70,7 @@ public class Enemy : Element
         enemyData.dType = DType;
         enemyData.id = GetInstanceID();
         enemyData.name = name;
+        enemyData.spriteIndex = spriteIndex;
 
         //COMBAT STATS
         enemyData.armor = Armor;
@@ -87,6 +99,7 @@ public class Enemy : Element
                 maxHP = enemyData.maxHP;
                 DType = enemyData.dType;
                 name = enemyData.name;
+                spriteIndex = enemyData.spriteIndex;
 
                 //COMBAT STATS
                 Armor = enemyData.armor;
@@ -187,13 +200,15 @@ public class Enemy : Element
      * RELOAD AS LAST ENEMY:
      * This method changes the name of the prefab to the name of the last enemy, so that the InitializeDeserialization method can be used.
      * With the deserialization, the data of the last enemy is assigned to the variables of the enemy script attached to the clone of the prefab.
+     * In addition, the sprite index of the game object to be used in the enemy sprite loader for animation is sent to the SpriteManager.
      */
 
     public void ReloadAsLastEnemy()
     {
         EnemySave enemySave = EnemySave.Instance.LoadEnemyData();
-        gameObject.name = enemySave.lastEnemy.name;        
-        InitializeDeserialization();            
+        gameObject.name = enemySave.lastEnemy.name;
+        InitializeDeserialization();
+        SpriteManager.Instance.AssignEnemyRefIndex(spriteIndex);
     }
 
     /*

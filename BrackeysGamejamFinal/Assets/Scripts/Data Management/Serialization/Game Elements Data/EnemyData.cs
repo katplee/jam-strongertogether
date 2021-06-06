@@ -12,6 +12,7 @@ public class EnemyData
     public DragonType dType;
     public int id;
     public string name;
+    public int spriteIndex;
 
     //COMBAT STATS
     public float armor;
