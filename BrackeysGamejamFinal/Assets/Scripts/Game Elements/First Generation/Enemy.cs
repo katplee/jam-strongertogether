@@ -24,13 +24,18 @@ public class Enemy : Element
     protected override void Awake()
     {
         base.Awake();
-        SubscribeEvents();
+        SubscribeEvents();       
+    }
 
+    private void Start()
+    {
         if (GameManager.currentSceneName == GameManager.attackScene) { return; }
 
         if (TryGetComponent<SpriteRenderer>(out SpriteRenderer component))
         {
-            spriteIndex = Int32.Parse(component.sprite.name.ToCharArray().Reverse().ToString().Substring(0, 1));
+            string spriteName = component.sprite.name;
+            int found = spriteName.IndexOf("_");
+            spriteIndex = Int32.Parse(spriteName.Substring(found + 1, 1));
         }
     }
 
@@ -209,6 +214,7 @@ public class Enemy : Element
         gameObject.name = enemySave.lastEnemy.name;
         InitializeDeserialization();
         SpriteManager.Instance.AssignEnemyRefIndex(spriteIndex);
+        Debug.Log(spriteIndex);
     }
 
     /*

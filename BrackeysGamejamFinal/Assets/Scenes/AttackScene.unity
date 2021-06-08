@@ -687,28 +687,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 338553136}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &338553138 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6283360413482932523, guid: 2c3af6132c90d4e4c907325c4c26a9bc,
-    type: 3}
-  m_PrefabInstance: {fileID: 338553136}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &338553139
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 338553138}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 01b583add8a953540831a5b52a1ce748, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sprites:
-  - {fileID: 3233434971801782112, guid: 1160404fb5ff870409f324ff6636ef18, type: 3}
-  - {fileID: -8266914349668798883, guid: 1160404fb5ff870409f324ff6636ef18, type: 3}
-  - {fileID: -8861267295100551262, guid: 1160404fb5ff870409f324ff6636ef18, type: 3}
 --- !u!1 &348426738
 GameObject:
   m_ObjectHideFlags: 0
@@ -2631,7 +2609,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68b01c5f94b98ab4bbea4e4ff118c687, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemies: []
 --- !u!1 &1402721317
 GameObject:
   m_ObjectHideFlags: 0

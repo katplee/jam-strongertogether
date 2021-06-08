@@ -35,7 +35,9 @@ public class BattleStartState : StateMachineBehaviour
         FM.EGO = TM.TEnemy.transform.GetChild(0).gameObject;
 
         FM.Enemy = FM.EGO.AddComponent<Enemy>();
+
         FM.Enemy.ReloadAsLastEnemy();
+        SpriteManager.Instance.LoadAndAssign();
         
         FM.EHUD = HM.HEnemy;
         FM.EHUD.UpdateHUD(FM.Enemy);

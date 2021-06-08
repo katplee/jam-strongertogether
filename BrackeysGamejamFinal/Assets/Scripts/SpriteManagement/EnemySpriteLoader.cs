@@ -1,41 +1,102 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
 public class EnemySpriteLoader : MonoBehaviour
 {
-    public Sprite[] Sprites { get; set; }
+    #region Animation
+    public List<Sprite> Sprites { get; set; }
     private AnimationClip animClip;
+    private float animKeyFrameRate = 5;
+    private Animator animator;
 
     private EditorCurveBinding spriteBinding = new EditorCurveBinding();
+    #endregion
+
+    #region Avatar/Sprite
+    private SpriteRenderer spriteRenderer;
+    #endregion
 
     private void Start()
     {
         //pass the enemy sprite loader to the sprite manager
         SpriteManager.Instance.AssignEnemySpriteLoader(this);
+        animator = GetComponent<Animator>();
 
+        spriteRenderer = GetComponent<SpriteRenderer>();
+
+        SubscribeEvents();
+
+    }
+
+    private void OnDestroy()
+    {
+        UnsubscribeEvents();
+    }
+
+    private void GenerateAnimClip()
+    {
         animClip = new AnimationClip();
         animClip.frameRate = 20; // fps
 
         spriteBinding.type = typeof(SpriteRenderer);
-        //spriteBinding.path = "";
-        //spriteBinding.propertyName = "m_Sprite";
+        spriteBinding.path = "";
+        spriteBinding.propertyName = "m_Sprite";
 
-        ObjectReferenceKeyframe[] spriteKeyFrames = new ObjectReferenceKeyframe[sprites.Length];
+        ObjectReferenceKeyframe[] spriteKeyFrames = new ObjectReferenceKeyframe[Sprites.Count];
 
-        for (int i = 0; i < (sprites.Length); i++)
+        for (int i = 0; i < (Sprites.Count); i++)
         {
             spriteKeyFrames[i] = new ObjectReferenceKeyframe();
-            spriteKeyFrames[i].time = i / animClip.frameRate;
-            spriteKeyFrames[i].value = sprites[i];
+
+            if (i == Sprites.Count - 1)
+            {
+                spriteKeyFrames[i].time = spriteKeyFrames[i - 1].time + (8 / animClip.frameRate);
+            }
+            else
+            {
+                spriteKeyFrames[i].time = (i / animClip.frameRate) * animKeyFrameRate;
+            }
+            spriteKeyFrames[i].value = Sprites[i];
         }
 
         AnimationUtility.SetObjectReferenceCurve(animClip, spriteBinding, spriteKeyFrames);
 
-        AssetDatabase.CreateAsset(animClip, "Assets/Animations/Enemy/Sample.anim");
+        AssetDatabase.CreateAsset(animClip, "Assets/Animations/Enemy/EnemyAttackReady.anim");
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
+
+        //SetAnimation();
+    }
+
+    private void SetAnimation()
+    {
+        animator.SetBool("animReady", true);
+    }
+
+    public void SetAvatar()
+    {
+        Debug.Log(Sprites[0]);
+        spriteRenderer.sprite = Sprites[0];
+    }
+
+    public void GenerateList()
+    {
+        Sprites = new List<Sprite>();
+    }
+
+    private void SubscribeEvents()
+    {
+        SpriteManager.OnTransferComplete += GenerateAnimClip;
+        SpriteManager.OnTransferComplete += SetAvatar;
+    }
+
+    private void UnsubscribeEvents()
+    {
+        SpriteManager.OnTransferComplete -= GenerateAnimClip;
+        SpriteManager.OnTransferComplete -= SetAvatar;
     }
 }
 

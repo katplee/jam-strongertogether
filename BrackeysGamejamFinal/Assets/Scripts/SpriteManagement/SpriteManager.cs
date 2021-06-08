@@ -6,7 +6,7 @@ using System;
 
 public class SpriteManager : MonoBehaviour
 {
-    public event Action Release;
+    public static event Action OnTransferComplete;
 
     private static SpriteManager instance;
     public static SpriteManager Instance
@@ -26,21 +26,18 @@ public class SpriteManager : MonoBehaviour
     #endregion
 
     #region Enemy sprite manager
-    
-    private int refIndex;
-    private AssetReference spriteSheet;
-    private Queue<Sprite> animSprites;
+    public int refIndex;
+    private Queue<Sprite> animSprites = new Queue<Sprite>();
     private int animKeyFrameCount = 4;
     private int animAvailableKeyFrames = 3;
     //private readonly Dictionary<AssetReference, AsyncOperationHandle<GameObject>> _asyncOperationHandles =
     //    new Dictionary<AssetReference, AsyncOperationHandle<GameObject>>();
     private EnemySpriteLoader enemySpriteLoader;
-
     #endregion
 
-    private void LoadAndAssign(AssetReference assetReference)
+    public void LoadAndAssign()
     {
-        Addressables.LoadAssetAsync<IList<Sprite>>(spriteSheet).Completed += (obj) =>
+        Addressables.LoadAssetAsync<IList<Sprite>>(enemiesSpriteSheetAddress).Completed += (obj) =>
         {
             if (obj.Result == null)
             {
@@ -52,20 +49,16 @@ public class SpriteManager : MonoBehaviour
             {
                 if (i == animAvailableKeyFrames) { i = 0; }
 
-                animSprites.Enqueue(obj.Result[refIndex * 3 + i]);
+                animSprites.Enqueue(obj.Result[(refIndex / animAvailableKeyFrames) * animAvailableKeyFrames + i]);
 
                 if (animSprites.Count == animKeyFrameCount) { break; }
             }
+
+            //assign sprites for animation
+            AssignSprites();
+            enemySpriteLoader.SetAvatar();
+            //OnTransferComplete?.Invoke();
         };
-
-        AssignSprites();
-    }
-
-    private void Remove()
-    {
-        Addressables.ReleaseInstance(obj.gameObject);
-
-        
     }
 
     public void AssignEnemyRefIndex(int index)
@@ -80,12 +73,11 @@ public class SpriteManager : MonoBehaviour
 
     private void AssignSprites()
     {
+        if (enemySpriteLoader.Sprites == null) { enemySpriteLoader.GenerateList(); }
+
         for (int i = 0; i < animKeyFrameCount; i++)
         {
-            enemySpriteLoader.Sprites[i] = animSprites.Dequeue();
+            enemySpriteLoader.Sprites.Add(animSprites.Dequeue());
         }
     }
-
-
-
 }
