@@ -9,15 +9,11 @@ public class PlayerTurnState : StateMachineBehaviour
 
     private ActionManager AM;
 
-    private Animator animator;
-
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        Debug.Log("Player turn state start!");
         FightManager.Instance.ChangeStateName(State);
-        
-        this.animator = animator;
+        Debug.Log("Player turn state start!");
 
         SubscribeEvents();
         SetManagers();
@@ -66,7 +62,7 @@ public class PlayerTurnState : StateMachineBehaviour
         switch (buttonName)
         {
             case "Attack":
-                animator.SetBool("isAttacking", true);
+                AnimatorManager.Animator.SetBool("isAttacking", true);
                 break;
 
             case "Fuse":

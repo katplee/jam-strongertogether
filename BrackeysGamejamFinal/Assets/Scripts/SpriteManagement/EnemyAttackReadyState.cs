@@ -13,25 +13,13 @@ public class EnemyAttackReadyState : StateMachineBehaviour
     private EditorCurveBinding spriteBinding = new EditorCurveBinding();
 
     ObjectReferenceKeyframe[] animKeyFrames = new ObjectReferenceKeyframe[3];
+    */
 
     //OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        animClip.frameRate = animSecondRate;
-
-        spriteBinding.type = typeof(SpriteRenderer);
-        spriteBinding.path = "";
-        spriteBinding.propertyName = "m_Sprite";
-
-        for (int i = 0; i < 3; i++)
-        {
-            animKeyFrames[i] = new ObjectReferenceKeyframe();
-            animKeyFrames[i].time = i * 5;
-            animKeyFrames[i].value = animSprites[i];
-            //animKeyFrames[i].value = animSprites.Dequeue();
-        }
     }
-    */
+    
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     //override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)

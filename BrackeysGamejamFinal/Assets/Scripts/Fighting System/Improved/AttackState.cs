@@ -10,7 +10,6 @@ public class AttackState : StateMachineBehaviour
     private FightManager FM;
     private HUDManager HM;
 
-    private Animator animator;
     private bool isPlayerTurn;
 
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
@@ -19,13 +18,13 @@ public class AttackState : StateMachineBehaviour
         Debug.Log("Attack state!");
         FightManager.Instance.ChangeStateName(State);
 
-        this.animator = animator;
-        isPlayerTurn = animator.GetBool("isPlayerTurn");
+        isPlayerTurn = AnimatorManager.Animator.GetBool("isPlayerTurn");
 
         SubscribeEvents();
         SetManagers();
 
         if (!isPlayerTurn) { FM.OnAttack(isPlayerTurn); }
+        //note that when it is the player's turn, FM.OnAttack will be called via button press
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
@@ -61,28 +60,28 @@ public class AttackState : StateMachineBehaviour
         HM = HUDManager.Instance;
     }
 
-    private void ChangePlayerState()
+    private void OnTurnEnd()
     {
         bool state = isPlayerTurn ^ true;
-        animator.SetBool("isPlayerTurn", state);
-        animator.SetBool("isAttacking", false);
+        AnimatorManager.Animator.SetBool("isPlayerTurn", state);
+        AnimatorManager.Animator.SetBool("isAttacking", false);
     }
 
     private void OnFightEnd(BattleState state)
     {
-        if (state == BattleState.WON) { animator.SetBool("playerWon", true); }
-        else { animator.SetBool("enemyWon", true); }
+        if (state == BattleState.WON) { AnimatorManager.Animator.SetBool("playerWon", true); }
+        else { AnimatorManager.Animator.SetBool("enemyWon", true); }
     }
 
     private void SubscribeEvents()
     {
-        FightManager.OnTurnEnd += ChangePlayerState;
+        FightManager.OnTurnEnd += OnTurnEnd;
         FightManager.OnFightEnd += OnFightEnd;
     }
 
     private void UnsubscribeEvents()
     {
-        FightManager.OnTurnEnd -= ChangePlayerState;
+        FightManager.OnTurnEnd -= OnTurnEnd;
         FightManager.OnFightEnd -= OnFightEnd;
     }
 }

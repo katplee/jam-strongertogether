@@ -28,7 +28,6 @@ public class EnemySpriteLoader : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
 
         SubscribeEvents();
-
     }
 
     private void OnDestroy()
@@ -36,7 +35,7 @@ public class EnemySpriteLoader : MonoBehaviour
         UnsubscribeEvents();
     }
 
-    private void GenerateAnimClip()
+    public void GenerateAnimClip()
     {
         animClip = new AnimationClip();
         animClip.frameRate = 20; // fps
@@ -68,7 +67,7 @@ public class EnemySpriteLoader : MonoBehaviour
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
 
-        //SetAnimation();
+        SetAnimation();
     }
 
     private void SetAnimation()
@@ -78,7 +77,6 @@ public class EnemySpriteLoader : MonoBehaviour
 
     public void SetAvatar()
     {
-        Debug.Log(Sprites[0]);
         spriteRenderer.sprite = Sprites[0];
     }
 

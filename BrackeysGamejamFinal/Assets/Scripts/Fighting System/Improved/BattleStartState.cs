@@ -33,9 +33,9 @@ public class BattleStartState : StateMachineBehaviour
         //do the same for the enemy
         //FM.EGO = Instantiate(PM.PEnemy, TM.TEnemy);
         FM.EGO = TM.TEnemy.transform.GetChild(0).gameObject;
-
         FM.Enemy = FM.EGO.AddComponent<Enemy>();
 
+        //assign the sprites for animation
         FM.Enemy.ReloadAsLastEnemy();
         SpriteManager.Instance.LoadAndAssign();
         

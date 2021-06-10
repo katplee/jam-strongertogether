@@ -7,6 +7,7 @@ public class PlayerWonState : StateMachineBehaviour
     public BattleState State { get { return BattleState.WON; } }
 
     private ActionManager AM;
+    private FightManager FM;
 
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -46,6 +47,7 @@ public class PlayerWonState : StateMachineBehaviour
     private void SetManagers()
     {
         AM = ActionManager.Instance;
+        FM = FightManager.Instance;
     }
 
     private void SetButtonAccess()
@@ -62,9 +64,16 @@ public class PlayerWonState : StateMachineBehaviour
     private void DisplayFightOverUI()
     {
         //the fight ends here
-        //UI should contain all buttons the player can choose, including the leave button
+        //UI should contain all buttons the player can choose from, including the leave button
         //maybe show some statistics of the player? win rate, etc.
         //show the inventory and provide actions the player can do with his/her dragons
+
+        //and then, reflect changes in enemy stats
+        FM.Enemy.AssignAsLastEnemy();
+
+        //temporarily return to the basic scene automatically
+        FM.OnLeave();
+
     }
 
 }

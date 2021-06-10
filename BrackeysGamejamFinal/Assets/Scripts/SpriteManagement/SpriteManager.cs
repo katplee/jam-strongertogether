@@ -56,8 +56,7 @@ public class SpriteManager : MonoBehaviour
 
             //assign sprites for animation
             AssignSprites();
-            enemySpriteLoader.SetAvatar();
-            //OnTransferComplete?.Invoke();
+            OnTransferComplete?.Invoke();
         };
     }
 

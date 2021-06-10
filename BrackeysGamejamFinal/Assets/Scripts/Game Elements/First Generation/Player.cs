@@ -66,7 +66,7 @@ public class Player : Element
     private void Start()
     {
         rb2d = GetComponent<Rigidbody2D>();
-        anim = GetComponent<Animator>();               
+        anim = GetComponent<Animator>();
     }
 
     void Update()
@@ -89,7 +89,7 @@ public class Player : Element
         DType = DragonType.NOTDRAGON;
 
         //each element's max HP is dependent on the level (temporary fix)
-        float elementMaxHP = (GameManager.currLvl * hpLevelFactor) +
+        float elementMaxHP = (GameManager.currLvl * 2 * hpLevelFactor) +
             Random.Range(-hpMargin, hpMargin);
         SetStatMaximum(ref maxHP, elementMaxHP);
         hp = maxHP;
@@ -250,7 +250,7 @@ public class Player : Element
     }
 
     private void TESTPrintPlayerData()
-    {        
+    {
         string playerStats =
             $"//BASIC STATS\n" +
             $"hp : {playerData.hp}\n" +

@@ -67,6 +67,7 @@ public class FightManager : MonoBehaviour
 
     public void OnAttack(bool isPlayerTurn)
     {
+        Debug.Log(State);
         if (State != BattleState.ATTACKING) { return; }
 
         if (isPlayerTurn) { DealAttack(Player, Enemy); }
@@ -136,9 +137,10 @@ public class FightManager : MonoBehaviour
     {
         EnemySave.Instance.lastEnemy.hp = 0;
         EnemySave.Instance.lastEnemy.armor = 0;
+        OnLeave();
     }
 
-    public void OnLeaveButton()
+    public void OnLeave()
     {
         //RestartDragonStats();
         //OnFightEnd?.Invoke();
