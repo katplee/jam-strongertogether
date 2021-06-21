@@ -224,6 +224,9 @@ public class Enemy : Element
      */
     private void ReloadThisEnemy()
     {
+        //Alive() check is done based on the serialized data.
+        //Therefore, even though the InitializeSerialization() method is called first via the OnNormalInstatiation(),
+        //the parameter values initialized are not really evaluated and will eventually be replaced with the true and correct values via deserialization.
         if (!Alive())
         {
             OnDestroy();

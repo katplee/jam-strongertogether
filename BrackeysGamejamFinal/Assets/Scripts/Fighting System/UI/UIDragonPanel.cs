@@ -7,6 +7,8 @@ public class UIDragonPanel : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 {
     private Animator animator;
 
+    private DragonData selectedDragon;
+
     void Start()
     {
         animator = GetComponent<Animator>();
@@ -20,5 +22,10 @@ public class UIDragonPanel : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public void OnPointerExit(PointerEventData eventData)
     {
         animator.SetBool("mouseOn", false);
+    }
+
+    public void ParentParameters()
+    {
+        RectTransform rect = GetComponent<RectTransform>();
     }
 }

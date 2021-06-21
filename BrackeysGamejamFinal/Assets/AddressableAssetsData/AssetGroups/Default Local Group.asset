@@ -21,6 +21,10 @@ MonoBehaviour:
     m_Address: Sprites/ENEMIES.png
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: 32561c42902882d43a6ba1ed743b7314
+    m_Address: Sprites/DRAGONS.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: b4d1ddcf26a0be648bd3fa68d7a36fe4, type: 2}
   m_SchemaSet:

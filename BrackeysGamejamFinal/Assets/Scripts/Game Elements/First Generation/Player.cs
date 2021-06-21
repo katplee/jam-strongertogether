@@ -130,7 +130,17 @@ public class Player : Element
         playerData = new PlayerData();
 
         //BASIC STATS
-        playerData.position = transform.position;
+
+        //if-else loop is to keep the player position set to the position before scene transitioned to the attack scene
+        if(GameManager.currentSceneName == GameManager.attackScene)
+        {
+            playerData.position = PlayerSave.Instance.LoadPlayerData().player.position;
+        }
+        else
+        {
+            playerData.position = transform.position;
+        }
+        
         playerData.hp = hp;
         playerData.maxHP = maxHP;
         playerData.type = Type;

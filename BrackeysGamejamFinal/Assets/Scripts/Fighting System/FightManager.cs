@@ -130,20 +130,14 @@ public class FightManager : MonoBehaviour
 
     public void OnFuse()
     {
-
-    }
-
-    public void TESTOnEnemyDefeated()
-    {
-        EnemySave.Instance.lastEnemy.hp = 0;
-        EnemySave.Instance.lastEnemy.armor = 0;
-        OnLeave();
+        
     }
 
     public void OnLeave()
     {
-        //RestartDragonStats();
-        //OnFightEnd?.Invoke();
+        //keeps the player's data and carries it over to the basic scene
+        Player.Instance.AssignPlayer();
+        
         sceneTransition.FadeTo(LevelData.mapScene);
     }
 
@@ -151,6 +145,13 @@ public class FightManager : MonoBehaviour
 
 
     /*
+
+    public void TESTOnEnemyDefeated()
+    {
+        EnemySave.Instance.lastEnemy.hp = 0;
+        EnemySave.Instance.lastEnemy.armor = 0;
+        OnLeave();
+    }
 
     private void SetEnemySprite()
     {
