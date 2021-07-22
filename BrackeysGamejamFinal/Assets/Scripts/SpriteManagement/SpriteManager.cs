@@ -13,7 +13,7 @@ public class SpriteManager : MonoBehaviour
      * spriteLoader
      */
 
-    public static event Action OnTransferComplete;
+    public static event Action<string> OnTransferComplete;
 
     private static SpriteManager instance;
     public static SpriteManager Instance
@@ -33,12 +33,13 @@ public class SpriteManager : MonoBehaviour
     private const string playerSpriteSheetAddress = "Sprites/PLAYER.png";
     #endregion
 
+    private string objectTag;
     public int refIndex;
     private Queue<Sprite> animSprites = new Queue<Sprite>();
-    private int animKeyFrameCount = 4;
+    private int animKeyFrameCount;
     private int animAvailableKeyFrames;
     private string sheetAddress;
-    
+
     //private readonly Dictionary<AssetReference, AsyncOperationHandle<GameObject>> _asyncOperationHandles =
     //    new Dictionary<AssetReference, AsyncOperationHandle<GameObject>>();
 
@@ -60,6 +61,8 @@ public class SpriteManager : MonoBehaviour
     {
         InputParameters(targetObject);
 
+        if (targetObject == "Player") { AssignRefIndex(refIndex * animAvailableKeyFrames); }
+
         Addressables.LoadAssetAsync<IList<Sprite>>(sheetAddress).Completed += (obj) =>
         {
             if (obj.Result == null)
@@ -74,27 +77,31 @@ public class SpriteManager : MonoBehaviour
 
                 animSprites.Enqueue(obj.Result[(refIndex / animAvailableKeyFrames) * animAvailableKeyFrames + i]);
 
-                if (animSprites.Count == animKeyFrameCount) { break; } //check if necessary...
+                if (animSprites.Count == animKeyFrameCount) { break; }
             }
 
             //assign sprites for animation
             AssignSprites(targetObject);
-            OnTransferComplete?.Invoke();
+            OnTransferComplete?.Invoke(objectTag);
         };
     }
 
     private void InputParameters(string targetObject)
     {
+        objectTag = targetObject;
+
         switch (targetObject)
         {
             case "Enemy":
                 sheetAddress = enemiesSpriteSheetAddress;
                 animAvailableKeyFrames = 3;
+                animKeyFrameCount = 4;
                 break;
 
             case "Player":
                 sheetAddress = playerSpriteSheetAddress;
                 animAvailableKeyFrames = 4;
+                animKeyFrameCount = 5;
                 break;
 
             default:
@@ -104,6 +111,8 @@ public class SpriteManager : MonoBehaviour
 
     public void AssignRefIndex(int index)
     {
+        //called via Enemy.ReloadAsLastEnemy()
+        //called in FightManager for player animation preview
         refIndex = index;
     }
 
@@ -138,6 +147,8 @@ public class SpriteManager : MonoBehaviour
     {
         if (enemySpriteLoader.Sprites == null) { enemySpriteLoader.GenerateList(); }
 
+        if (enemySpriteLoader.Sprites.Count != 0) { enemySpriteLoader.Sprites.Clear(); }
+
         for (int i = 0; i < animKeyFrameCount; i++)
         {
             enemySpriteLoader.Sprites.Add(animSprites.Dequeue());
@@ -146,6 +157,13 @@ public class SpriteManager : MonoBehaviour
 
     private void AssignPlayerSprites()
     {
+        if (playerSpriteLoader.Sprites == null) { playerSpriteLoader.GenerateList(); }
 
+        if (playerSpriteLoader.Sprites.Count != 0) { playerSpriteLoader.Sprites.Clear(); }
+
+        for (int i = 0; i < animKeyFrameCount; i++)
+        {
+            playerSpriteLoader.Sprites.Add(animSprites.Dequeue());
+        }
     }
 }

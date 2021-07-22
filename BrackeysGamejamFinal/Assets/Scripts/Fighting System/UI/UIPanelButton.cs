@@ -11,6 +11,7 @@ public class UIPanelButton : UIObject, IPointerDownHandler, IPointerEnterHandler
     private Image dragonImage;
     private RectTransform rect;
     private static Vector3 currentSubPanelPosition = Vector3.zero;
+    private int buttonIndex;
 
     InventoryData inventory = new InventoryData();
     private DragonType type;
@@ -39,6 +40,10 @@ public class UIPanelButton : UIObject, IPointerDownHandler, IPointerEnterHandler
         {
             SetInteractability(true);
         }
+
+        //set the buttonIndex
+        buttonIndex = transform.GetSiblingIndex() + 1;
+        Debug.Log($"{name} : {buttonIndex}");
     }
 
     public void SetInteractability(bool value)
@@ -83,11 +88,20 @@ public class UIPanelButton : UIObject, IPointerDownHandler, IPointerEnterHandler
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        //show the subpanel with updated tamed dragon stats
+        ShowSubPanel();
+
+        //if the dragon is tamed, proceed to doing the preview animation for the player avatar
+        FightManager.Instance.OnFusePreview(buttonIndex);
+    }
+
+    private void ShowSubPanel()
+    {
         if (currentSubPanelPosition == Vector3.zero)
         {
             currentSubPanelPosition = rect.position;
         }
-        
+
         UIDragonSubPanel.Instance.ClearSubPanel();
 
         //make subpanel active/inactive
@@ -107,5 +121,7 @@ public class UIPanelButton : UIObject, IPointerDownHandler, IPointerEnterHandler
         //compute the world point of the mouse position - discontinued
         //Vector3 mousePosition = Camera.main.ScreenToWorldPoint(eventData.position);
     }
+
+    
 
 }

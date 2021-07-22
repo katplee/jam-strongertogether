@@ -128,11 +128,15 @@ public class FightManager : MonoBehaviour
         OnFightEnd?.Invoke(State);
     }
 
-    public void OnFusePreview(DragonData dragonData)
+    public void OnFusePreview(int dragonToFuseIndex)
     {
+        //erased parameter: dragondata?
         //must assign the refIndex needed in the sprite manager
+        SpriteManager.Instance.AssignRefIndex(dragonToFuseIndex);
+        SpriteManager.Instance.LoadAndAssign("Player");
+        
         //change avatar of player
-        SpriteRenderer spriteRenderer = PGO.GetComponent<SpriteRenderer>();
+        //SpriteRenderer spriteRenderer = PGO.GetComponent<SpriteRenderer>();
         //spriteRenderer.sprite;
 
         //change stats to that of dragon's

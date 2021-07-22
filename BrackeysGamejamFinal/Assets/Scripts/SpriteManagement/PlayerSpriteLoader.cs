@@ -1,12 +1,28 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
+using UnityEditor.Animations;
 using UnityEngine;
 
 public class PlayerSpriteLoader : MonoBehaviour
 {
+    private static PlayerSpriteLoader instance;
+    public static PlayerSpriteLoader Instance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                instance = FindObjectOfType<PlayerSpriteLoader>();
+            }
+            return instance;
+        }
+    }
+
     #region Animation
+    private const string objectTag = "Player";
     public List<Sprite> Sprites { get; set; }
     private AnimationClip animClip;
     private float animKeyFrameRate = 5;
@@ -35,8 +51,10 @@ public class PlayerSpriteLoader : MonoBehaviour
         UnsubscribeEvents();
     }
 
-    public void GenerateAnimClip()
+    public void GenerateAnimClip(string tag)
     {
+        if (tag != objectTag) { return; }
+
         animClip = new AnimationClip();
         animClip.frameRate = 20; // fps
 
@@ -63,7 +81,15 @@ public class PlayerSpriteLoader : MonoBehaviour
 
         AnimationUtility.SetObjectReferenceCurve(animClip, spriteBinding, spriteKeyFrames);
 
-        AssetDatabase.CreateAsset(animClip, "Assets/Animations/Enemy/PlayerAttackReady.anim");
+        if (animator.GetBool("panelMouseOn") == true)
+        {
+            AssetDatabase.CreateAsset(animClip, "Assets/Animations/Player/PlayerAttackReadyPreview.anim");
+        }
+        else
+        {
+            AssetDatabase.CreateAsset(animClip, "Assets/Animations/Player/PlayerAttackReady.anim");
+        }
+
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
 
@@ -72,11 +98,16 @@ public class PlayerSpriteLoader : MonoBehaviour
 
     private void SetAnimation()
     {
-        animator.SetBool("animReady", true);
+        AnimatorController controller = (AnimatorController)animator.runtimeAnimatorController;
+        AnimatorState state = controller.layers[0].stateMachine.states.FirstOrDefault(s => s.state.name.Equals("PlayerAttackReady")).state;
+        controller.SetStateEffectiveMotion(state, animClip);
+        animator.SetTrigger("animReady");
     }
 
-    public void SetAvatar()
+    public void SetAvatar(string tag)
     {
+        if (tag != objectTag) { return; }
+
         spriteRenderer.sprite = Sprites[0];
     }
 
@@ -85,16 +116,33 @@ public class PlayerSpriteLoader : MonoBehaviour
         Sprites = new List<Sprite>();
     }
 
+    public void SetAnimParameter(string paramName, bool boolValue = false)
+    {
+        switch (paramName)
+        {
+            case "animReady":
+                animator.SetTrigger(paramName);
+                break;
+
+            case "panelMouseOn":
+                animator.SetBool(paramName, boolValue);
+                break;
+
+            default:
+                break;
+        }
+    }
+
     private void SubscribeEvents()
     {
-        //SpriteManager.OnTransferComplete += GenerateAnimClip;
-        //SpriteManager.OnTransferComplete += SetAvatar;
+        SpriteManager.OnTransferComplete += GenerateAnimClip;
+        SpriteManager.OnTransferComplete += SetAvatar;
     }
 
     private void UnsubscribeEvents()
     {
-        //SpriteManager.OnTransferComplete -= GenerateAnimClip;
-        //SpriteManager.OnTransferComplete -= SetAvatar;
+        SpriteManager.OnTransferComplete -= GenerateAnimClip;
+        SpriteManager.OnTransferComplete -= SetAvatar;
     }
 }
 

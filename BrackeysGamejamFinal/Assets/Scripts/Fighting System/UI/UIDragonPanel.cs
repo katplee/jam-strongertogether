@@ -29,15 +29,24 @@ public class UIDragonPanel : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        //for animations of dragonPanel
         animator.SetBool("mouseOn", true);
+
+        //for animations of player
+        PlayerSpriteLoader.Instance.SetAnimParameter("panelMouseOn", true);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
+        //for animations of dragonPanel
         animator.SetBool("mouseOn", false);
 
+        //for animations of dragonSubPanel
         UIDragonSubPanel.Instance.ClearSubPanel();
         UIDragonSubPanel.Instance.ToggleInteractability(false);
+
+        //for animations of player
+        PlayerSpriteLoader.Instance.SetAnimParameter("panelMouseOn", false);
     }
 
     public void ParentParameters()

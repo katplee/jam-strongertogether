@@ -8,9 +8,8 @@ using UnityEngine;
 
 public class EnemySpriteLoader : MonoBehaviour
 {
-    public static event Action<AnimationClip> OnAnimGenComplete;
-
     #region Animation
+    private const string objectTag = "Enemy";
     public List<Sprite> Sprites { get; set; }
     private AnimationClip animClip;
     private float animKeyFrameRate = 5;
@@ -39,8 +38,12 @@ public class EnemySpriteLoader : MonoBehaviour
         UnsubscribeEvents();
     }
 
-    public void GenerateAnimClip()
+    public void GenerateAnimClip(string tag)
     {
+        if (tag != objectTag) { return; }
+
+        Debug.Log("from enemy genanimclip");
+
         animClip = new AnimationClip();
         animClip.frameRate = 20; // fps
 
@@ -71,9 +74,6 @@ public class EnemySpriteLoader : MonoBehaviour
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
 
-        
-        OnAnimGenComplete?.Invoke(animClip);
-
         SetAnimation();
     }
 
@@ -85,9 +85,10 @@ public class EnemySpriteLoader : MonoBehaviour
         animator.SetTrigger("animReady");
     }
 
-    public void SetAvatar()
+    public void SetAvatar(string tag)
     {
-        Debug.Log("setavatar");
+        if (tag != objectTag) { return; }
+
         spriteRenderer.sprite = Sprites[0];
     }
 
