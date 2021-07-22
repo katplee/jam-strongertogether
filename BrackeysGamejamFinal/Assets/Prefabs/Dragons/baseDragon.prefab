@@ -148,11 +148,11 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: -4092580835606932215, guid: 32561c42902882d43a6ba1ed743b7314,
     type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
+  m_FlipX: 1
   m_FlipY: 0
   m_DrawMode: 0
   m_Size: {x: 6.78125, y: 4.1875}
@@ -199,23 +199,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c856a09954c37747ad74460ff2c70bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weakness: 4
-  weaknessFactor: 2
-  hp: 100
-  armor: 1
-  remainder: 0
-  damageAmount: 15
-  fireAttack: 0
-  waterAttack: 0
-  windAttack: 0
-  earthAttack: 0
-  maxHP: 100
-  maxArmor: 0
-  dragonImmunity: 0.5
-  xpPerMinute: 10
-  xpPerWonFight: 120
-  xpPerLvl: 100
-  maxLvl: 5
   tamingReqs: {fileID: 2229290202662044384}
 --- !u!114 &2229290202662044384
 MonoBehaviour:
@@ -230,7 +213,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pStones: 2
-  pStonesReq: {fileID: 0}
+  pStonesReq: {fileID: 2229290203129814051}
   dragon: {fileID: 2229290202662044387}
   reqText: {fileID: 2229290203410693634}
   reqStone: {fileID: 4223273187617315609, guid: 1f5be065c99c31a4c8098ec90069fa99,

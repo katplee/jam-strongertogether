@@ -294,8 +294,8 @@ public class Dragon : Element
 
     private void SubscribeEvents()
     {
-        GameManager.OnLevelFirstInstance += InitialSerialization;
-        GameManager.OnLevelNormalInstance += InitializeSerialization;
+        //GameManager.OnLevelFirstInstance += InitialSerialization;
+        //GameManager.OnLevelNormalInstance += InitializeSerialization;
         SerializationCommander.ReloadAllDragons += ReloadThisDragon;
 
         //to sort
@@ -305,8 +305,8 @@ public class Dragon : Element
 
     private void UnsubscribeEvents()
     {
-        GameManager.OnLevelFirstInstance -= InitialSerialization;
-        GameManager.OnLevelNormalInstance -= InitializeSerialization;
+        //GameManager.OnLevelFirstInstance -= InitialSerialization;
+        //GameManager.OnLevelNormalInstance -= InitializeSerialization;
         SerializationCommander.ReloadAllDragons -= ReloadThisDragon;
 
         //to sort

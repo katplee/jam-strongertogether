@@ -35,7 +35,7 @@ public class Enemy : Element
         {
             string spriteName = component.sprite.name;
             int found = spriteName.IndexOf("_");
-            spriteIndex = Int32.Parse(spriteName.Substring(found + 1, 1));
+            spriteIndex = Int32.Parse(spriteName.Substring(found + 1));
         }
     }
 
@@ -213,7 +213,7 @@ public class Enemy : Element
         EnemySave enemySave = EnemySave.Instance.LoadEnemyData();
         gameObject.name = enemySave.lastEnemy.name;
         InitializeDeserialization();
-        SpriteManager.Instance.AssignEnemyRefIndex(spriteIndex);
+        SpriteManager.Instance.AssignRefIndex(spriteIndex);
     }
 
     /*

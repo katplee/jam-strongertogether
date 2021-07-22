@@ -25,6 +25,14 @@ MonoBehaviour:
     m_Address: Sprites/DRAGONS.png
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: 4a90241c77da3e14f8081860848fc602
+    m_Address: Prefabs/DRAGON.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 20e8c484e9b0e0a40ac77fa70fcba6a1
+    m_Address: Sprites/PLAYER.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: b4d1ddcf26a0be648bd3fa68d7a36fe4, type: 2}
   m_SchemaSet:

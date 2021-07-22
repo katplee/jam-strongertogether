@@ -21,8 +21,8 @@ public class BattleStartState : StateMachineBehaviour
         SetManagers();
 
         //instantiate the player prefab at the player transform
-        FM.PGO = Instantiate(PM.PPlayer, TM.TPlayer);
-        //FM.PGO = TM.TPlayer.transform.GetChild(0).gameObject;
+        //FM.PGO = Instantiate(PM.PPlayer, TM.TPlayer);
+        FM.PGO = TM.TPlayer.transform.GetChild(0).gameObject;
         //add the player script and add the data
         FM.Player = FM.PGO.AddComponent<Player>();
         FM.Player.InitializeDeserialization();
@@ -36,8 +36,8 @@ public class BattleStartState : StateMachineBehaviour
         FM.Enemy = FM.EGO.AddComponent<Enemy>();
 
         //assign the sprites for animation
-        FM.Enemy.ReloadAsLastEnemy();
-        SpriteManager.Instance.LoadAndAssign();
+        FM.Enemy.ReloadAsLastEnemy(); //ref index assignment is done here
+        SpriteManager.Instance.LoadAndAssign("Enemy");
         
         FM.EHUD = HM.HEnemy;
         FM.EHUD.UpdateHUD(FM.Enemy);

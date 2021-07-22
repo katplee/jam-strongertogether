@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -20,9 +21,6 @@ public class UIDragonSubPanel : MonoBehaviour, IPointerEnterHandler, IPointerExi
     }
 
     public DragonType Type { get; private set; }
-    private List<DragonData> dragonList = new List<DragonData>();
-
-    private Animator animator;
 
     //Interactibility-related variables
     private RectTransform rect;
@@ -33,7 +31,12 @@ public class UIDragonSubPanel : MonoBehaviour, IPointerEnterHandler, IPointerExi
     private Vector3 mousePosition;
 
     //Dragon-listing-related variables
-    private GameObject interim; //refers to the vertical container in-between this and the dragon list
+    private Transform interim; //refers to the vertical container in-between this and the dragon list
+    private List<DragonData> dragonList = new List<DragonData>();
+    private List<GameObject> dragonPrefabsList = new List<GameObject>();
+    private const string dragonPrefabAddress = "Prefabs/DRAGON.prefab";
+    private GameObject dragonPrefab;
+
 
     void Start()
     {
@@ -41,21 +44,28 @@ public class UIDragonSubPanel : MonoBehaviour, IPointerEnterHandler, IPointerExi
         rect = GetComponent<RectTransform>();
         rect.localScale = new Vector3(0f, 0f, 0f);
 
-        //retrieve animator component
-        animator = transform.parent.GetComponent<Animator>();
-
         //retrieve interim vertical container
-        interim = transform.GetChild(0).gameObject;
+        interim = transform.GetChild(0);
+
+        //set the dragon prefab
+        Addressables.LoadAssetAsync<GameObject>(dragonPrefabAddress).Completed += (obj) =>
+        {
+            if (obj.Result == null)
+            {
+                Debug.LogError("Dragon prefab not uploaded properly.");
+                return;
+            }
+
+            dragonPrefab = obj.Result;
+        };
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        //animator.SetBool("mouseOn", true);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        //animator.SetBool("mouseOn", false);
     }
 
     public void OnPointerUp(PointerEventData eventData)
@@ -86,16 +96,60 @@ public class UIDragonSubPanel : MonoBehaviour, IPointerEnterHandler, IPointerExi
         return this.mousePosition;
     }
 
-    public void PrepareForSubPanelGeneration()
+    public void PrepareForDragonListGeneration()
     {
-        //instantiate 
+        if (dragonList == null) { return; }
+
+        if (dragonList.Count == 0) { return; }
+
+        //instantiate enough dragon prefabs for each dragon on list
+        for (int i = 0; i < dragonList.Count; i++)
+        {
+            if (dragonPrefabsList.Count == dragonList.Count) { return; }
+
+            GameObject go = Instantiate(dragonPrefab, interim);
+            dragonPrefabsList.Add(go);
+        }
+
+        StartCoroutine(UpdateDragonList());
     }
-    
+
+    IEnumerator UpdateDragonList()
+    {
+        //distribute info to each instantiated dragon prefab
+        for (int i = 0; i < dragonPrefabsList.Count; i++)
+        {
+            DP_UIDragon dragon = dragonPrefabsList[i].GetComponent<DP_UIDragon>();
+            if(dragon.uploadState != 0) { yield return null; }
+            dragon.UpdateDragon(dragonList[i]);
+        }
+    }
+
     public void GenerateSubPanel(Vector3 mousePosition)
     {
         Vector3 subPanelUpperLeftPoint = MousePosition(mousePosition) - ParentUpperLeftPoint();
         RectTransform subPanel = GetComponent<RectTransform>();
+
+        if (mousePosition.x > 0)
+        {
+            subPanel.pivot = new Vector2(1f, 1f);
+        }
+        else
+        {
+            subPanel.pivot = new Vector2(0f, 1f);
+        }
+
         subPanel.anchoredPosition = subPanelUpperLeftPoint;
+    }
+
+    public void ClearSubPanel()
+    {
+        foreach (Transform child in interim)
+        {
+            Destroy(child.gameObject);
+        }
+
+        dragonPrefabsList.Clear();
     }
 
     public void PassDragonList(List<DragonData> list)
@@ -108,12 +162,16 @@ public class UIDragonSubPanel : MonoBehaviour, IPointerEnterHandler, IPointerExi
         Type = dragonType;
     }
 
-    public bool ToggleInteractability()
+    public bool ToggleInteractability(bool buttonChanged)
     {
         if (Vector3.Magnitude(rect.localScale) == 0)
         {
             rect.localScale = new Vector3(1f, 1f, 1f);
 
+            gameObject.SetActive(true);
+        }
+        else if (buttonChanged)
+        {
             gameObject.SetActive(true);
         }
         else

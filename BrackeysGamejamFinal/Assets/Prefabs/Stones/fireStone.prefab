@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2342021335866471125}
   - component: {fileID: 2342021335866471126}
   m_Layer: 0
-  m_Name: fireStome
+  m_Name: fireStone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -96,7 +96,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 488f50b5de6a2ff4daedf9349dc0af66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 0
+  type: 1
 --- !u!61 &2342021335866471126
 BoxCollider2D:
   m_ObjectHideFlags: 0

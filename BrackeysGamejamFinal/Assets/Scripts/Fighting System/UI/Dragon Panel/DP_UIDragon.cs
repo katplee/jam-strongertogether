@@ -2,13 +2,17 @@
 using UnityEngine.EventSystems;
 
 
-public class DP_UIDragon : UIObject, IPointerEnterHandler, IPointerExitHandler
+public class DP_UIDragon : UIObject, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler
 {
+    public int uploadState { get; set; } = 3;
+
     private DP_UIAvatar dragonAvatar;
     private DP_UIName dragonName;
     private DP_UIHP dragonHP;
     private DP_UIXP dragonXP;
     private DP_UIOpacity dragonOpacity;
+
+    private DragonData dragonData;
 
     //check this
     public override string Label
@@ -19,16 +23,19 @@ public class DP_UIDragon : UIObject, IPointerEnterHandler, IPointerExitHandler
     private void SetAvatar(DP_UIAvatar avatar)
     {
         dragonAvatar = avatar;
+        uploadState--;
     }
 
     private void SetName(DP_UIName name)
     {
         dragonName = name;
+        uploadState--;
     }
 
     private void SetHP(DP_UIHP hp)
     {
         dragonHP = hp;
+        uploadState--;
     }
 
     private void SetXP(DP_UIXP xp)
@@ -66,17 +73,25 @@ public class DP_UIDragon : UIObject, IPointerEnterHandler, IPointerExitHandler
                 SetOpacity(DP_UIObject as DP_UIOpacity);
                 break;
 
-            
+
         }
     }
 
-    public void UpdateDragon<T>(T dragon)
-        where T : Dragon
+    public void UpdateDragon(DragonData dragon)
     {
+        dragonData = dragon;
         dragonAvatar.ChangeAvatar();
         dragonName.ChangeText(dragon.name);
-        dragonHP.ChangeFillAmount(dragon.NormalHP());
+        dragonHP.ChangeFillAmount(NormalHP(dragon.hp, dragon.maxHP));
         //dragonXP.ChangeFillAmount();
+    }
+
+    public float NormalHP(float hp, float maxHP)
+    {
+        if (maxHP == 0) { return 0; }
+
+        float normalHP = hp / maxHP;
+        return normalHP;
     }
 
     private void UpdateOpacity(bool active)
@@ -87,10 +102,21 @@ public class DP_UIDragon : UIObject, IPointerEnterHandler, IPointerExitHandler
     public void OnPointerEnter(PointerEventData eventData)
     {
         UpdateOpacity(true);
+
+        //change avatar and stats of player (like a preview)
+        //call OnFusePreview from Fight Manager and pass dragonData!
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        UpdateOpacity(true);
+        UpdateOpacity(false);
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        if (eventData.button == PointerEventData.InputButton.Left)
+        {
+            
+        }
     }
 }

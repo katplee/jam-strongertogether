@@ -5,6 +5,19 @@ using UnityEngine.EventSystems;
 
 public class UIDragonPanel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
+    private static UIDragonPanel instance;
+    public static UIDragonPanel Instance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                instance = FindObjectOfType<UIDragonPanel>();
+            }
+            return instance;
+        }
+    }
+
     private Animator animator;
 
     private DragonData selectedDragon;
@@ -22,6 +35,9 @@ public class UIDragonPanel : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public void OnPointerExit(PointerEventData eventData)
     {
         animator.SetBool("mouseOn", false);
+
+        UIDragonSubPanel.Instance.ClearSubPanel();
+        UIDragonSubPanel.Instance.ToggleInteractability(false);
     }
 
     public void ParentParameters()

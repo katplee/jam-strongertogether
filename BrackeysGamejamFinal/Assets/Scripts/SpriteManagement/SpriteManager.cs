@@ -6,6 +6,13 @@ using System;
 
 public class SpriteManager : MonoBehaviour
 {
+    /*
+     * Things which are different:
+     * address (sprite sheet address)
+     * animAvailableKeyFrames
+     * spriteLoader
+     */
+
     public static event Action OnTransferComplete;
 
     private static SpriteManager instance;
@@ -23,21 +30,37 @@ public class SpriteManager : MonoBehaviour
 
     #region Addresses
     private const string enemiesSpriteSheetAddress = "Sprites/ENEMIES.png";
+    private const string playerSpriteSheetAddress = "Sprites/PLAYER.png";
     #endregion
 
-    #region Enemy sprite manager
     public int refIndex;
     private Queue<Sprite> animSprites = new Queue<Sprite>();
     private int animKeyFrameCount = 4;
-    private int animAvailableKeyFrames = 3;
+    private int animAvailableKeyFrames;
+    private string sheetAddress;
+    
     //private readonly Dictionary<AssetReference, AsyncOperationHandle<GameObject>> _asyncOperationHandles =
     //    new Dictionary<AssetReference, AsyncOperationHandle<GameObject>>();
+
+    #region Enemy sprite manager
     private EnemySpriteLoader enemySpriteLoader;
+    private PlayerSpriteLoader playerSpriteLoader;
     #endregion
 
-    public void LoadAndAssign()
+    #region Player sprite manager
+    private const int solo = 0;
+    private const int fusedBase = 4;
+    private const int fusedFire = 8;
+    private const int fusedAir = 12;
+    private const int fusedWater = 16;
+    private const int fusedEarth = 20;
+    #endregion
+
+    public void LoadAndAssign(string targetObject)
     {
-        Addressables.LoadAssetAsync<IList<Sprite>>(enemiesSpriteSheetAddress).Completed += (obj) =>
+        InputParameters(targetObject);
+
+        Addressables.LoadAssetAsync<IList<Sprite>>(sheetAddress).Completed += (obj) =>
         {
             if (obj.Result == null)
             {
@@ -51,18 +74,42 @@ public class SpriteManager : MonoBehaviour
 
                 animSprites.Enqueue(obj.Result[(refIndex / animAvailableKeyFrames) * animAvailableKeyFrames + i]);
 
-                if (animSprites.Count == animKeyFrameCount) { break; }
+                if (animSprites.Count == animKeyFrameCount) { break; } //check if necessary...
             }
 
             //assign sprites for animation
-            AssignSprites();
+            AssignSprites(targetObject);
             OnTransferComplete?.Invoke();
         };
     }
 
-    public void AssignEnemyRefIndex(int index)
+    private void InputParameters(string targetObject)
+    {
+        switch (targetObject)
+        {
+            case "Enemy":
+                sheetAddress = enemiesSpriteSheetAddress;
+                animAvailableKeyFrames = 3;
+                break;
+
+            case "Player":
+                sheetAddress = playerSpriteSheetAddress;
+                animAvailableKeyFrames = 4;
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    public void AssignRefIndex(int index)
     {
         refIndex = index;
+    }
+
+    public void AssignPlayerSpriteLoader(PlayerSpriteLoader loader)
+    {
+        playerSpriteLoader = loader;
     }
 
     public void AssignEnemySpriteLoader(EnemySpriteLoader loader)
@@ -70,7 +117,24 @@ public class SpriteManager : MonoBehaviour
         enemySpriteLoader = loader;
     }
 
-    private void AssignSprites()
+    private void AssignSprites(string targetObject)
+    {
+        switch (targetObject)
+        {
+            case "Enemy":
+                AssignEnemySprites();
+                break;
+
+            case "Player":
+                AssignPlayerSprites();
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    private void AssignEnemySprites()
     {
         if (enemySpriteLoader.Sprites == null) { enemySpriteLoader.GenerateList(); }
 
@@ -78,5 +142,10 @@ public class SpriteManager : MonoBehaviour
         {
             enemySpriteLoader.Sprites.Add(animSprites.Dequeue());
         }
+    }
+
+    private void AssignPlayerSprites()
+    {
+
     }
 }

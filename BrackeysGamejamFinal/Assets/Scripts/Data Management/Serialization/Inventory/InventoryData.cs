@@ -50,6 +50,24 @@ public class InventoryData
         return null;
     }
 
+    public List<DragonData> SendTamedDragonList(DragonType type)
+    {
+        if(CountTamedDragons(type) == 0) { return null; }
+
+        List<DragonData> list = ChooseDragonList(type);
+        List<DragonData> tamedList = new List<DragonData>();
+
+        foreach (DragonData dragon in list)
+        {
+            if(dragon.isTame == true)
+            {
+                tamedList.Add(dragon);
+            }
+        }
+
+        return tamedList;
+    }
+
     public int CountTamedDragons(DragonType type)
     {
         List<DragonData> list = ChooseDragonList(type);
@@ -74,7 +92,7 @@ public class InventoryData
     #endregion
 
     #region Stones
-    
+
     public List<StoneData> ChooseStoneList(StoneType type)
     {
         switch (type)

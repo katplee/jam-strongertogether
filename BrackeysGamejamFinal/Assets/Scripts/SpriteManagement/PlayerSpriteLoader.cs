@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEditor;
-using UnityEditor.Animations;
 using UnityEngine;
 
-public class EnemySpriteLoader : MonoBehaviour
+public class PlayerSpriteLoader : MonoBehaviour
 {
-    public static event Action<AnimationClip> OnAnimGenComplete;
-
     #region Animation
     public List<Sprite> Sprites { get; set; }
     private AnimationClip animClip;
@@ -26,7 +22,7 @@ public class EnemySpriteLoader : MonoBehaviour
     private void Start()
     {
         //pass the enemy sprite loader to the sprite manager
-        SpriteManager.Instance.AssignEnemySpriteLoader(this);
+        SpriteManager.Instance.AssignPlayerSpriteLoader(this);
         animator = GetComponent<Animator>();
 
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -67,27 +63,20 @@ public class EnemySpriteLoader : MonoBehaviour
 
         AnimationUtility.SetObjectReferenceCurve(animClip, spriteBinding, spriteKeyFrames);
 
-        AssetDatabase.CreateAsset(animClip, "Assets/Animations/Enemy/EnemyAttackReady.anim");
+        AssetDatabase.CreateAsset(animClip, "Assets/Animations/Enemy/PlayerAttackReady.anim");
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
-
-        
-        OnAnimGenComplete?.Invoke(animClip);
 
         SetAnimation();
     }
 
     private void SetAnimation()
     {
-        AnimatorController controller = (AnimatorController)animator.runtimeAnimatorController;
-        AnimatorState state = controller.layers[0].stateMachine.states.FirstOrDefault(s => s.state.name.Equals("EnemyAttackReady")).state;
-        controller.SetStateEffectiveMotion(state, animClip);
-        animator.SetTrigger("animReady");
+        animator.SetBool("animReady", true);
     }
 
     public void SetAvatar()
     {
-        Debug.Log("setavatar");
         spriteRenderer.sprite = Sprites[0];
     }
 
@@ -98,14 +87,14 @@ public class EnemySpriteLoader : MonoBehaviour
 
     private void SubscribeEvents()
     {
-        SpriteManager.OnTransferComplete += GenerateAnimClip;
-        SpriteManager.OnTransferComplete += SetAvatar;
+        //SpriteManager.OnTransferComplete += GenerateAnimClip;
+        //SpriteManager.OnTransferComplete += SetAvatar;
     }
 
     private void UnsubscribeEvents()
     {
-        SpriteManager.OnTransferComplete -= GenerateAnimClip;
-        SpriteManager.OnTransferComplete -= SetAvatar;
+        //SpriteManager.OnTransferComplete -= GenerateAnimClip;
+        //SpriteManager.OnTransferComplete -= SetAvatar;
     }
 }
 
