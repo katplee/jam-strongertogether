@@ -34,7 +34,7 @@ public class SpriteManager : MonoBehaviour
     #endregion
 
     private string objectTag;
-    public int refIndex;
+    public int refIndex = 0;
     private Queue<Sprite> animSprites = new Queue<Sprite>();
     private int animKeyFrameCount;
     private int animAvailableKeyFrames;

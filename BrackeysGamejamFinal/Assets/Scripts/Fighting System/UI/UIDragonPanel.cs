@@ -38,6 +38,9 @@ public class UIDragonPanel : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     public void OnPointerExit(PointerEventData eventData)
     {
+        //if there is a dragon selected, subpanel will not retract until fusion with dragon is complete
+        if (UIDragonSubPanel.Instance.IsSelected) { return; }
+
         //for animations of dragonPanel
         animator.SetBool("mouseOn", false);
 

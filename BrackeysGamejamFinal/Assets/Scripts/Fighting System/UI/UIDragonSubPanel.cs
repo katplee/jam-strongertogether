@@ -25,6 +25,7 @@ public class UIDragonSubPanel : MonoBehaviour, IPointerEnterHandler, IPointerExi
     //Interactibility-related variables
     private RectTransform rect;
     private Image image;
+    public bool IsSelected { get; set; }
 
     //Position-related variables
     private Vector3 mainPanelUpperLeftPt;
@@ -40,6 +41,9 @@ public class UIDragonSubPanel : MonoBehaviour, IPointerEnterHandler, IPointerExi
 
     void Start()
     {
+        //set isSelected bool to false
+        IsSelected = false;
+
         //set panel to zero scale, but active
         rect = GetComponent<RectTransform>();
         rect.localScale = new Vector3(0f, 0f, 0f);
@@ -120,7 +124,7 @@ public class UIDragonSubPanel : MonoBehaviour, IPointerEnterHandler, IPointerExi
         for (int i = 0; i < dragonPrefabsList.Count; i++)
         {
             DP_UIDragon dragon = dragonPrefabsList[i].GetComponent<DP_UIDragon>();
-            if(dragon.uploadState != 0) { yield return null; }
+            if (dragon.uploadState != 0) { yield return null; }
             dragon.UpdateDragon(dragonList[i]);
         }
     }

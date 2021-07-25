@@ -12,12 +12,22 @@ public class DP_UIDragon : UIObject, IPointerEnterHandler, IPointerExitHandler, 
     private DP_UIXP dragonXP;
     private DP_UIOpacity dragonOpacity;
 
-    private DragonData dragonData;
+    private DragonData dragonData = new DragonData();
 
     //check this
     public override string Label
     {
         get { return transform.tag; }
+    }
+
+    private void Awake()
+    {
+        SubscribeEvents();
+    }
+
+    private void OnDestroy()
+    {
+        UnsubscribeEvents();
     }
 
     private void SetAvatar(DP_UIAvatar avatar)
@@ -72,8 +82,6 @@ public class DP_UIDragon : UIObject, IPointerEnterHandler, IPointerExitHandler, 
             case "DP_UIOpacity":
                 SetOpacity(DP_UIObject as DP_UIOpacity);
                 break;
-
-
         }
     }
 
@@ -109,6 +117,9 @@ public class DP_UIDragon : UIObject, IPointerEnterHandler, IPointerExitHandler, 
 
     public void OnPointerExit(PointerEventData eventData)
     {
+        //if there is a dragon selected, selected item will not change opacity
+        if (UIDragonSubPanel.Instance.IsSelected) { return; }
+
         UpdateOpacity(false);
     }
 
@@ -116,7 +127,26 @@ public class DP_UIDragon : UIObject, IPointerEnterHandler, IPointerExitHandler, 
     {
         if (eventData.button == PointerEventData.InputButton.Left)
         {
-            
+            UIDragonSubPanel.Instance.IsSelected = UIDragonSubPanel.Instance.IsSelected ^ true;
+            UpdateOpacity(UIDragonSubPanel.Instance.IsSelected);
+
+            if (UIDragonSubPanel.Instance.IsSelected) { PlayerSpriteLoader.Instance.SetSelection(); }
+            else { PlayerSpriteLoader.Instance.ClearSelection(); }
         }
+    }
+
+    private void SendDragonData()
+    {
+        FightManager.Instance.PassDragonData(dragonData);
+    }
+
+    private void SubscribeEvents()
+    {
+        FightManager.OnDragonFuse += SendDragonData;
+    }
+
+    private void UnsubscribeEvents()
+    {
+        FightManager.OnDragonFuse -= SendDragonData;
     }
 }

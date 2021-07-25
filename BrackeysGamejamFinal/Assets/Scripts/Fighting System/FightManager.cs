@@ -14,6 +14,7 @@ public class FightManager : MonoBehaviour
 {
     public static event Action OnTurnEnd;
     public static event Action<BattleState> OnFightEnd;
+    public static event Action OnDragonFuse;
 
     private static FightManager instance;
     public static FightManager Instance
@@ -59,6 +60,12 @@ public class FightManager : MonoBehaviour
 
     [Header("Transition Values")]
     public SceneTransition sceneTransition;
+
+    private void Start()
+    {
+        //SpriteManager.Instance.AssignRefIndex(dragonToFuseIndex);
+        //SpriteManager.Instance.LoadAndAssign("Player");
+    }
 
     public void ChangeStateName(BattleState state)
     {
@@ -140,12 +147,21 @@ public class FightManager : MonoBehaviour
         //spriteRenderer.sprite;
 
         //change stats to that of dragon's
-
     }
 
-    public void OnFuse()
+    public void FuseDragonHP()
     {
-        
+        OnDragonFuse?.Invoke();
+    }
+
+    public void PassDragonData(DragonData dragon)
+    {
+        //set the 
+        Player.SetParametersOnFuse(dragon.hp);
+
+        //update the HUDs
+        HUDManager.Instance.HPlayer.UpdateHUD(Player);
+        HUDManager.Instance.HEnemy.UpdateHUD(Enemy);
     }
 
     public void OnLeave()

@@ -43,7 +43,6 @@ public class UIPanelButton : UIObject, IPointerDownHandler, IPointerEnterHandler
 
         //set the buttonIndex
         buttonIndex = transform.GetSiblingIndex() + 1;
-        Debug.Log($"{name} : {buttonIndex}");
     }
 
     public void SetInteractability(bool value)
@@ -88,11 +87,16 @@ public class UIPanelButton : UIObject, IPointerDownHandler, IPointerEnterHandler
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        if (UIDragonSubPanel.Instance.IsSelected) { return; }
+        
         //show the subpanel with updated tamed dragon stats
         ShowSubPanel();
 
-        //if the dragon is tamed, proceed to doing the preview animation for the player avatar
-        FightManager.Instance.OnFusePreview(buttonIndex);
+        if(inventory.CountTamedDragons(type) > 0)
+        {
+            //if the dragon is tamed, proceed to doing the preview animation for the player avatar
+            FightManager.Instance.OnFusePreview(buttonIndex);
+        }
     }
 
     private void ShowSubPanel()

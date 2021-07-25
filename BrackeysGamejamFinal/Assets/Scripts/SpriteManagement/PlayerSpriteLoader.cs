@@ -32,16 +32,21 @@ public class PlayerSpriteLoader : MonoBehaviour
     #endregion
 
     #region Avatar/Sprite
+    private Sprite selectedAvatar = null;
+    private AnimationClip selectedAnimation = null;
     private SpriteRenderer spriteRenderer;
     #endregion
 
     private void Start()
     {
+        animator = GetComponent<Animator>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+
         //pass the enemy sprite loader to the sprite manager
         SpriteManager.Instance.AssignPlayerSpriteLoader(this);
-        animator = GetComponent<Animator>();
 
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        //set the animator bool to off (work around.. check this)
+        animator.SetBool("panelMouseOn", false);
 
         SubscribeEvents();
     }
@@ -80,8 +85,8 @@ public class PlayerSpriteLoader : MonoBehaviour
         }
 
         AnimationUtility.SetObjectReferenceCurve(animClip, spriteBinding, spriteKeyFrames);
-
-        if (animator.GetBool("panelMouseOn") == true)
+        
+        if (!UIDragonSubPanel.Instance.IsSelected)
         {
             AssetDatabase.CreateAsset(animClip, "Assets/Animations/Player/PlayerAttackReadyPreview.anim");
         }
@@ -90,6 +95,7 @@ public class PlayerSpriteLoader : MonoBehaviour
             AssetDatabase.CreateAsset(animClip, "Assets/Animations/Player/PlayerAttackReady.anim");
         }
 
+        //AssetDatabase.CreateAsset(animClip, "Assets/Animations/Player/PlayerAttackReadyPreview.anim");
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
 
@@ -99,16 +105,9 @@ public class PlayerSpriteLoader : MonoBehaviour
     private void SetAnimation()
     {
         AnimatorController controller = (AnimatorController)animator.runtimeAnimatorController;
-        AnimatorState state = controller.layers[0].stateMachine.states.FirstOrDefault(s => s.state.name.Equals("PlayerAttackReady")).state;
+        AnimatorState state = controller.layers[0].stateMachine.states.FirstOrDefault(s => s.state.name.Equals("PlayerAttackReadyPreview")).state;
         controller.SetStateEffectiveMotion(state, animClip);
         animator.SetTrigger("animReady");
-    }
-
-    public void SetAvatar(string tag)
-    {
-        if (tag != objectTag) { return; }
-
-        spriteRenderer.sprite = Sprites[0];
     }
 
     public void GenerateList()
@@ -133,16 +132,43 @@ public class PlayerSpriteLoader : MonoBehaviour
         }
     }
 
+    public void SetSelection()
+    {
+        selectedAvatar = Sprites[0];
+        //selectedAnimation = animClip;
+    }
+
+    public void ClearSelection()
+    {
+        selectedAvatar = null;
+        //selectedAnimation = null;
+    }
+
+    public void FinalizeSelection()
+    {
+        //set the sprite/avatar
+        spriteRenderer.sprite = selectedAvatar;
+
+        //set the default player attack ready anim to the new anim
+        GenerateAnimClip("Player");
+
+        AnimatorController controller = (AnimatorController)animator.runtimeAnimatorController;
+        AnimatorState state = controller.layers[0].stateMachine.states.FirstOrDefault(s => s.state.name.Equals("PlayerAttackReady")).state;
+        controller.SetStateEffectiveMotion(state, animClip);
+
+        //set dragon sub panel isSelected to false
+        UIDragonSubPanel.Instance.IsSelected = false;
+        UIDragonPanel.Instance.OnPointerExit(null);
+    }
+
     private void SubscribeEvents()
     {
         SpriteManager.OnTransferComplete += GenerateAnimClip;
-        SpriteManager.OnTransferComplete += SetAvatar;
     }
 
     private void UnsubscribeEvents()
     {
         SpriteManager.OnTransferComplete -= GenerateAnimClip;
-        SpriteManager.OnTransferComplete -= SetAvatar;
     }
 }
 

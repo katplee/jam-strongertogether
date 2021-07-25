@@ -66,8 +66,15 @@ public class PlayerTurnState : StateMachineBehaviour
                 break;
 
             case "Fuse":
-                //do something
-                //animator.SetBool("isPlayerTurn", false);
+                //change the avatar
+                //change the default animation
+                PlayerSpriteLoader.Instance.FinalizeSelection();
+
+                //change HP stats as a result of fusion with dragon
+                FightManager.Instance.FuseDragonHP();
+
+                //change animator parameters
+                MoveToPlayerTurn();
                 break;
 
             default:
@@ -83,5 +90,11 @@ public class PlayerTurnState : StateMachineBehaviour
     private void UnsubscribeEvents()
     {
         ActionManager.OnButtonPress -= FireButtonResponse;
+    }
+
+    private void MoveToPlayerTurn()
+    {
+        AnimatorManager.Animator.SetBool("isPlayerTurn", false);
+        AnimatorManager.Animator.SetBool("isAttacking", false);
     }
 }

@@ -259,6 +259,12 @@ public class Player : Element
 
     }
 
+    public void SetParametersOnFuse(float armor)
+    {
+        SetStatMaximum(ref maxArmor, Armor + armor);
+        Armor = Armor + armor;
+    }
+    
     private void TESTPrintPlayerData()
     {
         string playerStats =

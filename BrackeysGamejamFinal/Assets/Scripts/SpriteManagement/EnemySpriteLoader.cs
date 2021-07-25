@@ -42,8 +42,6 @@ public class EnemySpriteLoader : MonoBehaviour
     {
         if (tag != objectTag) { return; }
 
-        Debug.Log("from enemy genanimclip");
-
         animClip = new AnimationClip();
         animClip.frameRate = 20; // fps
 
