@@ -163,6 +163,7 @@ public class UIDragonSubPanel : MonoBehaviour, IPointerEnterHandler, IPointerExi
 
     public void SetDragonType(DragonType dragonType)
     {
+
         Type = dragonType;
     }
 
