@@ -2,38 +2,35 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-//using UnityEditor;
-//using UnityEditor.Animations;
+using UnityEditor;
+using UnityEditor.Animations;
 using UnityEngine;
 
 public class EnemySpriteLoader : MonoBehaviour
 {
     #region Animation
+    private const string objectTag = "Enemy";
     public List<Sprite> Sprites { get; set; }
     private AnimationClip animClip;
     private float animKeyFrameRate = 5;
     private Animator animator;
 
-    //private EditorCurveBinding spriteBinding = new EditorCurveBinding();
+    private EditorCurveBinding spriteBinding = new EditorCurveBinding();
     #endregion
 
     #region Avatar/Sprite
     private SpriteRenderer spriteRenderer;
-    private int enemyIndex;
     #endregion
-
-
-    private void Awake()
-    {
-        SubscribeEvents();
-    }
 
     private void Start()
     {
         //pass the enemy sprite loader to the sprite manager
-        EnemySpriteManager.Instance.AssignEnemySpriteLoader(this);
+        SpriteManager.Instance.AssignEnemySpriteLoader(this);
         animator = GetComponent<Animator>();
+
         spriteRenderer = GetComponent<SpriteRenderer>();
+
+        SubscribeEvents();
     }
 
     private void OnDestroy()
@@ -41,11 +38,10 @@ public class EnemySpriteLoader : MonoBehaviour
         UnsubscribeEvents();
     }
 
-    /*
-     * Removing all classes referring to the UnityEditor
-     * 
-    public void GenerateAnimClip()
+    public void GenerateAnimClip(string tag)
     {
+        if (tag != objectTag) { return; }
+
         animClip = new AnimationClip();
         animClip.frameRate = 20; // fps
 
@@ -72,31 +68,26 @@ public class EnemySpriteLoader : MonoBehaviour
 
         AnimationUtility.SetObjectReferenceCurve(animClip, spriteBinding, spriteKeyFrames);
 
-        AssetDatabase.CreateAsset(animClip, "Assets/Animations & State Machines/Enemy/EnemyAttackReady.anim");
-        AssetDatabase. SaveAssets();
+        AssetDatabase.CreateAsset(animClip, "Assets/Animations/Enemy/EnemyAttackReady.anim");
+        AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
 
         SetAnimation();
     }
-    */
 
-    private void SetAnimation(int enemyIndex)
+    private void SetAnimation()
     {
-        //AnimatorController controller = (AnimatorController)animator.runtimeAnimatorController;
-        //AnimatorState state = controller.layers[0].stateMachine.states.FirstOrDefault(s => s.state.name.Equals("EnemyAttackReady")).state;
-        //controller.SetStateEffectiveMotion(state, animClip);
-
-        this.enemyIndex = enemyIndex;
-
-        //set the animation in the blend tree
-        animator.SetFloat("enemyIndex", enemyIndex);
-        //animate
+        AnimatorController controller = (AnimatorController)animator.runtimeAnimatorController;
+        AnimatorState state = controller.layers[0].stateMachine.states.FirstOrDefault(s => s.state.name.Equals("EnemyAttackReady")).state;
+        controller.SetStateEffectiveMotion(state, animClip);
         animator.SetTrigger("animReady");
     }
 
-    public void SetAvatar()
+    public void SetAvatar(string tag)
     {
-        this.GetComponent<SpriteRenderer>().sprite = Sprites[0];
+        if (tag != objectTag) { return; }
+
+        spriteRenderer.sprite = Sprites[0];
     }
 
     public void GenerateList()
@@ -106,16 +97,14 @@ public class EnemySpriteLoader : MonoBehaviour
 
     private void SubscribeEvents()
     {
-        //EnemySpriteManager.OnTransferComplete += GenerateAnimClip;
-        //EnemySpriteManager.OnTransferComplete += SetAvatar;
-        EnemySpriteManager.OnTransferComplete += SetAnimation;
+        SpriteManager.OnTransferComplete += GenerateAnimClip;
+        SpriteManager.OnTransferComplete += SetAvatar;
     }
 
     private void UnsubscribeEvents()
     {
-        //EnemySpriteManager.OnTransferComplete -= GenerateAnimClip;
-        //EnemySpriteManager.OnTransferComplete -= SetAvatar;
-        EnemySpriteManager.OnTransferComplete -= SetAnimation;
+        SpriteManager.OnTransferComplete -= GenerateAnimClip;
+        SpriteManager.OnTransferComplete -= SetAvatar;
     }
 }
 

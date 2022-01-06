@@ -2,8 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
-using UnityEditor.Animations;
+//using UnityEditor;
+//using UnityEditor.Animations;
 using UnityEngine;
 
 public class PlayerSpriteLoader : MonoBehaviour
@@ -22,92 +22,37 @@ public class PlayerSpriteLoader : MonoBehaviour
     }
 
     #region Animation
-    private const string objectTag = "Player";
     public List<Sprite> Sprites { get; set; }
-    private AnimationClip animClip;
     private float animKeyFrameRate = 5;
     private Animator animator;
 
-    private EditorCurveBinding spriteBinding = new EditorCurveBinding();
     #endregion
 
     #region Avatar/Sprite
     private Sprite selectedAvatar = null;
-    private AnimationClip selectedAnimation = null;
     private SpriteRenderer spriteRenderer;
+    private int dragonIndex;
+    private Sprite origPlayerSprite;
     #endregion
+
+    private void Awake()
+    {
+        SubscribeEvents();
+    }
 
     private void Start()
     {
+        //pass the player enemy sprite loader to the sprite manager
+        PlayerSpriteManager.Instance.AssignPlayerSpriteLoader(this);
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
 
-        //pass the enemy sprite loader to the sprite manager
-        SpriteManager.Instance.AssignPlayerSpriteLoader(this);
-
-        //set the animator bool to off (work around.. check this)
-        animator.SetBool("panelMouseOn", false);
-
-        SubscribeEvents();
+        RestartAnimation();
     }
 
     private void OnDestroy()
     {
         UnsubscribeEvents();
-    }
-
-    public void GenerateAnimClip(string tag)
-    {
-        if (tag != objectTag) { return; }
-
-        animClip = new AnimationClip();
-        animClip.frameRate = 20; // fps
-
-        spriteBinding.type = typeof(SpriteRenderer);
-        spriteBinding.path = "";
-        spriteBinding.propertyName = "m_Sprite";
-
-        ObjectReferenceKeyframe[] spriteKeyFrames = new ObjectReferenceKeyframe[Sprites.Count];
-
-        for (int i = 0; i < (Sprites.Count); i++)
-        {
-            spriteKeyFrames[i] = new ObjectReferenceKeyframe();
-
-            if (i == Sprites.Count - 1)
-            {
-                spriteKeyFrames[i].time = spriteKeyFrames[i - 1].time + (8 / animClip.frameRate);
-            }
-            else
-            {
-                spriteKeyFrames[i].time = (i / animClip.frameRate) * animKeyFrameRate;
-            }
-            spriteKeyFrames[i].value = Sprites[i];
-        }
-
-        AnimationUtility.SetObjectReferenceCurve(animClip, spriteBinding, spriteKeyFrames);
-        
-        if (!UIDragonSubPanel.Instance.IsSelected)
-        {
-            AssetDatabase.CreateAsset(animClip, "Assets/Animations/Player/PlayerAttackReadyPreview.anim");
-        }
-        else
-        {
-            AssetDatabase.CreateAsset(animClip, "Assets/Animations/Player/PlayerAttackReady.anim");
-        }
-
-        //AssetDatabase.CreateAsset(animClip, "Assets/Animations/Player/PlayerAttackReadyPreview.anim");
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
-
-        SetAnimation();
-    }
-
-    private void SetAnimation()
-    {
-        AnimatorController controller = (AnimatorController)animator.runtimeAnimatorController;
-        AnimatorState state = controller.layers[0].stateMachine.states.FirstOrDefault(s => s.state.name.Equals("PlayerAttackReadyPreview")).state;
-        controller.SetStateEffectiveMotion(state, animClip);
-        animator.SetTrigger("animReady");
     }
 
     public void GenerateList()
@@ -132,43 +77,73 @@ public class PlayerSpriteLoader : MonoBehaviour
         }
     }
 
+    private void SetAnimation(int dragonIndex)
+    {
+        this.dragonIndex = dragonIndex;
+
+        //save player sprite prior to fuse preview animation
+        origPlayerSprite = spriteRenderer.sprite;
+
+        //set the animation in the blend tree
+        animator.SetFloat("dragonIndex", dragonIndex);
+        //animate
+        animator.SetTrigger("animReady");
+
+        //set the player sprite temporarily to the new sprite
+        SetSelection();
+    }
+
     public void SetSelection()
     {
         selectedAvatar = Sprites[0];
-        //selectedAnimation = animClip;
+        spriteRenderer.sprite = selectedAvatar;
     }
 
     public void ClearSelection()
     {
         selectedAvatar = null;
-        //selectedAnimation = null;
     }
 
-    public void FinalizeSelection()
+    public void ResetSprite()
     {
-        //set the sprite/avatar
+        spriteRenderer.sprite = origPlayerSprite;
+        origPlayerSprite = null;
+    }
+
+    public bool FinalizeSelection()
+    {
+        if (!UIDragonSubPanel.Instance.IsSelected) { return false; }
+
         spriteRenderer.sprite = selectedAvatar;
 
-        //set the default player attack ready anim to the new anim
-        GenerateAnimClip("Player");
-
-        AnimatorController controller = (AnimatorController)animator.runtimeAnimatorController;
-        AnimatorState state = controller.layers[0].stateMachine.states.FirstOrDefault(s => s.state.name.Equals("PlayerAttackReady")).state;
-        controller.SetStateEffectiveMotion(state, animClip);
+        //animator.SetFloat("dragonIndex", dragonIndex); this is not needed, I think..
+        animator.SetTrigger("animReady");
 
         //set dragon sub panel isSelected to false
         UIDragonSubPanel.Instance.IsSelected = false;
         UIDragonPanel.Instance.OnPointerExit(null);
+
+        return true;
     }
 
     private void SubscribeEvents()
     {
-        SpriteManager.OnTransferComplete += GenerateAnimClip;
+        PlayerSpriteManager.OnTransferComplete += SetAnimation;
     }
 
     private void UnsubscribeEvents()
     {
-        SpriteManager.OnTransferComplete -= GenerateAnimClip;
+        PlayerSpriteManager.OnTransferComplete -= SetAnimation;
+    }
+
+    private void RestartAnimation()
+    {
+        //check if there was a dragon flying when player went to fight with enemy
+        InventorySave inventorySave = InventorySave.Instance.LoadInventoryData();
+        InventoryData inventory = inventorySave.inventory;
+
+        //PlayerSpriteManager.Instance.AssignRefIndex(inventory.flyingDragonIndex);
+        PlayerSpriteManager.Instance.LoadAndAssign();
     }
 }
 
